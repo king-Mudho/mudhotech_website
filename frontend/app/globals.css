@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Slightly brighter page surface so white cards separate cleanly from it
+       and the whole page reads lighter and more open. */
+    --background: 220 30% 98%;
+    --foreground: 218 74% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 218 74% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 218 74% 15%;
+    --primary: 218 74% 15%;
+    --primary-foreground: 0 0% 100%;
+    /* Cool tint rather than flat grey — gives alternating sections a visible
+       but gentle rhythm against --background. */
+    --secondary: 214 40% 94%;
+    --secondary-foreground: 218 74% 15%;
+    --muted: 220 15% 94%;
+    /* Darkened from 46% to reach WCAG AA 4.5:1 on --background (was 4.44:1). */
+    --muted-foreground: 218 17% 40%;
+    /* Darkened from 50% so white text on --accent, and --accent text on light
+       backgrounds, both clear WCAG AA 4.5:1 (docs/09-ui-ux-design.md §7). */
+    --accent: 211 100% 38%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 211 100% 38%;
+    --radius: 0.5rem;
+    --hero: 218 74% 10%;
+    --hero-foreground: 0 0% 100%;
+    /* Brighter than --accent: that one is tuned for AA on light backgrounds,
+       which is too dark to read over the navy hero overlay. */
+    --hero-accent: 211 100% 66%;
+    --whatsapp: 142 70% 45%;
+    --whatsapp-foreground: 0 0% 100%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 220 40% 6%;
+    --foreground: 220 15% 90%;
+    --card: 220 35% 10%;
+    --card-foreground: 220 15% 90%;
+    --popover: 220 35% 10%;
+    --popover-foreground: 220 15% 90%;
+    --primary: 211 100% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 30% 14%;
+    --secondary-foreground: 220 15% 90%;
+    --muted: 220 25% 14%;
+    --muted-foreground: 220 15% 55%;
+    --accent: 211 100% 60%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 25% 18%;
+    --input: 220 25% 18%;
+    --ring: 211 100% 55%;
+    --hero: 218 74% 6%;
+    --hero-foreground: 0 0% 100%;
+    --hero-accent: 211 100% 66%;
+    --whatsapp: 142 70% 45%;
+    --whatsapp-foreground: 0 0% 100%;
+    --sidebar-background: 220 40% 8%;
+    --sidebar-foreground: 220 15% 90%;
+    --sidebar-primary: 211 100% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 30% 14%;
+    --sidebar-accent-foreground: 220 15% 90%;
+    --sidebar-border: 220 25% 18%;
+    --sidebar-ring: 211 100% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+
+  /* Honour the OS "reduce motion" preference for CSS-driven animation.
+     Framer Motion is handled separately via <MotionConfig reducedMotion="user">.
+     Animations are neutralised rather than removed so anything that relies on
+     an animation to become visible still ends up visible. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .section-padding {
+    @apply py-20 md:py-28;
+  }
+  .page-padding-top {
+    @apply pt-20;
+  }
+}
+
+@layer components {
+  .prose-custom h2 {
+    @apply font-heading text-xl font-bold text-foreground mt-10 mb-3;
+  }
+  .prose-custom h3 {
+    @apply font-heading text-lg font-semibold text-foreground mt-6 mb-2;
+  }
+  .prose-custom p {
+    @apply text-muted-foreground text-sm leading-relaxed mb-4;
+  }
+  .prose-custom ul {
+    @apply list-disc list-inside text-muted-foreground text-sm leading-relaxed mb-4 space-y-1;
+  }
+  .prose-custom a {
+    @apply text-accent hover:underline;
+  }
+  .prose-custom strong {
+    @apply text-foreground font-semibold;
+  }
+}

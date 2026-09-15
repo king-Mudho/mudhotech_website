@@ -1,0 +1,113 @@
+export interface BlogPost {
+  slug: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  category: string;
+  image: string;
+  readTime: string;
+  content: string[]; // markdown — rendered via a proper markdown renderer, see src/components/marketing/BlogContent.tsx
+}
+
+export const blogPosts: BlogPost[] = [
+  {
+    slug: "business-digital-transformation",
+    title: "5 Signs Your Business Needs Digital Transformation",
+    excerpt: "Is your business still relying on manual processes? Discover the telltale signs it's time to embrace digital solutions for growth and efficiency.",
+    date: "2026-02-15",
+    category: "Digital Strategy",
+    image: "/images/blog-digital-transformation.jpg",
+    readTime: "6 min read",
+    content: [
+      "Digital transformation is no longer a luxury — it's a necessity for businesses that want to stay competitive in today's fast-paced market. Yet many companies, especially small and medium enterprises, continue to rely on outdated manual processes that slow them down.",
+      "## 1. Your Processes Are Mostly Manual",
+      "If your team spends hours on spreadsheets, paper forms, or repetitive data entry, you're losing valuable time. Automating workflows with custom software can cut processing time by up to 70%, freeing your team to focus on strategic work.",
+      "## 2. You're Losing Customers to Competitors",
+      "When competitors offer online ordering, real-time tracking, or self-service portals and you don't, customers notice. Modern consumers expect seamless digital experiences, and failing to deliver means losing market share.",
+      "## 3. Data Is Scattered Across Multiple Systems",
+      "Using disconnected tools — one for accounting, another for inventory, a third for HR — creates data silos. A unified digital platform ensures everyone works from a single source of truth, reducing errors and improving decision-making.",
+      "## 4. Your Team Works Remotely but Lacks Digital Tools",
+      "The shift to remote and hybrid work demands cloud-based collaboration tools, project management platforms, and secure remote access. Without them, productivity suffers and communication breaks down.",
+      "## 5. You Can't Track Performance in Real Time",
+      "If generating a business report takes days instead of seconds, you're operating blind. Real-time dashboards and analytics give you instant visibility into sales, operations, and customer behaviour, empowering data-driven decisions.",
+      "## Ready to Transform?",
+      "At MudhoTech Solutions, we help businesses across Zimbabwe and Southern Africa embrace digital transformation — from custom software development to cloud migration and process automation. Our solutions are designed to be scalable, affordable, and tailored to your unique needs.",
+    ],
+  },
+  {
+    slug: "protect-business-cyber-threats",
+    title: "How to Protect Your Business from Cyber Threats",
+    excerpt: "Cybersecurity is no longer optional. Learn practical steps to safeguard your business data, networks, and customer information from modern threats.",
+    date: "2026-02-08",
+    category: "Cybersecurity",
+    image: "/images/blog-cybersecurity.jpg",
+    readTime: "7 min read",
+    content: [
+      "Cyberattacks are on the rise globally, and African businesses are increasingly becoming targets. From ransomware to phishing scams, the threats are real and the consequences can be devastating — financial loss, reputational damage, and legal liability.",
+      "## Understanding the Threat Landscape",
+      "Small and medium businesses are particularly vulnerable because they often lack dedicated security teams. Attackers know this and exploit weak passwords, unpatched software, and untrained employees to gain access to sensitive systems.",
+      "## Essential Cybersecurity Measures",
+      "**Use Strong, Unique Passwords:** Implement a password policy that requires complex passwords and regular changes. Consider using a password manager for your team.",
+      "**Keep Software Updated:** Outdated software contains known vulnerabilities. Enable automatic updates for operating systems, browsers, and business applications.",
+      "**Install Enterprise-Grade Antivirus:** Free antivirus solutions aren't enough for business use. Invest in comprehensive endpoint protection that includes real-time threat detection.",
+      "**Enable Multi-Factor Authentication (MFA):** MFA adds an extra layer of security by requiring a second form of verification beyond just a password.",
+      "## Train Your Employees",
+      "Human error is the leading cause of data breaches. Regular cybersecurity training helps employees recognise phishing emails, suspicious links, and social engineering tactics.",
+      "## Back Up Your Data",
+      "Implement the 3-2-1 backup rule: keep three copies of your data, on two different types of media, with one copy stored offsite or in the cloud. This ensures business continuity even after a ransomware attack.",
+      "## Get Professional Help",
+      "MudhoTech Solutions provides comprehensive cybersecurity assessments, network security setup, and ongoing monitoring to keep your business protected. Don't wait for a breach — act now.",
+    ],
+  },
+  {
+    slug: "cloud-computing-small-businesses",
+    title: "Benefits of Cloud Computing for Small Businesses",
+    excerpt: "Cloud computing is revolutionizing how small businesses operate. Explore cost savings, scalability, and collaboration benefits of moving to the cloud.",
+    date: "2026-01-28",
+    category: "Cloud Computing",
+    image: "/images/blog-cloud-computing.jpg",
+    readTime: "5 min read",
+    content: [
+      "Cloud computing has transformed from a buzzword into an essential business tool. For small businesses in Zimbabwe and across Africa, the cloud offers opportunities that were once only available to large corporations with massive IT budgets.",
+      "## What Is Cloud Computing?",
+      "Simply put, cloud computing means using internet-based servers and services instead of maintaining your own physical hardware. This includes everything from email and file storage to complete business management platforms.",
+      "## Cost Savings",
+      "The most immediate benefit is reduced IT costs. There's no need to purchase expensive servers, hire dedicated IT staff for maintenance, or worry about hardware failures. You pay only for what you use, converting capital expenditure into predictable monthly costs.",
+      "## Scalability on Demand",
+      "As your business grows, your cloud infrastructure grows with it. Need more storage? More computing power? It's available instantly, without purchasing new hardware or waiting weeks for installation.",
+      "## Enhanced Collaboration",
+      "Cloud-based tools like Google Workspace and Microsoft 365 enable real-time collaboration. Your team can work on the same documents simultaneously, whether they're in the office, at home, or on the road.",
+      "## Improved Security",
+      "Contrary to common misconceptions, reputable cloud providers invest heavily in security — far more than most small businesses can afford independently. Your data is encrypted, backed up automatically, and protected by enterprise-grade security measures.",
+      "## Business Continuity",
+      "Natural disasters, power outages, or hardware failures won't stop your business when your data and applications live in the cloud. You can access everything from any device, anywhere, ensuring operations continue uninterrupted.",
+      "## Getting Started",
+      "MudhoTech Solutions specialises in cloud migration for small and medium businesses. We assess your current infrastructure, recommend the right cloud solutions, and manage the entire migration process — ensuring zero data loss and minimal downtime.",
+    ],
+  },
+  {
+    slug: "school-management-systems",
+    title: "Why Every School Needs a Management System",
+    excerpt: "From attendance tracking to grade management, discover how school management systems streamline operations and improve educational outcomes.",
+    date: "2026-01-15",
+    category: "Education Tech",
+    image: "/images/blog-school-management.jpg",
+    readTime: "6 min read",
+    content: [
+      "Schools across Zimbabwe face growing administrative challenges — from managing student records and tracking attendance to processing fee payments and generating reports. A digital school management system addresses all these pain points in one integrated platform.",
+      "## The Problem with Manual Administration",
+      "Many schools still rely on paper registers, handwritten report cards, and manual fee tracking. This approach is not only time-consuming but error-prone. Lost records, miscalculated grades, and payment disputes are common, creating frustration for administrators, teachers, and parents alike.",
+      "## Key Features of a Modern School Management System",
+      "**Student Information Management:** Centralise all student data — personal details, academic history, medical records, and emergency contacts — in one secure, searchable database.",
+      "**Attendance Tracking:** Digital attendance eliminates paper registers and provides instant insights into attendance patterns, helping identify at-risk students early.",
+      "**Grade & Report Card Management:** Automate grade calculations, generate professional report cards, and allow parents to view results online — saving teachers hours of manual work each term.",
+      "**Fee Management:** Track payments, generate invoices, send payment reminders, and produce financial reports with ease. Integration with mobile payment platforms like EcoCash makes fee collection seamless.",
+      "## Benefits for Stakeholders",
+      "**For Administrators:** Reduced paperwork, better decision-making with real-time data, and streamlined communication with parents and staff.",
+      "**For Teachers:** More time for teaching and less time on administrative tasks. Easy access to student performance data helps tailor instruction.",
+      "**For Parents:** Transparency into their child's academic performance, attendance, and fee status — accessible anytime from their phone.",
+      "## MudhoTech School Solutions",
+      "MudhoTech Solutions has developed and deployed school management systems for institutions across Zimbabwe. Our systems are designed for the local context — supporting local curricula, mobile money integration, and low-bandwidth environments. Contact us to schedule a demo.",
+    ],
+  },
+];
