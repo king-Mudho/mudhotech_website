@@ -48,7 +48,12 @@ export default function ITSupportPage() {
               icon={service.icon}
               title={service.title}
               description={service.description}
+              detail={service.detail}
               items={service.items}
+              worksWith={service.worksWith}
+              bestFor={service.bestFor}
+              image={service.image}
+              turnaround={service.turnaround}
             />
           ))}
         </div>

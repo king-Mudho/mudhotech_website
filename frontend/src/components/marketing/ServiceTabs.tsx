@@ -20,21 +20,31 @@ export function ServiceTabs() {
               icon={service.icon}
               title={service.title}
               description={service.description}
+              detail={service.detail}
               items={service.items}
+              worksWith={service.worksWith}
+              bestFor={service.bestFor}
+              image={service.image}
+              turnaround={service.turnaround}
             />
           ))}
         </div>
       </TabsContent>
 
       <TabsContent value="development">
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {devServices.map((service) => (
             <ServiceCard
               key={service.title}
               icon={service.icon}
               title={service.title}
               description={service.description}
+              detail={service.detail}
               items={service.items}
+              worksWith={service.worksWith}
+              bestFor={service.bestFor}
+              image={service.image}
+              turnaround={service.turnaround}
             />
           ))}
         </div>

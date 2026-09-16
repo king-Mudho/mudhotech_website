@@ -32,10 +32,13 @@ export default function WebSoftwarePage() {
       />
 
       <Section>
+        {/* Distinct from the h1 above it, which already says "Software &
+            Development Services" — this one explains the choice the tabs
+            present rather than restating the page title. */}
         <SectionHeading
-          eyebrow="What We Do"
-          title="Software Services & Development"
-          lead="Pick a track below — day-to-day software support, or building something new."
+          eyebrow="Two Ways We Help"
+          title="Fix What You Have, or Build Something New"
+          lead="Day-to-day software setup and support on one side; custom systems, stores, and apps on the other."
         />
         <ServiceTabs />
       </Section>

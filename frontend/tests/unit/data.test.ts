@@ -57,6 +57,32 @@ describe("services", () => {
     }
   });
 
+  it("gives every category the detail and audience copy the card renders", () => {
+    for (const category of [...softwareServices, ...devServices, ...hardwareServices]) {
+      expect(category.detail.length).toBeGreaterThan(80);
+      expect(category.bestFor.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("points every service image at a local file, never a remote host", () => {
+    // Remote stock would need a next.config remotePatterns entry and would
+    // reintroduce the placeholder imagery docs/OPEN-QUESTIONS.md #4 flags.
+    for (const category of [...softwareServices, ...devServices, ...hardwareServices]) {
+      if (category.image) expect(category.image.startsWith("/images/")).toBe(true);
+    }
+  });
+
+  it("never repeats a service's own items back as works-with chips", () => {
+    // A chip row that restates the checklist above it is padding, not
+    // information — see the Mobile App Development card.
+    for (const category of [...softwareServices, ...devServices, ...hardwareServices]) {
+      if (!category.worksWith) continue;
+      const items = category.items.map((i) => i.toLowerCase());
+      const duplicated = category.worksWith.filter((tool) => items.includes(tool.toLowerCase()));
+      expect(duplicated).toEqual([]);
+    }
+  });
+
   it("tags every gallery image with a category and alt text", () => {
     for (const image of galleryImages) {
       expect(image.alt.length).toBeGreaterThan(0);
