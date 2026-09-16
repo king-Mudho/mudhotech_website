@@ -16,6 +16,7 @@ export default function BlogPage() {
   return (
     <>
       <PageHero
+        crumbs={[{ name: "Blog" }]}
         eyebrow="Insights"
         title="Blog & Insights"
         lead="Practical technology guidance for businesses and institutions across Zimbabwe."

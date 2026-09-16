@@ -14,6 +14,12 @@ export default {
       },
     },
     extend: {
+      spacing: {
+        // The navbar's height. `h-18` was already in the markup but is not a
+        // default Tailwind utility, so it compiled to nothing and the header
+        // height was whatever its padding and logo happened to add up to.
+        18: "4.5rem",
+      },
       fontFamily: {
         heading: ["var(--font-heading)", "sans-serif"],
         body: ["var(--font-body)", "sans-serif"],
@@ -35,6 +41,8 @@ export default {
         destructive: {
           DEFAULT: "hsl(var(--destructive) / <alpha-value>)",
           foreground: "hsl(var(--destructive-foreground) / <alpha-value>)",
+          // For error text and invalid borders drawn on a page surface.
+          emphasis: "hsl(var(--destructive-emphasis) / <alpha-value>)",
         },
         muted: {
           DEFAULT: "hsl(var(--muted) / <alpha-value>)",

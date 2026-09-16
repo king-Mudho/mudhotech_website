@@ -48,8 +48,12 @@ describe("ContactForm", () => {
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
     await waitFor(() => {
-      expect(screen.getAllByText(/String must contain|Invalid email/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByRole("alert").length).toBeGreaterThan(0);
     });
+    // Human wording, not Zod's internal assertion text. An empty field is
+    // "you missed this"; a filled-but-wrong one is "this isn't valid".
+    expect(screen.getByText(/please enter your full name/i)).toBeInTheDocument();
+    expect(screen.getByText(/please enter your email address/i)).toBeInTheDocument();
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -64,9 +68,39 @@ describe("ContactForm", () => {
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/invalid email/i)).toBeInTheDocument();
+      expect(screen.getByText(/valid email address/i)).toBeInTheDocument();
     });
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("links each error to its field so a screen reader announces it", async () => {
+    const user = userEvent.setup();
+    render(<ContactForm />);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    const nameInput = await screen.findByLabelText("Name");
+    await waitFor(() => expect(nameInput).toHaveAttribute("aria-invalid", "true"));
+
+    const describedBy = nameInput.getAttribute("aria-describedby");
+    expect(describedBy).toBeTruthy();
+    const description = document.getElementById(describedBy!.split(" ")[0]);
+    expect(description).toHaveTextContent(/please enter your full name/i);
+    expect(description).toHaveAttribute("role", "alert");
+  });
+
+  it("replaces the form with a confirmation once the message is sent", async () => {
+    const user = userEvent.setup();
+    render(<ContactForm />);
+
+    await user.type(screen.getByLabelText("Name"), "Tendai Moyo");
+    await user.type(screen.getByLabelText("Email"), "tendai@example.com");
+    await user.type(screen.getByLabelText("Subject"), "Website enquiry");
+    await user.type(screen.getByLabelText("Message"), "I would like a new website for my business.");
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    expect(await screen.findByText(/message received/i)).toBeInTheDocument();
+    expect(screen.queryByLabelText("Message")).not.toBeInTheDocument();
   });
 
   it("posts the correct payload to the contact endpoint on valid input", async () => {

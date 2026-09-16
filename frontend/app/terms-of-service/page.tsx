@@ -13,6 +13,7 @@ export default function TermsOfServicePage() {
   return (
     <>
       <PageHero
+        crumbs={[{ name: "Terms of Service" }]}
         eyebrow="Legal"
         title="Terms of Service"
         lead="The terms governing our services and engagements."

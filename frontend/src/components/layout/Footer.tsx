@@ -41,7 +41,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-heading font-semibold text-base mb-4">Quick Links</h3>
+            <h2 className="font-heading font-semibold text-base mb-4">Quick Links</h2>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.path + link.name}>
@@ -54,7 +54,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-heading font-semibold text-base mb-4">Services</h3>
+            <h2 className="font-heading font-semibold text-base mb-4">Services</h2>
             <ul className="space-y-2">
               {services.map((s) => (
                 <li key={s.name}>
@@ -67,7 +67,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-heading font-semibold text-base mb-4">Contact</h3>
+            <h2 className="font-heading font-semibold text-base mb-4">Contact</h2>
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-sm text-background/70">
                 <Phone className="h-4 w-4 mt-0.5 text-accent shrink-0" />

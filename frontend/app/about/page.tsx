@@ -30,6 +30,7 @@ export default function AboutPage() {
   return (
     <>
       <PageHero
+        crumbs={[{ name: "About Us" }]}
         eyebrow="About Us"
         title={company.shortName}
         lead={company.about}

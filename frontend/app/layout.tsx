@@ -3,10 +3,11 @@ import { Poppins, Open_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Navbar } from "@/components/layout/Navbar";
+import { SkipToContent } from "@/components/layout/SkipToContent";
 import { Footer } from "@/components/layout/Footer";
-import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
 import { CookieConsent } from "@/components/layout/CookieConsent";
-import { ScrollToTopButton } from "@/components/layout/ScrollToTopButton";
+import { FloatingActions } from "@/components/layout/FloatingActions";
+import { HideOnAdmin } from "@/components/layout/HideOnAdmin";
 import { Analytics } from "@/components/layout/Analytics";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -60,11 +61,18 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable} ${openSans.variable}`} suppressHydrationWarning>
       <body className="font-body antialiased">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <SkipToContent />
           <Navbar />
-          <main>{children}</main>
-          <Footer />
-          <WhatsAppButton />
-          <ScrollToTopButton />
+          {/* id + tabIndex give the skip link a real landing target: without
+              tabIndex the browser moves the viewport but leaves focus in the
+              header, so the next Tab goes back to the nav. */}
+          <main id="main-content" tabIndex={-1} className="focus:outline-none">
+            {children}
+          </main>
+          <HideOnAdmin>
+            <Footer />
+          </HideOnAdmin>
+          <FloatingActions />
           <CookieConsent />
           <Toaster />
         </ThemeProvider>

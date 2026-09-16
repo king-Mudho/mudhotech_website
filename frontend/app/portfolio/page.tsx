@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/layout/PageHero";
 import { Section } from "@/components/layout/Section";
+import { SectionHeading } from "@/components/layout/SectionHeading";
 import { SectionBreak } from "@/components/layout/SectionBreak";
 import { PortfolioTabs } from "@/components/marketing/PortfolioTabs";
 import { Testimonials } from "@/components/marketing/Testimonials";
@@ -16,6 +17,7 @@ export default function PortfolioPage() {
   return (
     <>
       <PageHero
+        crumbs={[{ name: "Portfolio" }]}
         eyebrow="Our Work"
         title="Portfolio"
         lead="Software we've built, hardware we've fixed, and the results our clients saw."
@@ -23,6 +25,11 @@ export default function PortfolioPage() {
       />
 
       <Section>
+        <SectionHeading
+          eyebrow="Selected Work"
+          title="Projects, Repairs & Gallery"
+          lead="Browse by what you need: software we've delivered, hardware we've brought back, or the kit we work on."
+        />
         <PortfolioTabs />
       </Section>
 

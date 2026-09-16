@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ServiceJsonLd } from "@/components/seo/JsonLd";
 import { PageHero } from "@/components/layout/PageHero";
 import { Section } from "@/components/layout/Section";
+import { SectionHeading } from "@/components/layout/SectionHeading";
 import { SectionBreak } from "@/components/layout/SectionBreak";
 import { ServiceCard } from "@/components/marketing/ServiceCard";
 import { Button } from "@/components/ui/button";
@@ -17,7 +19,14 @@ export const metadata: Metadata = {
 export default function ITSupportPage() {
   return (
     <>
+      <ServiceJsonLd
+        name="IT Support & Hardware Services"
+        description="Hardware installation and upgrades, laptop and desktop repairs, preventive maintenance, networking, and peripheral setup."
+        path="/it-support"
+      />
+
       <PageHero
+        crumbs={[{ name: "IT Support" }]}
         eyebrow="IT Support"
         title="Hardware & Networking Support"
         lead="We keep your systems running — fast, secure, and smooth. Repairs, upgrades, maintenance, and networking."
@@ -25,6 +34,13 @@ export default function ITSupportPage() {
       />
 
       <Section>
+        {/* Each card is an h3; without this h2 the page jumped straight from
+            the h1 to h3, which reads as a missing level to assistive tech. */}
+        <SectionHeading
+          eyebrow="What We Cover"
+          title="Hardware & Networking Services"
+          lead="Installation, repair, maintenance, and connectivity — for a single laptop or a whole office."
+        />
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {hardwareServices.map((service) => (
             <ServiceCard

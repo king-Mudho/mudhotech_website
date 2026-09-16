@@ -13,6 +13,7 @@ export default function PrivacyPolicyPage() {
   return (
     <>
       <PageHero
+        crumbs={[{ name: "Privacy Policy" }]}
         eyebrow="Legal"
         title="Privacy Policy"
         lead="How we collect, use, and protect your information."

@@ -37,17 +37,25 @@ export function TrustedPartners() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="group flex items-center justify-center rounded-xl border border-border bg-card p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md"
+              className="group rounded-xl border border-border bg-card p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md"
             >
-              {/* Muted rather than washed out: full grayscale at 70% opacity
-                  made these almost invisible on a light background. */}
-              <Image
-                src={partner.logo}
-                alt={partner.name}
-                width={120}
-                height={64}
-                className="h-16 w-auto object-contain opacity-90 grayscale-[65%] transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0 dark:invert dark:group-hover:invert-0"
-              />
+              {/* `fill` inside a fixed box rather than width/height props: the
+                  logos have six different intrinsic aspect ratios, so a single
+                  declared 120x64 was wrong for most of them and next/image
+                  warned about the mismatch on every one. object-contain now
+                  letterboxes each logo into an identical cell, which also
+                  lines the row up properly. */}
+              <div className="relative h-16 w-full">
+                {/* Muted rather than washed out: full grayscale at 70% opacity
+                    made these almost invisible on a light background. */}
+                <Image
+                  src={partner.logo}
+                  alt={partner.name}
+                  fill
+                  sizes="(max-width: 640px) 40vw, (max-width: 1024px) 25vw, 140px"
+                  className="object-contain opacity-90 grayscale-[65%] transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0 dark:invert dark:group-hover:invert-0"
+                />
+              </div>
             </motion.div>
           ))}
         </div>

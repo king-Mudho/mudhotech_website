@@ -28,7 +28,7 @@ test("contact form blocks invalid input client-side", async ({ page }) => {
   await page.getByLabel("Email").fill("not-an-email");
   await page.getByRole("button", { name: /send message/i }).click();
 
-  await expect(page.getByText(/invalid email/i)).toBeVisible();
+  await expect(page.getByText(/valid email address/i)).toBeVisible();
   expect(requestFired).toBe(false);
 });
 

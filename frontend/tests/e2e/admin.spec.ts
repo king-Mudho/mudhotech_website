@@ -81,7 +81,7 @@ test("admin dashboard tabs all render", async ({ page }) => {
   await page.getByRole("tab", { name: "Settings" }).click();
   await expect(page.getByRole("heading", { name: "Email Notifications" })).toBeVisible();
 
-  await page.getByRole("tab", { name: "Quotes" }).click();
+  await page.getByRole("tab", { name: /^Quotes/ }).click();
   await expect(page.getByRole("columnheader", { name: "Service" })).toBeVisible();
 });
 

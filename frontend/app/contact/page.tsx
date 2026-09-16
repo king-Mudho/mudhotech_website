@@ -3,6 +3,7 @@ import { Phone, MessageCircle, Mail, MapPin } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionBreak } from "@/components/layout/SectionBreak";
+import { MapEmbed } from "@/components/layout/MapEmbed";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { company } from "@/data/company";
 import { telHref, mailtoHref, whatsappUrl, WHATSAPP_GREETING } from "@/lib/whatsapp";
@@ -12,6 +13,8 @@ export const metadata: Metadata = {
   description: `Get in touch with ${company.shortName} — phone, WhatsApp, email, or visit our Harare office.`,
   alternates: { canonical: "/contact" },
 };
+
+const mapsUrl = "https://www.google.com/maps/search/?api=1&query=8+Shepperton+Graniteside+Harare+Zimbabwe";
 
 export default function ContactPage() {
   const contactCards = [
@@ -43,13 +46,14 @@ export default function ContactPage() {
       label: "Visit Us",
       value: company.registeredOffice,
       hint: "Open in Maps",
-      href: "https://www.google.com/maps/search/?api=1&query=8+Shepperton+Graniteside+Harare+Zimbabwe",
+      href: mapsUrl,
     },
   ];
 
   return (
     <>
       <PageHero
+        crumbs={[{ name: "Contact" }]}
         eyebrow="Contact"
         title="Let's Talk"
         lead="Questions, quotes, or support — reach us whichever way suits you best."
@@ -71,8 +75,10 @@ export default function ContactPage() {
               </div>
               <p className="mb-1 font-heading font-semibold">{label}</p>
               <p className="break-words text-sm text-muted-foreground">{value}</p>
-              {/* Tells the visitor what tapping actually does before they commit. */}
-              <p className="mt-3 text-xs font-medium text-accent opacity-0 transition-opacity group-hover:opacity-100">
+              {/* Tells the visitor what tapping actually does before they
+                  commit. Always visible on touch, where there is no hover to
+                  reveal it; it only fades in on pointer devices. */}
+              <p className="mt-3 text-xs font-medium text-accent transition-opacity md:opacity-0 md:group-hover:opacity-100 md:group-focus-visible:opacity-100">
                 {hint}
               </p>
             </a>
@@ -109,12 +115,10 @@ export default function ContactPage() {
       </Section>
 
       <section aria-label="Office location map">
-        <iframe
-          title="MudhoTech Solutions office location"
-          src="https://www.google.com/maps?q=8+Shepperton+Graniteside+Harare+Zimbabwe&output=embed"
-          className="w-full h-96 border-0"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
+        <MapEmbed
+          query="8 Shepperton, Graniteside, Harare, Zimbabwe"
+          label="MudhoTech Solutions office location"
+          directUrl={mapsUrl}
         />
       </section>
     </>

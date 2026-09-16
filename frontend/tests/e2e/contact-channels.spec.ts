@@ -76,7 +76,16 @@ test.describe("contact channels", () => {
     expect(decodeURIComponent(url.searchParams.get("text") ?? "")).toContain("Hello MudhoTech");
   });
 
-  test("the embedded map points at the office", async ({ page }) => {
+  test("the map is not loaded from Google until the visitor asks for it", async ({ page }) => {
+    // The embed sets Google's cookies, so it stays out of the DOM until
+    // requested — see src/components/layout/MapEmbed.tsx.
+    await expect(page.locator('iframe[title*="office location" i]')).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /open in google maps/i })).toBeVisible();
+  });
+
+  test("the embedded map points at the office once loaded", async ({ page }) => {
+    await page.getByRole("button", { name: /load the map/i }).click();
+
     const map = page.locator('iframe[title*="office location" i]');
     await expect(map).toHaveCount(1);
     const src = await map.getAttribute("src");

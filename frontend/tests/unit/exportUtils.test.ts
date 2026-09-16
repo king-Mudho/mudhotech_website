@@ -29,6 +29,11 @@ function captureCsv(): { getContent: () => string } {
   };
 }
 
+/** Strips the BOM and splits on the CRLF record separator. */
+function rows(csv: string): string[] {
+  return csv.replace(/^﻿/, "").split("\r\n");
+}
+
 describe("exportToCSV", () => {
   beforeEach(() => {
     vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
@@ -42,7 +47,41 @@ describe("exportToCSV", () => {
     const capture = captureCsv();
     exportToCSV([], contactColumns, "test");
     const csv = capture.getContent();
-    expect(csv.split("\n")[0]).toBe('"Name","Email","Phone","Subject","Message","Status","Received"');
+    expect(rows(csv)[0]).toBe('"Name","Email","Phone","Subject","Message","Status","Received"');
+  });
+
+  it("leads with a UTF-8 BOM so Excel does not mangle non-ASCII characters", () => {
+    const capture = captureCsv();
+    exportToCSV([], contactColumns, "test");
+    expect(capture.getContent().charCodeAt(0)).toBe(0xfeff);
+  });
+
+  it("separates records with CRLF", () => {
+    const capture = captureCsv();
+    exportToCSV([{ name: "Tendai" }], [{ key: "name", label: "Name" }], "test");
+    expect(capture.getContent()).toContain('"Name"\r\n"Tendai"');
+  });
+
+  it("defuses cells a spreadsheet would execute as a formula", () => {
+    const capture = captureCsv();
+    exportToCSV(
+      [
+        { name: '=HYPERLINK("http://evil.example","Click")' },
+        { name: "+1234" },
+        { name: "-cmd" },
+        { name: "@SUM(A1)" },
+        { name: "Tendai Moyo" },
+      ],
+      [{ key: "name", label: "Name" }],
+      "test",
+    );
+    const body = rows(capture.getContent()).slice(1);
+    expect(body[0]).toBe(`"'=HYPERLINK(""http://evil.example"",""Click"")"`);
+    expect(body[1]).toBe(`"'+1234"`);
+    expect(body[2]).toBe(`"'-cmd"`);
+    expect(body[3]).toBe(`"'@SUM(A1)"`);
+    // An ordinary value is left exactly as it was.
+    expect(body[4]).toBe('"Tendai Moyo"');
   });
 
   it("escapes embedded double quotes by doubling them", () => {
@@ -66,7 +105,7 @@ describe("exportToCSV", () => {
       { key: "business", label: "Business" },
     ], "test");
     const csv = capture.getContent();
-    expect(csv.split("\n")[1]).toBe('"",""');
+    expect(rows(csv)[1]).toBe('"",""');
   });
 });
 

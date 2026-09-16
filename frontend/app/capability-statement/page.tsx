@@ -50,6 +50,7 @@ export default function CapabilityStatementPage() {
   return (
     <>
       <PageHero
+        crumbs={[{ name: "Capability Statement" }]}
         eyebrow="Corporate Profile"
         title="Capability Statement"
         lead="Our structured company profile for tenders, vendor registration, and partnership conversations."

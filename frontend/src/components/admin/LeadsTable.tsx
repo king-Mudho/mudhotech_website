@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { AdminReplyDialog } from "@/components/admin/AdminReplyDialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { apiFetch, ApiClientError } from "@/lib/api/client";
 import { contactColumns, quoteColumns, exportToCSV, exportToPDF } from "@/lib/exportUtils";
 import type { ContactSubmission, QuoteRequest, SubmissionStatus } from "@/types/api";
@@ -45,17 +47,23 @@ export function LeadsTable({ type }: { type: LeadType }) {
   const [viewing, setViewing] = useState<Row | null>(null);
   const [replyingTo, setReplyingTo] = useState<Row | null>(null);
   const [deleting, setDeleting] = useState<Row | null>(null);
+  const [confirmingBulkDelete, setConfirmingBulkDelete] = useState(false);
 
-  const queryKey = ["submissions", type, search, statusFilter, page];
+  // Debounced so a six-character search is one request, not six.
+  const debouncedSearch = useDebouncedValue(search);
+  const queryKey = ["submissions", type, debouncedSearch, statusFilter, page];
 
-  const { data, isLoading } = useQuery<ListResponse>({
+  const { data, isLoading, isFetching } = useQuery<ListResponse>({
     queryKey,
     queryFn: () => {
       const params = new URLSearchParams({ type, page: String(page) });
-      if (search) params.set("search", search);
+      if (debouncedSearch) params.set("search", debouncedSearch);
       if (statusFilter !== "all") params.set("status", statusFilter);
       return apiFetch<ListResponse>(`/api/admin/submissions?${params}`);
     },
+    // Keeps the previous page on screen while the next one loads instead of
+    // collapsing the table to a spinner on every keystroke or page change.
+    placeholderData: (previous) => previous,
   });
 
   const invalidate = () => {
@@ -158,6 +166,7 @@ export function LeadsTable({ type }: { type: LeadType }) {
             size="sm"
             onClick={() => exportToCSV(rows, columns, `mudhotech-${type}s`)}
             disabled={rows.length === 0}
+            title={`Export the ${rows.length} rows on this page as CSV`}
           >
             <Download className="h-4 w-4" />
             CSV
@@ -183,7 +192,9 @@ export function LeadsTable({ type }: { type: LeadType }) {
           <Button size="sm" variant="outline" onClick={() => bulkMutation.mutate("markReplied")}>
             Mark Replied
           </Button>
-          <Button size="sm" variant="destructive" onClick={() => bulkMutation.mutate("delete")}>
+          {/* Deleting one row asks first; deleting twenty used to fire
+              immediately on a single click, with no undo behind it. */}
+          <Button size="sm" variant="destructive" onClick={() => setConfirmingBulkDelete(true)}>
             Delete
           </Button>
           <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>
@@ -192,7 +203,12 @@ export function LeadsTable({ type }: { type: LeadType }) {
         </div>
       )}
 
-      <div className="rounded-xl border border-border overflow-x-auto">
+      <div
+        aria-busy={isFetching}
+        className={`overflow-x-auto rounded-xl border border-border transition-opacity ${
+          isFetching && !isLoading ? "opacity-60" : "opacity-100"
+        }`}
+      >
         <Table>
           <TableHeader>
             <TableRow>
@@ -213,15 +229,26 @@ export function LeadsTable({ type }: { type: LeadType }) {
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground py-10">
-                  Loading…
-                </TableCell>
-              </TableRow>
+              // Skeleton rows rather than a centred "Loading…": the table keeps
+              // its shape, so the layout does not jump when data arrives.
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={`skeleton-${i}`}>
+                  {Array.from({ length: 7 }).map((__, j) => (
+                    <TableCell key={j}>
+                      <Skeleton className="h-4 w-full" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : rows.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground py-10">
-                  No submissions found.
+                <TableCell colSpan={7} className="py-12 text-center">
+                  <p className="font-medium text-foreground">No submissions found</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {search || statusFilter !== "all"
+                      ? "Try clearing the search or the status filter."
+                      : "New enquiries from the website will appear here."}
+                  </p>
                 </TableCell>
               </TableRow>
             ) : (
@@ -267,7 +294,7 @@ export function LeadsTable({ type }: { type: LeadType }) {
                       <Reply className="h-4 w-4" />
                     </Button>
                     <Button size="icon" variant="ghost" aria-label={`Delete ${row.name}`} onClick={() => setDeleting(row)}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <Trash2 className="h-4 w-4 text-destructive-emphasis" />
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -344,6 +371,31 @@ export function LeadsTable({ type }: { type: LeadType }) {
           onSent={invalidate}
         />
       )}
+
+      <AlertDialog open={confirmingBulkDelete} onOpenChange={setConfirmingBulkDelete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Delete {selected.size} {selected.size === 1 ? "submission" : "submissions"}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes {selected.size === 1 ? "this record" : "these records"}, including the original
+              message. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                bulkMutation.mutate("delete");
+                setConfirmingBulkDelete(false);
+              }}
+            >
+              Delete {selected.size}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog open={!!deleting} onOpenChange={(open) => !open && setDeleting(null)}>
         <AlertDialogContent>

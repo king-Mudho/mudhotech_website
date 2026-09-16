@@ -15,7 +15,7 @@ const Testimonials = dynamic(() => import("@/components/marketing/Testimonials")
 const FAQ = dynamic(() => import("@/components/marketing/FAQ").then((m) => m.FAQ));
 import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
-import { OrganizationJsonLd, LocalBusinessJsonLd } from "@/components/seo/JsonLd";
+import { OrganizationJsonLd, LocalBusinessJsonLd, WebSiteJsonLd, FaqJsonLd } from "@/components/seo/JsonLd";
 import { company } from "@/data/company";
 
 export const metadata: Metadata = {
@@ -29,6 +29,10 @@ export default function Home() {
     <>
       <OrganizationJsonLd />
       <LocalBusinessJsonLd />
+      <WebSiteJsonLd />
+      {/* The FAQ accordion below is rendered from the same `faq` module, so
+          the structured data always matches what the visitor can see. */}
+      <FaqJsonLd />
 
       <HomeHero />
 

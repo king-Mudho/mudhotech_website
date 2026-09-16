@@ -32,6 +32,9 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
+    // Every non-default `quality` used in the markup has to be declared here
+    // from Next 16 on; undeclared values warn today and will throw later.
+    qualities: [60, 65, 75],
     // TODO(content): placeholder gallery photography is hosted on Unsplash —
     // remove this once real/licensed images land. See docs/OPEN-QUESTIONS.md #4.
     remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],

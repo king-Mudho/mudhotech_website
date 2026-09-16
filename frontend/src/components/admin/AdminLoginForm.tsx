@@ -71,7 +71,7 @@ export function AdminLoginForm() {
           />
         </div>
 
-        {error && <p className="text-destructive text-sm">{error}</p>}
+        {error && <p className="text-destructive-emphasis text-sm">{error}</p>}
 
         <Button type="submit" variant="accent" className="w-full" disabled={submitting}>
           {submitting ? "Signing in…" : "Sign In"}

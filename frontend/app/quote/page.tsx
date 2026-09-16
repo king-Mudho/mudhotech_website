@@ -14,6 +14,7 @@ export default function QuotePage() {
   return (
     <>
       <PageHero
+        crumbs={[{ name: "Request a Quote" }]}
         eyebrow="Get a Quote"
         title="Request a Free Quote"
         lead="Tell us what you need. We'll come back with scope, timeline, and a clear cost estimate."

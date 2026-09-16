@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ServiceJsonLd } from "@/components/seo/JsonLd";
 import { PageHero } from "@/components/layout/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
@@ -16,7 +17,14 @@ export const metadata: Metadata = {
 export default function WebSoftwarePage() {
   return (
     <>
+      <ServiceJsonLd
+        name="Web & Software Development"
+        description="Custom web systems, e-commerce, mobile apps, plus software installation, setup, security, and troubleshooting."
+        path="/web-software"
+      />
+
       <PageHero
+        crumbs={[{ name: "Web & Software" }]}
         eyebrow="Web & Software"
         title="Software & Development Services"
         lead="From operating system setup to custom business platforms — everything your organization runs on."
@@ -24,6 +32,11 @@ export default function WebSoftwarePage() {
       />
 
       <Section>
+        <SectionHeading
+          eyebrow="What We Do"
+          title="Software Services & Development"
+          lead="Pick a track below — day-to-day software support, or building something new."
+        />
         <ServiceTabs />
       </Section>
 

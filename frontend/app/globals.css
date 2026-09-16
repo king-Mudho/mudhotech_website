@@ -27,6 +27,12 @@
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
+    /* Error text and invalid-field borders sit ON a surface, so they need a
+       different value from --destructive, which is a button *background*
+       carrying white text. One colour cannot do both: on the dark theme a
+       red dark enough for white text to pass AA is 1.9:1 against the page,
+       which is what the old error messages were rendering at. */
+    --destructive-emphasis: 0 72% 41%;
     --border: 220 15% 90%;
     --input: 220 15% 90%;
     --ring: 211 100% 38%;
@@ -65,6 +71,7 @@
     --accent-foreground: 0 0% 100%;
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 100%;
+    --destructive-emphasis: 0 84% 70%;
     --border: 220 25% 18%;
     --input: 220 25% 18%;
     --ring: 211 100% 55%;
