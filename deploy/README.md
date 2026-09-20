@@ -12,9 +12,9 @@ syntax error takes down *every* site on the box, not just this one.
 ## Shape of it
 
 ```
-Browser ──443──► nginx ──► 127.0.0.1:3000  Next.js  (mudhotech-web.service)
+Browser ──443──► nginx ──► 127.0.0.1:3100  Next.js  (mudhotech-web.service)
                                 │
-                                └── server-to-server ──► 127.0.0.1:8000  Django
+                                └── server-to-server ──► 127.0.0.1:8100  Django
                                                           (mudhotech-api.service)
 ```
 
@@ -154,8 +154,8 @@ journalctl -u mudhotech-api -n 100 --no-pager
 nginx -t && systemctl reload nginx
 
 # Is each layer up?
-curl -I http://127.0.0.1:3000/           # Next
-curl -s http://127.0.0.1:8000/api/health/ # Django
+curl -I http://127.0.0.1:3100/           # Next
+curl -s http://127.0.0.1:8100/api/health/ # Django
 curl -I https://mudhotech.com/            # through nginx
 ```
 

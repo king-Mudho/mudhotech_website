@@ -29,6 +29,27 @@ python3 --version 2>/dev/null || echo "  python3: not installed"
 echo "  Existing nginx sites:"
 ls -1 /etc/nginx/sites-enabled/ 2>/dev/null | sed 's/^/    /' || echo "    (none)"
 
+# Port collision is the most likely way this breaks the sites already here.
+# ABI runs a Next.js app on this box and will hold the default 3000, so
+# mudhotech uses 3100/8100 — but verify rather than assume, because the
+# failure mode is one service silently refusing to start on EADDRINUSE.
+log "Checking ports 3100 and 8100 are free"
+echo "  Currently listening:"
+ss -ltnp 2>/dev/null | awk 'NR>1 {print "    " $4 "  " $6}' | sort -u | head -20
+for port in 3100 8100; do
+  if ss -ltn 2>/dev/null | awk '{print $4}' | grep -qE "[:.]${port}\$"; then
+    echo
+    echo "  !! Port ${port} is already in use."
+    echo "     Pick free ports and change them in all four places:"
+    echo "       deploy/nginx-mudhotech.conf      (proxy_pass)"
+    echo "       deploy/mudhotech-web.service     (Environment=PORT)"
+    echo "       deploy/mudhotech-api.service     (--bind)"
+    echo "       frontend/.env.production         (INTERNAL_API_URL)"
+    exit 1
+  fi
+  echo "  port ${port}: free"
+done
+
 log "Installing packages"
 apt-get update -qq
 apt-get install -y -qq git curl nginx python3-venv python3-pip certbot python3-certbot-nginx
