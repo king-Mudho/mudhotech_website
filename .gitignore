@@ -44,3 +44,8 @@ Thumbs.db
 *.sln
 *.sw?
 .claude/
+
+# Stray copies of deploy scripts downloaded for inspection.
+/provision.sh
+/deploy.sh
+/enable-tls.sh
