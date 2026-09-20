@@ -20,9 +20,23 @@ log() { printf '\n\033[1;34m==>\033[0m %s\n' "$1"; }
 
 log "Fetching $BRANCH"
 cd "$APP_ROOT"
+# This script lives in the repo it is about to overwrite. bash reads a
+# script incrementally, so `git reset --hard` replacing deploy.sh mid-run
+# leaves the rest of THIS execution using the old content — a fix to
+# deploy.sh appears to pull successfully and then not take effect, which is
+# a genuinely confusing five minutes. Hash before and after, and re-exec if
+# it moved.
+self_before=$(sha256sum "$0" | cut -d" " -f1)
+
 sudo -u "$APP_USER" git fetch origin "$BRANCH"
 sudo -u "$APP_USER" git checkout "$BRANCH"
 sudo -u "$APP_USER" git reset --hard "origin/$BRANCH"
+
+self_after=$(sha256sum "$0" | cut -d" " -f1)
+if [[ "$self_before" != "$self_after" && -z "${DEPLOY_REEXEC:-}" ]]; then
+  log "deploy.sh changed in this pull — restarting with the new version"
+  DEPLOY_REEXEC=1 exec bash "$0" "$@"
+fi
 
 log "Backend dependencies"
 sudo -u "$APP_USER" "$APP_ROOT/backend/.venv/bin/pip" install -q -r backend/requirements.txt
