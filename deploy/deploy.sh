@@ -75,9 +75,9 @@ sleep 4
 
 log "Health check"
 fail=0
-api=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8200/api/health/ || echo 000)
-web=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3200/ || echo 000)
-pub=$(curl -s -o /dev/null -w '%{http_code}' https://mudhotech.com/ || echo 000)
+api=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 http://127.0.0.1:8200/api/health/ || true)
+web=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 http://127.0.0.1:3200/ || true)
+pub=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 https://mudhotech.com/ || true)
 
 printf '  django  (127.0.0.1:8200)  %s\n' "$api"
 printf '  next    (127.0.0.1:3200)  %s\n' "$web"

@@ -29,7 +29,13 @@ ProtectHome=true
 ReadWritePaths=/srv/mudhotech/frontend/.next
 ProtectKernelTunables=true
 ProtectControlGroups=true
-RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+# AF_NETLINK is not optional here. Next.js calls os.networkInterfaces()
+# once it has bound, to print its "Network:" line. On glibc that goes
+# through getifaddrs(), which opens an AF_NETLINK socket — without it the
+# call fails EAFNOSUPPORT (errno 97) and Next exits 1 during startup, with
+# a stack trace pointing at uv_interface_addresses and nothing about
+# systemd. The process never gets far enough to serve a request.
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
 
 StandardOutput=journal
 StandardError=journal
