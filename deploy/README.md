@@ -1,7 +1,10 @@
 # Deploying mudhotech.com
 
-Target: `66.29.139.201`, root VPS, alongside the existing ABI and Digital
-Portal sites.
+Target: `66.29.139.201` — **AlmaLinux 9**, root VPS, alongside the existing
+ABI (`agribizframework.com`) and Digital Respondent sites.
+
+RHEL-family, so: `dnf` not `apt`, nginx vhosts in `/etc/nginx/conf.d/`, and
+**SELinux enforcing** — that last one matters, see below.
 
 Everything here is scoped to `mudhotech.com`. Nothing touches the other
 sites' nginx server blocks — but `nginx -t` before every reload, because a
@@ -75,12 +78,23 @@ less provision.sh          # read it before running it as root
 bash provision.sh
 ```
 
-Installs Node 20, Python, nginx and certbot if missing; creates the
-`mudhotech` service user; clones to `/srv/mudhotech`; generates a Django
-secret key; installs the systemd units and the nginx site.
+Installs Node 20, Python, nginx and certbot (via EPEL) if missing; creates
+the `mudhotech` service user; clones to `/srv/mudhotech`; generates a Django
+secret key; installs the systemd units; enables the HTTP vhost and reloads.
 
-It checks for an existing Node before installing, so it will not downgrade a
-runtime the other sites depend on.
+It checks for an existing Node first, so it will not downgrade a runtime ABI
+depends on. It records where it put the vhost in `/etc/mudhotech-deploy.conf`
+so `enable-tls.sh` writes to the same place.
+
+**SELinux:** the script sets `httpd_can_network_connect`. Without it,
+AlmaLinux denies nginx outbound TCP and *every* `proxy_pass` returns 502 with
+"Permission denied ... upstream" in the error log — which looks exactly like
+the app being down. If you ever see a 502 you cannot explain, check this
+first:
+
+```bash
+getsebool httpd_can_network_connect     # must be "on"
+```
 
 ### 3. Fill in the environment
 
@@ -179,6 +193,7 @@ curl -I https://mudhotech.com/            # through nginx
 | Leads arrive but no email | No mail credentials in `backend/.env` |
 | Admin login redirects in a loop | `DJANGO_ALLOWED_HOSTS` or `CORS_ALLOWED_ORIGINS` wrong |
 | Certificate expired | `certbot renew --dry-run`, check the timer is enabled |
+| 502, app is definitely running | SELinux — `getsebool httpd_can_network_connect` |
 
 ---
 

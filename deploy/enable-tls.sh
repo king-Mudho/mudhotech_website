@@ -54,16 +54,25 @@ certbot certonly --webroot -w "$WEBROOT" \
   --keep-until-expiring
 
 log "Installing the TLS config"
+# provision.sh recorded where the vhost actually lives — this box may use
+# RHEL's conf.d rather than Debian's sites-available.
+if [[ -f /etc/mudhotech-deploy.conf ]]; then
+  . /etc/mudhotech-deploy.conf
+else
+  die "/etc/mudhotech-deploy.conf missing — run provision.sh first."
+fi
+echo "  vhost: $NGINX_AVAIL"
+
 # Keep a copy of what is being replaced, so a bad swap is one command to undo.
-cp "/etc/nginx/sites-available/$DOMAIN" "/etc/nginx/sites-available/$DOMAIN.http.bak"
-cp "$APP_ROOT/deploy/nginx-mudhotech.conf" "/etc/nginx/sites-available/$DOMAIN"
+cp "$NGINX_AVAIL" "$NGINX_AVAIL.http.bak"
+cp "$APP_ROOT/deploy/nginx-mudhotech.conf" "$NGINX_AVAIL"
 
 if nginx -t; then
   systemctl reload nginx
   log "TLS enabled."
 else
   echo "  ! Config test failed — rolling back, nothing changed."
-  cp "/etc/nginx/sites-available/$DOMAIN.http.bak" "/etc/nginx/sites-available/$DOMAIN"
+  cp "$NGINX_AVAIL.http.bak" "$NGINX_AVAIL"
   nginx -t && systemctl reload nginx
   exit 1
 fi

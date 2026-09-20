@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 #
-# First-time server setup for mudhotech.com on a root VPS.
-# Run ONCE, as root, on 66.29.139.201.
+# First-time server setup for mudhotech.com.
+# Run ONCE, as root, on 66.29.139.201 (AlmaLinux 9).
 #
 #   bash provision.sh
 #
-# This box already hosts other sites. Everything here is additive and scoped
-# to mudhotech.com: it does not touch existing nginx server blocks, and it
-# does not enable a firewall (turning ufw on blind would cut off the other
-# sites and possibly your own SSH session).
+# This box already hosts other sites (ABI on agribizframework.com, and
+# Digital Respondent). Everything here is additive and scoped to
+# mudhotech.com. It does not touch their nginx server blocks, does not
+# downgrade a runtime they may depend on, and does not reconfigure the
+# firewall — 80/443 are already open or ABI would not be reachable, and
+# changing firewalld blind could cut off your own SSH session.
 
 set -euo pipefail
 
@@ -17,62 +19,85 @@ APP_ROOT=/srv/mudhotech
 REPO=https://github.com/king-Mudho/mudhotech_website.git
 BRANCH=main
 DOMAIN=mudhotech.com
+WEB_PORT=3100
+API_PORT=8100
 
 log() { printf '\n\033[1;34m==>\033[0m %s\n' "$1"; }
+die() { printf '\n\033[1;31m!!\033[0m %s\n' "$1"; exit 1; }
 
-[[ $EUID -eq 0 ]] || { echo "Run as root."; exit 1; }
+[[ $EUID -eq 0 ]] || die "Run as root."
 
-log "Checking what is already on this box"
-nginx -v 2>&1 || echo "  nginx: not installed"
-node --version 2>/dev/null || echo "  node: not installed"
-python3 --version 2>/dev/null || echo "  python3: not installed"
-echo "  Existing nginx sites:"
-ls -1 /etc/nginx/sites-enabled/ 2>/dev/null | sed 's/^/    /' || echo "    (none)"
+# ─── 0. Confirm the platform ─────────────────────────────────────────────
+# This script is RHEL-family (dnf, /etc/nginx/conf.d, SELinux). It was
+# originally written for Debian and would have failed on the first
+# apt-get; the box turned out to be AlmaLinux 9.
+log "Platform"
+. /etc/os-release
+echo "  $PRETTY_NAME"
+command -v dnf >/dev/null || die "No dnf found — this script targets AlmaLinux/RHEL 9."
 
-# Port collision is the most likely way this breaks the sites already here.
-# ABI runs a Next.js app on this box and will hold the default 3000, so
-# mudhotech uses 3100/8100 — but verify rather than assume, because the
-# failure mode is one service silently refusing to start on EADDRINUSE.
-log "Checking ports 3100 and 8100 are free"
-echo "  Currently listening:"
-ss -ltnp 2>/dev/null | awk 'NR>1 {print "    " $4 "  " $6}' | sort -u | head -20
-for port in 3100 8100; do
+# ─── 1. Survey what is already here ──────────────────────────────────────
+log "What is already on this box"
+nginx -v 2>&1 | sed 's/^/  /' || echo "  nginx: not installed"
+printf '  node:    %s\n' "$(node --version 2>/dev/null || echo 'not installed')"
+printf '  python3: %s\n' "$(python3 --version 2>/dev/null || echo 'not installed')"
+printf '  selinux: %s\n' "$(getenforce 2>/dev/null || echo 'not present')"
+
+# ─── 2. Ports ────────────────────────────────────────────────────────────
+# ABI is a Next.js app and will be holding the default 3000, so this stack
+# uses 3100/8100. Verify rather than assume: the failure mode is one
+# service silently refusing to start on EADDRINUSE.
+log "Checking ports $WEB_PORT and $API_PORT are free"
+ss -ltnp 2>/dev/null | awk 'NR>1 {print "    " $4}' | sort -u | head -20
+for port in "$WEB_PORT" "$API_PORT"; do
   if ss -ltn 2>/dev/null | awk '{print $4}' | grep -qE "[:.]${port}\$"; then
-    echo
-    echo "  !! Port ${port} is already in use."
-    echo "     Pick free ports and change them in all four places:"
-    echo "       deploy/nginx-mudhotech.conf      (proxy_pass)"
-    echo "       deploy/mudhotech-web.service     (Environment=PORT)"
-    echo "       deploy/mudhotech-api.service     (--bind)"
-    echo "       frontend/.env.production         (INTERNAL_API_URL)"
-    exit 1
+    die "Port ${port} is in use. Pick free ports and change them in:
+       deploy/nginx-mudhotech.conf      (proxy_pass)
+       deploy/nginx-mudhotech-http.conf (proxy_pass)
+       deploy/mudhotech-web.service     (Environment=PORT)
+       deploy/mudhotech-api.service     (--bind)
+       frontend/.env.production         (INTERNAL_API_URL)"
   fi
   echo "  port ${port}: free"
 done
 
+# ─── 3. Packages ─────────────────────────────────────────────────────────
 log "Installing packages"
-apt-get update -qq
-apt-get install -y -qq git curl nginx python3-venv python3-pip certbot python3-certbot-nginx
+dnf install -y -q git curl nginx python3 python3-pip || die "dnf install failed"
 
-# Node 20 LTS. Checked first so we do not clobber a newer runtime the other
-# sites on this box might depend on.
-if ! command -v node >/dev/null || [[ "$(node -v | cut -c2-3)" -lt 20 ]]; then
-  log "Installing Node.js 20 LTS"
-  curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-  apt-get install -y -qq nodejs
-else
-  log "Node $(node -v) already present — leaving it alone"
+# certbot lives in EPEL on AlmaLinux 9.
+if ! command -v certbot >/dev/null; then
+  log "Installing certbot (via EPEL)"
+  dnf install -y -q epel-release
+  dnf install -y -q certbot
 fi
 
-log "Creating service user '$APP_USER'"
-id -u "$APP_USER" >/dev/null 2>&1 || useradd --system --create-home --shell /usr/sbin/nologin "$APP_USER"
+# Node. ABI already runs a Next.js app, so node is almost certainly here —
+# only install if missing or older than 20, and never downgrade.
+if command -v node >/dev/null && [[ "$(node -v | sed 's/^v//' | cut -d. -f1)" -ge 20 ]]; then
+  log "Node $(node -v) already present — leaving it alone"
+else
+  log "Installing Node.js 20"
+  dnf module reset -y -q nodejs || true
+  dnf module enable -y -q nodejs:20 || true
+  dnf install -y -q nodejs || die "Node install failed"
+fi
+
+NPM_BIN=$(command -v npm) || die "npm not on PATH after install."
+echo "  npm at $NPM_BIN"
+
+# ─── 4. Service user and code ────────────────────────────────────────────
+log "Service user '$APP_USER'"
+id -u "$APP_USER" >/dev/null 2>&1 || useradd --system --create-home --shell /sbin/nologin "$APP_USER"
 
 log "Cloning into $APP_ROOT"
 if [[ -d "$APP_ROOT/.git" ]]; then
-  echo "  Already cloned — skipping."
+  echo "  Already cloned — pulling instead."
+  git -C "$APP_ROOT" fetch origin "$BRANCH" -q
+  git -C "$APP_ROOT" reset --hard "origin/$BRANCH" -q
 else
   mkdir -p "$APP_ROOT"
-  git clone --branch "$BRANCH" "$REPO" "$APP_ROOT"
+  git clone -q --branch "$BRANCH" "$REPO" "$APP_ROOT"
 fi
 chown -R "$APP_USER:$APP_USER" "$APP_ROOT"
 
@@ -80,10 +105,11 @@ log "Python virtualenv + dependencies"
 sudo -u "$APP_USER" python3 -m venv "$APP_ROOT/backend/.venv"
 sudo -u "$APP_USER" "$APP_ROOT/backend/.venv/bin/pip" install -q --upgrade pip
 sudo -u "$APP_USER" "$APP_ROOT/backend/.venv/bin/pip" install -q -r "$APP_ROOT/backend/requirements.txt"
-# Gunicorn is the production server; it is not in requirements.txt because
-# nothing needs it for local development.
+# Gunicorn is the production server; not in requirements.txt because local
+# development does not need it.
 sudo -u "$APP_USER" "$APP_ROOT/backend/.venv/bin/pip" install -q gunicorn
 
+# ─── 5. Environment ──────────────────────────────────────────────────────
 log "Environment files"
 for pair in "backend/.env.production.example:backend/.env" \
             "frontend/.env.production.example:frontend/.env.production"; do
@@ -103,66 +129,90 @@ if ! grep -q '^DJANGO_SECRET_KEY=.\+' "$APP_ROOT/backend/.env"; then
   echo "  Written to backend/.env (mode 600, never printed)."
 fi
 
+# ─── 6. systemd ──────────────────────────────────────────────────────────
 log "systemd units"
 cp "$APP_ROOT/deploy/mudhotech-api.service" /etc/systemd/system/
 cp "$APP_ROOT/deploy/mudhotech-web.service" /etc/systemd/system/
+# The unit hardcodes /usr/bin/npm; on AlmaLinux it can be elsewhere.
+sed -i "s|ExecStart=/usr/bin/npm|ExecStart=${NPM_BIN}|" /etc/systemd/system/mudhotech-web.service
 systemctl daemon-reload
 
+# ─── 7. SELinux ──────────────────────────────────────────────────────────
+# AlmaLinux ships SELinux enforcing. Without this boolean, nginx is denied
+# outbound TCP and every proxy_pass returns 502 with
+# "Permission denied ... upstream" in the error log — which looks exactly
+# like the app being down, and costs an hour to diagnose.
+if command -v getenforce >/dev/null && [[ "$(getenforce)" != "Disabled" ]]; then
+  log "SELinux: allowing nginx to connect to the app ports"
+  setsebool -P httpd_can_network_connect 1
+  echo "  httpd_can_network_connect = on"
+fi
+
+# ─── 8. nginx ────────────────────────────────────────────────────────────
+# RHEL-family nginx includes /etc/nginx/conf.d/*.conf. Some setups also add
+# the Debian-style sites-available/sites-enabled pair; detect which this box
+# actually uses rather than assuming.
 log "nginx site (HTTP bootstrap)"
-# The HTTP-only config goes in first, NOT the TLS one. The TLS config points
-# at certificate files that do not exist until certbot has run, and an
-# enabled config referencing a missing cert makes `nginx -t` fail — which
-# blocks reloads for every site on this box, ABI and Digital Respondent
-# included, and makes `certbot --nginx` fail too. deploy/enable-tls.sh swaps
-# in the TLS config once the certificate exists.
+if [[ -d /etc/nginx/sites-enabled ]] && grep -qs 'sites-enabled' /etc/nginx/nginx.conf; then
+  NGINX_AVAIL="/etc/nginx/sites-available/$DOMAIN"
+  NGINX_LINK="/etc/nginx/sites-enabled/$DOMAIN"
+  mkdir -p /etc/nginx/sites-available
+  echo "  Using sites-available/sites-enabled"
+else
+  NGINX_AVAIL="/etc/nginx/conf.d/$DOMAIN.conf"
+  NGINX_LINK=""
+  echo "  Using conf.d (RHEL default)"
+fi
+
+# The HTTP-only config goes in first. The TLS config points at certificate
+# files that do not exist until certbot has run, and an enabled config
+# referencing a missing cert makes `nginx -t` fail — which blocks reloads
+# for every site on this box, ABI included. enable-tls.sh swaps it later.
 mkdir -p /var/www/certbot
-cp "$APP_ROOT/deploy/nginx-mudhotech-http.conf" "/etc/nginx/sites-available/$DOMAIN"
-ln -sf "/etc/nginx/sites-available/$DOMAIN" "/etc/nginx/sites-enabled/$DOMAIN"
+cp "$APP_ROOT/deploy/nginx-mudhotech-http.conf" "$NGINX_AVAIL"
+[[ -n "$NGINX_LINK" ]] && ln -sf "$NGINX_AVAIL" "$NGINX_LINK"
+
+# Record where it went, so enable-tls.sh writes to the same place.
+printf 'NGINX_AVAIL=%s\nNGINX_LINK=%s\n' "$NGINX_AVAIL" "$NGINX_LINK" > /etc/mudhotech-deploy.conf
 
 if nginx -t; then
+  systemctl enable -q --now nginx 2>/dev/null || true
   systemctl reload nginx
   echo "  nginx reloaded with the HTTP bootstrap vhost."
 else
-  echo "  ! nginx config test FAILED. Removing the vhost so the other sites"
-  echo "    on this box keep working, then stopping."
-  rm -f "/etc/nginx/sites-enabled/$DOMAIN"
-  exit 1
+  echo "  ! nginx config test FAILED — removing the vhost so the other sites"
+  echo "    on this box keep working."
+  rm -f "$NGINX_AVAIL"; [[ -n "$NGINX_LINK" ]] && rm -f "$NGINX_LINK"
+  nginx -t && systemctl reload nginx
+  die "Stopped without changing anything."
 fi
 
-cat <<'NOTE'
+cat <<NOTE
 
 ──────────────────────────────────────────────────────────────────────
-Provisioning done. Three things left, in this order:
+Provisioning done. Three steps left, in this order:
 
-1. POINT DNS AT THIS SERVER, and wait for it to propagate.
-   At Namecheap → Domain List → mudhotech.com → Advanced DNS, replace the
-   parking records with:
+1. MAIL CREDENTIALS — without them a lead still saves and still shows in
+   the dashboard, but nobody is told it arrived:
 
-       A     @      66.29.139.201
-       A     www    66.29.139.201
+       nano $APP_ROOT/backend/.env
 
-   Delete the existing CNAME on `www` (it points at parkingpage.namecheap.com)
-   or the A record will not take effect.
+2. DEPLOY, so something is listening on $WEB_PORT:
 
-   Confirm before continuing — certbot WILL fail if DNS has not moved:
-       dig +short mudhotech.com     # must print 66.29.139.201
-
-2. FILL IN backend/.env — the mail credentials at minimum, or lead
-   notifications go nowhere:
-
-       nano /srv/mudhotech/backend/.env
-
-3. DEPLOY the app, so something is actually listening on 3100:
-
-       bash /srv/mudhotech/deploy/deploy.sh
+       bash $APP_ROOT/deploy/deploy.sh
        systemctl enable mudhotech-api mudhotech-web
 
-   http://mudhotech.com should now serve the site.
+   http://$DOMAIN should then serve the site.
 
-4. TURN ON TLS. Do NOT run `certbot --nginx` — it rewrites the config and
-   collides with the hand-written one, producing a redirect loop. Use:
+3. TLS. Do NOT run 'certbot --nginx' — it rewrites the config and
+   collides with the hand-written one, giving a redirect loop:
 
-       bash /srv/mudhotech/deploy/enable-tls.sh
+       bash $APP_ROOT/deploy/enable-tls.sh
 
+Then create the admin account:
+
+       cd $APP_ROOT/backend
+       set -a && . ./.env && set +a
+       .venv/bin/python manage.py createsuperuser
 ──────────────────────────────────────────────────────────────────────
 NOTE
