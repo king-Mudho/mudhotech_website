@@ -36,7 +36,13 @@ if [[ -f backend/db.sqlite3 ]]; then
   sudo -u "$APP_USER" cp backend/db.sqlite3 "$backup"
   echo "  Backed up to $backup"
 fi
-sudo -u "$APP_USER" bash -c "cd '$APP_ROOT/backend' && set -a && . ./.env && set +a && .venv/bin/python manage.py migrate --noinput"
+# NOT `set -a && . ./.env`: sourcing the file through bash breaks on any
+# value containing spaces or angle brackets, and
+#   DEFAULT_FROM_EMAIL=MudhoTech Solutions <noreply@mudhotech.com>
+# is both — bash reads "Solutions" as a command and "<noreply@..." as a
+# redirect. It is also unnecessary: config/settings.py calls load_dotenv()
+# and reads .env itself.
+sudo -u "$APP_USER" bash -c "cd '$APP_ROOT/backend' && .venv/bin/python manage.py migrate --noinput"
 
 log "Frontend dependencies"
 # `npm ci` not `npm install`: it installs exactly what package-lock.json

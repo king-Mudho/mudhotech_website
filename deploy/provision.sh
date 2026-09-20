@@ -239,8 +239,9 @@ Provisioning done. Three steps left, in this order:
 
 Then create the admin account:
 
-       cd $APP_ROOT/backend
-       set -a && . ./.env && set +a
-       .venv/bin/python manage.py createsuperuser
+       cd $APP_ROOT/backend && .venv/bin/python manage.py createsuperuser
+
+   (Django reads .env itself via load_dotenv — do not source it in bash,
+    values like "MudhoTech Solutions <noreply@...>" are not valid shell.)
 ──────────────────────────────────────────────────────────────────────
 NOTE

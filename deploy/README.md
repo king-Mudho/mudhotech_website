@@ -168,9 +168,14 @@ certbot renew --dry-run
 
 ```bash
 cd /srv/mudhotech/backend
-set -a && . ./.env && set +a
 .venv/bin/python manage.py createsuperuser
 ```
+
+Django reads `.env` itself through `load_dotenv()`, so never `source` it in
+bash first. A value like `DEFAULT_FROM_EMAIL=MudhoTech Solutions
+<noreply@mudhotech.com>` is perfectly valid dotenv and a syntax error in
+shell — bash reads `Solutions` as a command and `<noreply@...` as a
+redirect.
 
 **Do not copy the development `db.sqlite3` to this server.** It contains an
 `admin` / `DevAdmin123!` account with a password that is written down in the
