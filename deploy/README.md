@@ -82,23 +82,7 @@ secret key; installs the systemd units and the nginx site.
 It checks for an existing Node before installing, so it will not downgrade a
 runtime the other sites depend on.
 
-### 3. Certificate
-
-```bash
-certbot --nginx -d mudhotech.com -d www.mudhotech.com
-```
-
-The nginx config references cert paths that do not exist until this runs, so
-`nginx -t` fails before it. That is expected.
-
-Certbot installs its own renewal timer. Confirm it:
-
-```bash
-systemctl list-timers | grep certbot
-certbot renew --dry-run
-```
-
-### 4. Fill in the environment
+### 3. Fill in the environment
 
 ```bash
 nano /srv/mudhotech/backend/.env
@@ -110,11 +94,39 @@ block.
 
 Check `frontend/.env.production` too; the defaults should be right.
 
-### 5. Deploy
+### 4. Deploy
 
 ```bash
 bash /srv/mudhotech/deploy/deploy.sh
 systemctl enable mudhotech-api mudhotech-web    # survive a reboot
+```
+
+`http://mudhotech.com` should now serve the site. Still plain HTTP — that is
+the next step.
+
+### 5. Turn on TLS
+
+```bash
+bash /srv/mudhotech/deploy/enable-tls.sh
+```
+
+**Do not run `certbot --nginx`.** The nginx plugin rewrites the config it
+finds, which here collides with the hand-written TLS config and leaves a
+duplicated HTTP→HTTPS redirect — a redirect loop. `enable-tls.sh` uses
+`certbot certonly --webroot`, which only writes the challenge file and
+leaves nginx alone, then swaps the config in and rolls back if `nginx -t`
+fails.
+
+Ordering is deliberate. The TLS config references
+`/etc/letsencrypt/live/mudhotech.com/fullchain.pem`; enabling it before the
+certificate exists makes `nginx -t` fail, and on a shared box that blocks
+reloads for ABI and Digital Respondent too.
+
+Confirm renewal is scheduled:
+
+```bash
+systemctl list-timers | grep certbot
+certbot renew --dry-run
 ```
 
 ### 6. Create the admin account

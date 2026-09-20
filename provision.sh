@@ -108,26 +108,10 @@ cp "$APP_ROOT/deploy/mudhotech-api.service" /etc/systemd/system/
 cp "$APP_ROOT/deploy/mudhotech-web.service" /etc/systemd/system/
 systemctl daemon-reload
 
-log "nginx site (HTTP bootstrap)"
-# The HTTP-only config goes in first, NOT the TLS one. The TLS config points
-# at certificate files that do not exist until certbot has run, and an
-# enabled config referencing a missing cert makes `nginx -t` fail — which
-# blocks reloads for every site on this box, ABI and Digital Respondent
-# included, and makes `certbot --nginx` fail too. deploy/enable-tls.sh swaps
-# in the TLS config once the certificate exists.
-mkdir -p /var/www/certbot
-cp "$APP_ROOT/deploy/nginx-mudhotech-http.conf" "/etc/nginx/sites-available/$DOMAIN"
+log "nginx site"
+cp "$APP_ROOT/deploy/nginx-mudhotech.conf" "/etc/nginx/sites-available/$DOMAIN"
 ln -sf "/etc/nginx/sites-available/$DOMAIN" "/etc/nginx/sites-enabled/$DOMAIN"
-
-if nginx -t; then
-  systemctl reload nginx
-  echo "  nginx reloaded with the HTTP bootstrap vhost."
-else
-  echo "  ! nginx config test FAILED. Removing the vhost so the other sites"
-  echo "    on this box keep working, then stopping."
-  rm -f "/etc/nginx/sites-enabled/$DOMAIN"
-  exit 1
-fi
+mkdir -p /var/www/certbot
 
 cat <<'NOTE'
 
@@ -147,22 +131,15 @@ Provisioning done. Three things left, in this order:
    Confirm before continuing — certbot WILL fail if DNS has not moved:
        dig +short mudhotech.com     # must print 66.29.139.201
 
-2. FILL IN backend/.env — the mail credentials at minimum, or lead
-   notifications go nowhere:
+2. GET THE CERTIFICATE. The nginx config references cert files that do not
+   exist yet, so `nginx -t` fails until this runs:
 
-       nano /srv/mudhotech/backend/.env
+       certbot --nginx -d mudhotech.com -d www.mudhotech.com
 
-3. DEPLOY the app, so something is actually listening on 3100:
+3. FILL IN backend/.env — the mail credentials at minimum, or lead
+   notifications go nowhere. Then:
 
        bash /srv/mudhotech/deploy/deploy.sh
-       systemctl enable mudhotech-api mudhotech-web
-
-   http://mudhotech.com should now serve the site.
-
-4. TURN ON TLS. Do NOT run `certbot --nginx` — it rewrites the config and
-   collides with the hand-written one, producing a redirect loop. Use:
-
-       bash /srv/mudhotech/deploy/enable-tls.sh
 
 ──────────────────────────────────────────────────────────────────────
 NOTE
