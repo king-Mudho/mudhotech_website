@@ -1,0 +1,46 @@
+# /etc/systemd/system/mudhotech-api.service
+# Django API under Gunicorn.
+#
+# --bind 127.0.0.1:8000 is a security control, not a default. Django must not
+# be reachable from the internet: the browser is supposed to reach it only
+# through the Next.js Route Handlers, which attach the admin session token.
+# Binding 0.0.0.0 here would expose the admin API directly and defeat Layer 1
+# of the three-layer model in docs/ARCHITECTURE-DEVIATION.md.
+
+[Unit]
+Description=MudhoTech API (Django/Gunicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=mudhotech
+Group=mudhotech
+WorkingDirectory=/srv/mudhotech/backend
+EnvironmentFile=/srv/mudhotech/backend/.env
+ExecStart=/srv/mudhotech/backend/.venv/bin/gunicorn \
+    config.wsgi:application \
+    --bind 127.0.0.1:8000 \
+    --workers 3 \
+    --timeout 60 \
+    --access-logfile - \
+    --error-logfile -
+Restart=always
+RestartSec=5
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+# The SQLite database and its -wal/-shm siblings need write access, as does
+# the directory itself so SQLite can create them.
+ReadWritePaths=/srv/mudhotech/backend
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mudhotech-api
+
+[Install]
+WantedBy=multi-user.target

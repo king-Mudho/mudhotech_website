@@ -14,7 +14,10 @@ export const company = {
     phone: "+263 77 539 8749",
     whatsapp: "+263 71 270 0941",
     email: "mudhotechsolutions@gmail.com", // TODO(content): see docs/OPEN-QUESTIONS.md #2
-    website: "https://www.mudhotech.co.zw", // TODO(content): see docs/OPEN-QUESTIONS.md #1
+    // Canonical domain, confirmed 2026-09-20. This is the single place it is
+    // declared: the PDF capability statement, JSON-LD, and contact card all
+    // read it from here. NEXT_PUBLIC_SITE_URL must match exactly.
+    website: "https://mudhotech.com",
   },
   hours: {
     weekdays: "Monday – Friday: 8:00 AM – 5:00 PM",

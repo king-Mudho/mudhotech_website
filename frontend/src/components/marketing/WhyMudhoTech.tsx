@@ -1,17 +1,43 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AnimatedCounter } from "@/components/marketing/AnimatedCounter";
+import { Stethoscope, Wrench, FileText, MapPin } from "lucide-react";
 import { fadeUp } from "@/lib/motion";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 
-// TODO(content): placeholder statistics — confirm real figures with the
-// business owner before launch. See docs/OPEN-QUESTIONS.md #4.
-const stats = [
-  { target: 50, suffix: "+", label: "Projects Delivered" },
-  { target: 35, suffix: "+", label: "Happy Clients" },
-  { target: 5, suffix: "+", label: "Years Experience" },
-  { target: 24, suffix: "/7", label: "Support Available" },
+/**
+ * This band used to show four animated counters: "50+ Projects Delivered",
+ * "35+ Happy Clients", "5+ Years Experience", "24/7 Support Available".
+ * Every one of those figures was invented placeholder content, and on a live
+ * commercial domain an invented metric is a claim a customer can hold the
+ * business to.
+ *
+ * What replaces them are commitments the site already makes elsewhere and
+ * that the business controls directly — how it works, not how much it has
+ * done. Swap in real figures once they exist; the counter component is still
+ * in the repo at marketing/AnimatedCounter.tsx.
+ */
+const differentiators = [
+  {
+    icon: Stethoscope,
+    title: "Free diagnostics first",
+    body: "We find the fault and tell you what it will cost before any work is agreed — including when the honest answer is that it isn't worth repairing.",
+  },
+  {
+    icon: Wrench,
+    title: "One team, build and support",
+    body: "The people who build your system are the people who look after it. No handover to a support desk that has never seen your setup.",
+  },
+  {
+    icon: FileText,
+    title: "Handed over, not held hostage",
+    body: "Every project ends with documentation and training. You own what we build, and you are free to take it elsewhere.",
+  },
+  {
+    icon: MapPin,
+    title: "Harare-based, on site",
+    body: "We work across Zimbabwe and can come to you. Hardware problems get hands on them rather than instructions over the phone.",
+  },
 ];
 
 export function WhyMudhoTech() {
@@ -19,23 +45,29 @@ export function WhyMudhoTech() {
     <section className="section-padding bg-primary text-primary-foreground">
       <div className="container mx-auto px-4">
         <motion.div {...fadeUp}>
-          <SectionHeading eyebrow="Why MudhoTech" title="Built on Results" tone="light" />
+          <SectionHeading
+            eyebrow="Why MudhoTech"
+            title="How We Work"
+            lead="Four commitments we make on every job, whatever the size."
+            tone="light"
+          />
         </motion.div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl mx-auto">
-          {stats.map((stat, i) => (
+        <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {differentiators.map((item, i) => (
             <motion.div
-              key={stat.label}
+              key={item.title}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.08 }}
-              className="text-center"
+              className="rounded-2xl border border-white/10 bg-white/5 p-6"
             >
-              <p className="font-heading text-4xl md:text-5xl font-extrabold text-hero-accent mb-2">
-                <AnimatedCounter target={stat.target} suffix={stat.suffix} />
-              </p>
-              <p className="text-primary-foreground/70 text-sm">{stat.label}</p>
+              <span className="mb-4 inline-flex rounded-xl bg-hero-accent/15 p-2.5">
+                <item.icon className="h-5 w-5 text-hero-accent" aria-hidden="true" />
+              </span>
+              <h3 className="mb-2 font-heading text-base font-semibold text-white">{item.title}</h3>
+              <p className="text-sm leading-relaxed text-primary-foreground/70">{item.body}</p>
             </motion.div>
           ))}
         </div>

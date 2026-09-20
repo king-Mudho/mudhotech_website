@@ -4,7 +4,6 @@ import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { SectionBreak } from "@/components/layout/SectionBreak";
 import { PortfolioTabs } from "@/components/marketing/PortfolioTabs";
-import { Testimonials } from "@/components/marketing/Testimonials";
 
 export const metadata: Metadata = {
   title: "Portfolio",
@@ -20,7 +19,7 @@ export default function PortfolioPage() {
         crumbs={[{ name: "Portfolio" }]}
         eyebrow="Our Work"
         title="Portfolio"
-        lead="Software we've built, hardware we've fixed, and the results our clients saw."
+        lead="The devices and systems we work on day to day. Written case studies and client references are available on request."
         hueShift={-20}
       />
 
@@ -42,7 +41,6 @@ export default function PortfolioPage() {
         />
       </div>
 
-      <Testimonials />
     </>
   );
 }

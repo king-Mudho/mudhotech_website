@@ -1,0 +1,39 @@
+# /etc/systemd/system/mudhotech-web.service
+# Next.js production server. Bound to loopback — nginx is the only thing
+# that talks to it.
+
+[Unit]
+Description=MudhoTech website (Next.js)
+After=network.target mudhotech-api.service
+Wants=mudhotech-api.service
+
+[Service]
+Type=simple
+User=mudhotech
+Group=mudhotech
+WorkingDirectory=/srv/mudhotech/frontend
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOSTNAME=127.0.0.1
+EnvironmentFile=/srv/mudhotech/frontend/.env.production
+ExecStart=/usr/bin/npm run start
+Restart=always
+RestartSec=5
+
+# Hardening. This service needs to read its own directory and talk to
+# loopback; nothing else.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/mudhotech/frontend/.next
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mudhotech-web
+
+[Install]
+WantedBy=multi-user.target

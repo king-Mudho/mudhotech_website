@@ -7,11 +7,7 @@ import { ServiceCategoryCards } from "@/components/marketing/ServiceCategoryCard
 
 // Below-the-fold and framer-motion/embla-heavy — deferred so they don't
 // compete with the hero for main-thread time during the LCP window.
-const TrustedPartners = dynamic(() =>
-  import("@/components/marketing/TrustedPartners").then((m) => m.TrustedPartners),
-);
 const WhyMudhoTech = dynamic(() => import("@/components/marketing/WhyMudhoTech").then((m) => m.WhyMudhoTech));
-const Testimonials = dynamic(() => import("@/components/marketing/Testimonials").then((m) => m.Testimonials));
 const FAQ = dynamic(() => import("@/components/marketing/FAQ").then((m) => m.FAQ));
 import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
@@ -44,10 +40,16 @@ export default function Home() {
         </div>
       </Section>
 
-      <TrustedPartners />
+      {/* TrustedPartners and Testimonials are deliberately not rendered.
+          Both are placeholder content — six invented client logos (one of
+          them Harare City Council, a real government body) and four
+          testimonials attributed to named individuals who do not exist.
+          On a live domain those read as genuine endorsements. The
+          components and their data are still in the repo; restore these two
+          lines once there is real, attributable content to put in them.
+          See docs/OPEN-QUESTIONS.md #4. */}
       <ServiceCategoryCards />
       <WhyMudhoTech />
-      <Testimonials />
       <FAQ />
 
       <Section>

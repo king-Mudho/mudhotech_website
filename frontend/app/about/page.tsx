@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { Target, Eye, CheckCircle2 } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
@@ -16,15 +15,6 @@ export const metadata: Metadata = {
   description: `Learn about ${company.name} — our mission, values, client engagement model, and service commitments.`,
   alternates: { canonical: "/about" },
 };
-
-// TODO(content): placeholder team profiles — replace with real names/photos
-// before launch. See docs/OPEN-QUESTIONS.md #4.
-const team = [
-  { name: "Team Member", role: "Founder & Managing Director", image: "/images/team-ceo.jpg" },
-  { name: "Team Member", role: "Lead Developer", image: "/images/team-dev.jpg" },
-  { name: "Team Member", role: "IT Support Technician", image: "/images/team-tech.jpg" },
-  { name: "Team Member", role: "Operations", image: "/images/team-ops.jpg" },
-];
 
 export default function AboutPage() {
   return (
@@ -79,22 +69,11 @@ export default function AboutPage() {
         />
       </div>
 
-      <Section>
-        <SectionHeading eyebrow="Our Team" title="The People Behind the Work" />
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-          {team.map((member, i) => (
-            <div key={i} className="rounded-2xl bg-card border border-border overflow-hidden text-center">
-              <div className="relative h-56">
-                <Image src={member.image} alt={member.role} fill sizes="(max-width: 640px) 100vw, 25vw" className="object-cover" />
-              </div>
-              <div className="p-5">
-                <p className="font-heading font-semibold">{member.name}</p>
-                <p className="text-muted-foreground text-sm">{member.role}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Section>
+      {/* The team grid is deliberately not rendered: all four entries were
+          literally named "Team Member" over stock portraits. A page of
+          anonymous stock faces is worse than no team section. Restore it
+          with real names and photographs — the `team` array above is still
+          here. See docs/OPEN-QUESTIONS.md #4. */}
 
       <Section muted id="engagement-model">
         <SectionHeading

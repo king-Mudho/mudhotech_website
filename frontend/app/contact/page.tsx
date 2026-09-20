@@ -39,7 +39,7 @@ export default function ContactPage() {
       label: "Email",
       value: company.contact.email,
       hint: "Opens your mail app",
-      href: mailtoHref("Enquiry from mudhotech.co.zw"),
+      href: mailtoHref("Enquiry from mudhotech.com"),
     },
     {
       icon: MapPin,
