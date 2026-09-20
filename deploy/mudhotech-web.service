@@ -13,7 +13,7 @@ User=mudhotech
 Group=mudhotech
 WorkingDirectory=/srv/mudhotech/frontend
 Environment=NODE_ENV=production
-Environment=PORT=3100
+Environment=PORT=3200
 Environment=HOSTNAME=127.0.0.1
 EnvironmentFile=/srv/mudhotech/frontend/.env.production
 ExecStart=/usr/bin/npm run start

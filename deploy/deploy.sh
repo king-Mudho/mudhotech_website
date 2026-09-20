@@ -55,12 +55,12 @@ sleep 4
 
 log "Health check"
 fail=0
-api=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8100/api/health/ || echo 000)
-web=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3100/ || echo 000)
+api=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8200/api/health/ || echo 000)
+web=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3200/ || echo 000)
 pub=$(curl -s -o /dev/null -w '%{http_code}' https://mudhotech.com/ || echo 000)
 
-printf '  django  (127.0.0.1:8100)  %s\n' "$api"
-printf '  next    (127.0.0.1:3100)  %s\n' "$web"
+printf '  django  (127.0.0.1:8200)  %s\n' "$api"
+printf '  next    (127.0.0.1:3200)  %s\n' "$web"
 printf '  public  (https)           %s\n' "$pub"
 
 [[ "$api" == 200 ]] || { echo "  ! Django unhealthy:  journalctl -u mudhotech-api -n 50"; fail=1; }

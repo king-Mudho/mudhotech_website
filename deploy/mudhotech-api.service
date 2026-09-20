@@ -1,7 +1,7 @@
 # /etc/systemd/system/mudhotech-api.service
 # Django API under Gunicorn.
 #
-# --bind 127.0.0.1:8100 is a security control, not a default. Django must not
+# --bind 127.0.0.1:8200 is a security control, not a default. Django must not
 # be reachable from the internet: the browser is supposed to reach it only
 # through the Next.js Route Handlers, which attach the admin session token.
 # Binding 0.0.0.0 here would expose the admin API directly and defeat Layer 1
@@ -19,7 +19,7 @@ WorkingDirectory=/srv/mudhotech/backend
 EnvironmentFile=/srv/mudhotech/backend/.env
 ExecStart=/srv/mudhotech/backend/.venv/bin/gunicorn \
     config.wsgi:application \
-    --bind 127.0.0.1:8100 \
+    --bind 127.0.0.1:8200 \
     --workers 3 \
     --timeout 60 \
     --access-logfile - \

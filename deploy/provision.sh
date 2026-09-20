@@ -19,8 +19,8 @@ APP_ROOT=/srv/mudhotech
 REPO=https://github.com/king-Mudho/mudhotech_website.git
 BRANCH=main
 DOMAIN=mudhotech.com
-WEB_PORT=3100
-API_PORT=8100
+WEB_PORT=3200
+API_PORT=8200
 
 log() { printf '\n\033[1;34m==>\033[0m %s\n' "$1"; }
 die() { printf '\n\033[1;31m!!\033[0m %s\n' "$1"; exit 1; }
@@ -44,8 +44,9 @@ printf '  python3: %s\n' "$(python3 --version 2>/dev/null || echo 'not installed
 printf '  selinux: %s\n' "$(getenforce 2>/dev/null || echo 'not present')"
 
 # ─── 2. Ports ────────────────────────────────────────────────────────────
-# ABI is a Next.js app and will be holding the default 3000, so this stack
-# uses 3100/8100. Verify rather than assume: the failure mode is one
+# This box is busy: 3000, 3100, 8000 and 8100 are all taken by ABI and
+# Digital Respondent (plus PostgreSQL on 5432 and Redis on 6379), so this
+# stack uses 3200/8200. Verify rather than assume — the failure mode is one
 # service silently refusing to start on EADDRINUSE.
 log "Checking ports $WEB_PORT and $API_PORT are free"
 ss -ltnp 2>/dev/null | awk 'NR>1 {print "    " $4}' | sort -u | head -20
@@ -64,6 +65,23 @@ done
 # ─── 3. Packages ─────────────────────────────────────────────────────────
 log "Installing packages"
 dnf install -y -q git curl nginx python3 python3-pip || die "dnf install failed"
+
+# Django 6.0.8 requires Python >= 3.12. AlmaLinux 9 ships 3.9 as the default
+# python3, so building the venv with it would install fine and then fail on
+# `pip install Django==6.0.8` with an unhelpful "Requires-Python" error.
+# 3.12 installs alongside 3.9 without replacing it, so nothing else on this
+# box is affected.
+log "Python for the venv (Django 6 needs >= 3.12)"
+PYBIN=""
+for cand in python3.13 python3.12; do
+  if command -v "$cand" >/dev/null; then PYBIN=$(command -v "$cand"); break; fi
+done
+if [[ -z "$PYBIN" ]]; then
+  echo "  system python3 is $(python3 --version 2>&1 | awk '{print $2}') — installing 3.12 alongside it"
+  dnf install -y -q python3.12 python3.12-pip || die "Could not install python3.12"
+  PYBIN=$(command -v python3.12) || die "python3.12 not on PATH after install"
+fi
+echo "  using $PYBIN ($("$PYBIN" --version 2>&1))"
 
 # certbot lives in EPEL on AlmaLinux 9.
 if ! command -v certbot >/dev/null; then
@@ -102,7 +120,15 @@ fi
 chown -R "$APP_USER:$APP_USER" "$APP_ROOT"
 
 log "Python virtualenv + dependencies"
-sudo -u "$APP_USER" python3 -m venv "$APP_ROOT/backend/.venv"
+# Rebuild if an earlier run made the venv with the wrong interpreter.
+if [[ -x "$APP_ROOT/backend/.venv/bin/python" ]]; then
+  have=$("$APP_ROOT/backend/.venv/bin/python" -c 'import sys; print(f"{sys.version_info[0]}.{sys.version_info[1]}")')
+  if [[ "${have%%.*}" -lt 3 || "${have#*.}" -lt 12 ]]; then
+    echo "  existing venv is Python $have — too old for Django 6, rebuilding"
+    rm -rf "$APP_ROOT/backend/.venv"
+  fi
+fi
+sudo -u "$APP_USER" "$PYBIN" -m venv "$APP_ROOT/backend/.venv"
 sudo -u "$APP_USER" "$APP_ROOT/backend/.venv/bin/pip" install -q --upgrade pip
 sudo -u "$APP_USER" "$APP_ROOT/backend/.venv/bin/pip" install -q -r "$APP_ROOT/backend/requirements.txt"
 # Gunicorn is the production server; not in requirements.txt because local
@@ -138,7 +164,9 @@ sed -i "s|ExecStart=/usr/bin/npm|ExecStart=${NPM_BIN}|" /etc/systemd/system/mudh
 systemctl daemon-reload
 
 # ─── 7. SELinux ──────────────────────────────────────────────────────────
-# AlmaLinux ships SELinux enforcing. Without this boolean, nginx is denied
+# SELinux is Disabled on this particular box, so this block is skipped — but
+# it stays in, because a rebuild or a policy change would re-enable it.
+# Without this boolean, nginx is denied
 # outbound TCP and every proxy_pass returns 502 with
 # "Permission denied ... upstream" in the error log — which looks exactly
 # like the app being down, and costs an hour to diagnose.

@@ -3,8 +3,29 @@
 Target: `66.29.139.201` — **AlmaLinux 9**, root VPS, alongside the existing
 ABI (`agribizframework.com`) and Digital Respondent sites.
 
-RHEL-family, so: `dnf` not `apt`, nginx vhosts in `/etc/nginx/conf.d/`, and
-**SELinux enforcing** — that last one matters, see below.
+RHEL-family, so `dnf` not `apt`, and nginx vhosts in `/etc/nginx/conf.d/`.
+
+The box is busy. As surveyed on 2026-09-20:
+
+| Port | Used by |
+|---|---|
+| 3000, 3100 | ABI / Digital Respondent (Next.js) |
+| 8000, 8100 | their APIs |
+| 5432 | PostgreSQL |
+| 6379 | Redis |
+
+mudhotech therefore uses **3200** (Next) and **8200** (Django). `provision.sh`
+re-checks and aborts rather than racing an existing service for a port.
+
+Two other platform facts that bite:
+
+- **Python.** The system `python3` is 3.9; Django 6.0.8 needs >= 3.12.
+  `provision.sh` installs `python3.12` alongside it and builds the venv with
+  that. 3.9 stays as the system interpreter, so nothing else is affected.
+- **SELinux is currently Disabled** on this box, so the `httpd_can_network_connect`
+  step is skipped. The script still sets it when SELinux is on, because a
+  rebuild would bring it back and the symptom (every `proxy_pass` returning
+  502) points at completely the wrong thing.
 
 Everything here is scoped to `mudhotech.com`. Nothing touches the other
 sites' nginx server blocks — but `nginx -t` before every reload, because a
@@ -15,9 +36,9 @@ syntax error takes down *every* site on the box, not just this one.
 ## Shape of it
 
 ```
-Browser ──443──► nginx ──► 127.0.0.1:3100  Next.js  (mudhotech-web.service)
+Browser ──443──► nginx ──► 127.0.0.1:3200  Next.js  (mudhotech-web.service)
                                 │
-                                └── server-to-server ──► 127.0.0.1:8100  Django
+                                └── server-to-server ──► 127.0.0.1:8200  Django
                                                           (mudhotech-api.service)
 ```
 
@@ -180,8 +201,8 @@ journalctl -u mudhotech-api -n 100 --no-pager
 nginx -t && systemctl reload nginx
 
 # Is each layer up?
-curl -I http://127.0.0.1:3100/           # Next
-curl -s http://127.0.0.1:8100/api/health/ # Django
+curl -I http://127.0.0.1:3200/           # Next
+curl -s http://127.0.0.1:8200/api/health/ # Django
 curl -I https://mudhotech.com/            # through nginx
 ```
 
