@@ -6,6 +6,8 @@ import { SectionHeading } from "@/components/layout/SectionHeading";
 import { SectionBreak } from "@/components/layout/SectionBreak";
 import { ServiceTabs } from "@/components/marketing/ServiceTabs";
 import { SoftwareServiceForm } from "@/components/forms/SoftwareServiceForm";
+import { WorksWith } from "@/components/marketing/WorksWith";
+import { ProcessSteps } from "@/components/marketing/ProcessSteps";
 
 export const metadata: Metadata = {
   title: "Web & Software Services",
@@ -31,6 +33,8 @@ export default function WebSoftwarePage() {
         hueShift={-12}
       />
 
+      <WorksWith />
+
       <Section>
         {/* Distinct from the h1 above it, which already says "Software &
             Development Services" — this one explains the choice the tabs
@@ -51,6 +55,12 @@ export default function WebSoftwarePage() {
           subtitle="Built around your operations, not the other way around."
         />
       </div>
+
+      <ProcessSteps
+        eyebrow="How a Build Works"
+        title="Agreed in Writing, Then Built"
+        lead="Scope, timeline, and cost are settled before development starts — and the finished system is handed over with documentation and training."
+      />
 
       <Section muted id="request-service">
         <div className="max-w-2xl mx-auto">

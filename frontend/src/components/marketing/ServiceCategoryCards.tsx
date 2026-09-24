@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { fadeUp } from "@/lib/motion";
+import { fadeUp, fadeUpDelayed } from "@/lib/motion";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 
 const categories = [
@@ -49,10 +49,7 @@ export function ServiceCategoryCards() {
           {categories.map((category, i) => (
             <motion.div
               key={category.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.08 }}
+              {...fadeUpDelayed(i)}
             >
               <Link
                 href={category.href}

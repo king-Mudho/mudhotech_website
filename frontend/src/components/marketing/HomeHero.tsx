@@ -3,6 +3,7 @@ import { ShieldCheck, Zap, Users, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroBackground } from "@/components/layout/HeroBackground";
 import { company } from "@/data/company";
+import { WHATSAPP_GREETING, telHref, whatsappUrl } from "@/lib/whatsapp";
 
 const trustIndicators = [
   { icon: ShieldCheck, label: "Secure & Reliable" },
@@ -54,7 +55,21 @@ export function HomeHero() {
           </Button>
         </div>
 
-        <p className="mt-5 text-sm text-muted-foreground">Free consultation and diagnostics · No obligation</p>
+        <p className="mt-5 text-sm text-muted-foreground">
+          Free consultation and diagnostics · No obligation · Or{" "}
+          <a
+            href={whatsappUrl(WHATSAPP_GREETING)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-accent hover:underline"
+          >
+            WhatsApp us
+          </a>{" "}
+          /{" "}
+          <a href={telHref()} className="font-medium text-accent hover:underline">
+            call {company.contact.phone}
+          </a>
+        </p>
 
         <div
           className="mx-auto mt-14 grid max-w-4xl animate-fade-in-up grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4"

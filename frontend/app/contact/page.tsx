@@ -5,6 +5,8 @@ import { Section } from "@/components/layout/Section";
 import { SectionBreak } from "@/components/layout/SectionBreak";
 import { MapEmbed } from "@/components/layout/MapEmbed";
 import { ContactForm } from "@/components/forms/ContactForm";
+import { ProcessSteps } from "@/components/marketing/ProcessSteps";
+import { enquiryPhases } from "@/data/processes";
 import { company } from "@/data/company";
 import { telHref, mailtoHref, whatsappUrl, WHATSAPP_GREETING } from "@/lib/whatsapp";
 
@@ -113,6 +115,14 @@ export default function ContactPage() {
           <ContactForm />
         </div>
       </Section>
+
+      <ProcessSteps
+        eyebrow="What Happens Next"
+        title="After You Get in Touch"
+        lead="No sales pressure — just a clear answer about what you need and what it costs."
+        phases={enquiryPhases}
+        link={null}
+      />
 
       <section aria-label="Office location map">
         <MapEmbed

@@ -1,14 +1,19 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import { HomeHero } from "@/components/marketing/HomeHero";
 import { ServiceCategoryCards } from "@/components/marketing/ServiceCategoryCards";
+import { WorksWith } from "@/components/marketing/WorksWith";
+import { ContactCta } from "@/components/marketing/ContactCta";
+import { NeedsFinder } from "@/components/marketing/NeedsFinder";
 
 // Below-the-fold and framer-motion/embla-heavy — deferred so they don't
 // compete with the hero for main-thread time during the LCP window.
 const WhyMudhoTech = dynamic(() => import("@/components/marketing/WhyMudhoTech").then((m) => m.WhyMudhoTech));
 const FAQ = dynamic(() => import("@/components/marketing/FAQ").then((m) => m.FAQ));
+const ProcessSteps = dynamic(() => import("@/components/marketing/ProcessSteps").then((m) => m.ProcessSteps));
+const IndustriesServed = dynamic(() =>
+  import("@/components/marketing/IndustriesServed").then((m) => m.IndustriesServed),
+);
 import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { OrganizationJsonLd, LocalBusinessJsonLd, WebSiteJsonLd, FaqJsonLd } from "@/components/seo/JsonLd";
@@ -31,6 +36,7 @@ export default function Home() {
       <FaqJsonLd />
 
       <HomeHero />
+      <NeedsFinder />
 
       <Section muted>
         <div className="mx-auto max-w-3xl text-center">
@@ -49,20 +55,12 @@ export default function Home() {
           lines once there is real, attributable content to put in them.
           See docs/OPEN-QUESTIONS.md #4. */}
       <ServiceCategoryCards />
+      <WorksWith />
       <WhyMudhoTech />
+      <ProcessSteps />
+      <IndustriesServed />
       <FAQ />
-
-      <Section>
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
-          <p className="text-muted-foreground mb-8">
-            Tell us what you need and we&apos;ll put together a practical, costed proposal.
-          </p>
-          <Button asChild variant="accent" size="xl">
-            <Link href="/quote">Request a Free Quote</Link>
-          </Button>
-        </div>
-      </Section>
+      <ContactCta />
     </>
   );
 }

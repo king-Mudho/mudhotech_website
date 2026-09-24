@@ -6,6 +6,8 @@ import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { SectionBreak } from "@/components/layout/SectionBreak";
 import { Button } from "@/components/ui/button";
+import { IndustriesServed } from "@/components/marketing/IndustriesServed";
+import { ContactCta } from "@/components/marketing/ContactCta";
 import { company } from "@/data/company";
 import { engagementSteps } from "@/data/engagementModel";
 import { serviceCommitments, supportChannels } from "@/data/serviceCommitments";
@@ -103,6 +105,8 @@ export default function AboutPage() {
         </div>
       </Section>
 
+      <IndustriesServed />
+
       <Section id="service-commitment">
         <SectionHeading eyebrow="What You Can Expect" title="Service Level Commitment" />
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -142,6 +146,8 @@ export default function AboutPage() {
           </Button>
         </div>
       </Section>
+
+      <ContactCta />
     </>
   );
 }

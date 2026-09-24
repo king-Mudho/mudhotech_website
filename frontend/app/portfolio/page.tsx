@@ -4,6 +4,7 @@ import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { SectionBreak } from "@/components/layout/SectionBreak";
 import { PortfolioTabs } from "@/components/marketing/PortfolioTabs";
+import { ContactCta } from "@/components/marketing/ContactCta";
 
 export const metadata: Metadata = {
   title: "Portfolio",
@@ -41,6 +42,11 @@ export default function PortfolioPage() {
         />
       </div>
 
+      <ContactCta
+        title="Want to see work like yours?"
+        lead="Written case studies and client references are available on request. Tell us what you are planning and we'll share relevant examples."
+        action={{ href: "/contact", label: "Ask for References" }}
+      />
     </>
   );
 }
