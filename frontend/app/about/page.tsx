@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Target, Eye, CheckCircle2 } from "lucide-react";
+import { Target, Eye, CheckCircle2, Building2, MapPin, Clock, Layers } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
@@ -17,6 +17,17 @@ export const metadata: Metadata = {
   description: `Learn about ${company.name} — our mission, values, client engagement model, and service commitments.`,
   alternates: { canonical: "/about" },
 };
+
+/**
+ * Verifiable facts only, all read from `company`. The registration number
+ * joins this row once it is filled in (docs/OPEN-QUESTIONS.md #3).
+ */
+const facts = [
+  { icon: Building2, label: "Registered company", value: "(Private) Limited, Zimbabwe" },
+  { icon: MapPin, label: "Office", value: "Graniteside, Harare" },
+  { icon: Clock, label: "Open", value: "Mon – Fri, 8 AM – 5 PM" },
+  { icon: Layers, label: "One team", value: "Builds your systems and supports them" },
+];
 
 export default function AboutPage() {
   return (
@@ -48,6 +59,18 @@ export default function AboutPage() {
             <p className="text-muted-foreground leading-relaxed">{company.closingStatement}</p>
           </div>
         </div>
+
+        <dl className="mx-auto mt-8 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border lg:grid-cols-4">
+          {facts.map(({ icon: Icon, label, value }) => (
+            <div key={label} className="flex flex-col gap-1.5 bg-card p-5">
+              <dt className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-accent">
+                <Icon className="h-4 w-4" aria-hidden="true" />
+                {label}
+              </dt>
+              <dd className="text-sm font-medium leading-snug text-foreground">{value}</dd>
+            </div>
+          ))}
+        </dl>
       </Section>
 
       <Section muted>

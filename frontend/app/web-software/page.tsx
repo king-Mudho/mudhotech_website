@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { ServiceJsonLd } from "@/components/seo/JsonLd";
+import { ServiceJsonLd, FaqJsonLd } from "@/components/seo/JsonLd";
+import { FAQ } from "@/components/marketing/FAQ";
+import { buildFaq } from "@/data/faq";
 import { PageHero } from "@/components/layout/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
@@ -24,6 +26,7 @@ export default function WebSoftwarePage() {
         description="Custom web systems, e-commerce, mobile apps, plus software installation, setup, security, and troubleshooting."
         path="/web-software"
       />
+      <FaqJsonLd items={buildFaq} />
 
       <PageHero
         crumbs={[{ name: "Web & Software" }]}
@@ -60,6 +63,13 @@ export default function WebSoftwarePage() {
         eyebrow="How a Build Works"
         title="Agreed in Writing, Then Built"
         lead="Scope, timeline, and cost are settled before development starts — and the finished system is handed over with documentation and training."
+      />
+
+      <FAQ
+        items={buildFaq}
+        title="Before You Commission a Build"
+        lead="Cost, payments, ownership, and support — answered up front."
+        muted={false}
       />
 
       <Section muted id="request-service">

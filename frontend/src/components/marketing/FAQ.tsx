@@ -4,23 +4,36 @@ import { motion } from "framer-motion";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { fadeUp } from "@/lib/motion";
 import { SectionHeading } from "@/components/layout/SectionHeading";
-import { faq } from "@/data/faq";
+import { faq as defaultFaq, type FaqItem } from "@/data/faq";
 
-export function FAQ() {
+interface FAQProps {
+  items?: FaqItem[];
+  title?: string;
+  lead?: string;
+  muted?: boolean;
+}
+
+/** Defaults to the general set; service pages pass their own. Pair with `FaqJsonLd items={...}`. */
+export function FAQ({
+  items = defaultFaq,
+  title = "Frequently Asked Questions",
+  lead = "Quick answers to common questions about our services and process.",
+  muted = true,
+}: FAQProps) {
   return (
-    <section className="section-padding bg-secondary/50">
+    <section className={muted ? "section-padding bg-secondary/50" : "section-padding bg-background"}>
       <div className="container mx-auto px-4">
         <motion.div {...fadeUp}>
           <SectionHeading
             eyebrow="FAQ"
-            title="Frequently Asked Questions"
-            lead="Quick answers to common questions about our services and process."
+            title={title}
+            lead={lead}
           />
         </motion.div>
 
         <motion.div {...fadeUp} className="max-w-3xl mx-auto">
           <Accordion type="single" collapsible className="space-y-3">
-            {faq.map((item, i) => (
+            {items.map((item, i) => (
               <AccordionItem
                 key={item.q}
                 value={`faq-${i}`}

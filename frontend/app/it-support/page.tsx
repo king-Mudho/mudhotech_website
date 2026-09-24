@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { ServiceJsonLd } from "@/components/seo/JsonLd";
+import { ServiceJsonLd, FaqJsonLd } from "@/components/seo/JsonLd";
+import { FAQ } from "@/components/marketing/FAQ";
+import { supportFaq } from "@/data/faq";
 import { PageHero } from "@/components/layout/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
@@ -25,6 +27,7 @@ export default function ITSupportPage() {
         description="Hardware installation and upgrades, laptop and desktop repairs, preventive maintenance, networking, and peripheral setup."
         path="/it-support"
       />
+      <FaqJsonLd items={supportFaq} />
 
       <PageHero
         crumbs={[{ name: "IT Support" }]}
@@ -76,6 +79,8 @@ export default function ITSupportPage() {
         phases={repairPhases}
         link={null}
       />
+
+      <FAQ items={supportFaq} title="Repair & Support Questions" lead="What people usually ask before they bring a device in." />
 
       <ContactCta
         title="Need something fixed?"

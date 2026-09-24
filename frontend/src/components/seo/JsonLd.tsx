@@ -1,5 +1,5 @@
 import { company } from "@/data/company";
-import { faq } from "@/data/faq";
+import { faq, type FaqItem } from "@/data/faq";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -92,13 +92,13 @@ export function WebSiteJsonLd() {
  * renders, so the two can never disagree — a mismatch between the markup
  * and the visible answers is a manual-action risk, not just untidy.
  */
-export function FaqJsonLd() {
+export function FaqJsonLd({ items = faq }: { items?: FaqItem[] }) {
   return (
     <JsonLdScript
       data={{
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        mainEntity: faq.map((item) => ({
+        mainEntity: items.map((item) => ({
           "@type": "Question",
           name: item.q,
           acceptedAnswer: { "@type": "Answer", text: item.a },
