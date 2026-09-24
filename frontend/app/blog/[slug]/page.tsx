@@ -7,7 +7,9 @@ import { Section } from "@/components/layout/Section";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BlogContent } from "@/components/marketing/BlogContent";
+import { BlogContent, headingsOf } from "@/components/marketing/BlogContent";
+import { ReadingProgress } from "@/components/marketing/ReadingProgress";
+import { ContactCta } from "@/components/marketing/ContactCta";
 import { ShareButtons } from "@/components/marketing/ShareButtons";
 import { ArticleJsonLd } from "@/components/seo/JsonLd";
 import { blogPosts, type BlogPost } from "@/data/blogPosts";
@@ -37,6 +39,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+/**
+ * The service page each blog category leads into, so the closing call to
+ * action continues the topic the reader just finished instead of a generic
+ * "request a quote". Unmapped categories fall back to the quote form.
+ */
+const categoryService: Record<string, { href: string; label: string }> = {
+  "Digital Strategy": { href: "/web-software", label: "Explore Our Software Services" },
+  "Education Tech": { href: "/web-software", label: "Explore Our Software Services" },
+  Cybersecurity: { href: "/it-support", label: "Explore Our IT Support" },
+  "Cloud Computing": { href: "/it-support", label: "Explore Cloud & Networking" },
+};
+
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-ZW", { year: "numeric", month: "long", day: "numeric" });
 }
@@ -65,6 +79,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const related = relatedPosts(post);
   const previous = blogPosts[index - 1];
   const next = blogPosts[index + 1];
+  const headings = headingsOf(post.content);
 
   return (
     <>
@@ -75,6 +90,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         datePublished={post.date}
         slug={post.slug}
       />
+
+      <ReadingProgress targetId="article-body" />
 
       <section className="relative page-padding-top py-20 overflow-hidden bg-hero">
         {/* The post image is editorial content here, so it stays more visible
@@ -109,7 +126,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       </section>
 
       <Section>
-        <div className="max-w-3xl mx-auto">
+        <div id="article-body" className="max-w-3xl mx-auto">
           <div className="flex flex-wrap items-center justify-between gap-4 pb-6 mb-8 border-b border-border">
             <Button asChild variant="ghost" size="sm">
               <Link href="/blog">
@@ -119,6 +136,24 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </Button>
             <ShareButtons url={`${siteUrl}/blog/${post.slug}`} title={post.title} />
           </div>
+
+          {/* Only worth the space on posts long enough to need navigating. */}
+          {headings.length >= 3 && (
+            <nav aria-label="In this article" className="mb-10 rounded-2xl border border-border bg-secondary/50 p-6">
+              <p className="mb-3 font-heading text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                In this article
+              </p>
+              <ol className="space-y-2 text-sm">
+                {headings.map((h) => (
+                  <li key={h.id}>
+                    <a href={`#${h.id}`} className="text-foreground/80 hover:text-accent hover:underline">
+                      {h.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )}
 
           <BlogContent content={post.content} />
 
@@ -157,17 +192,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </div>
       </Section>
 
-      <Section muted>
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-heading text-2xl md:text-3xl font-bold mb-4">Need Help With This?</h2>
-          <p className="text-muted-foreground mb-8">
-            We work with organizations across Zimbabwe on exactly these challenges.
-          </p>
-          <Button asChild variant="accent" size="lg">
-            <Link href="/quote">Request a Free Quote</Link>
-          </Button>
-        </div>
-      </Section>
+      <ContactCta
+        title="Need help with this?"
+        lead="We work with organizations across Zimbabwe on exactly these challenges. Tell us where you are and we'll suggest a practical next step — free, with no obligation."
+        action={categoryService[post.category]}
+      />
 
       <Section>
         <h2 className="font-heading text-2xl font-bold text-center mb-10">Related Articles</h2>
