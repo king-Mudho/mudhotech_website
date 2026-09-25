@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionBreak } from "@/components/layout/SectionBreak";
@@ -7,6 +8,9 @@ import { CapabilityPdfButton } from "@/components/marketing/CapabilityPdfButton"
 import { company } from "@/data/company";
 import { collaborationAreas, potentialPartners } from "@/data/partnerships";
 import { roadmap } from "@/data/roadmap";
+import { devServices, hardwareServices, softwareServices } from "@/data/services";
+import { ProcessSteps } from "@/components/marketing/ProcessSteps";
+import { ContactCta } from "@/components/marketing/ContactCta";
 
 export const metadata: Metadata = {
   title: "Capability Statement",
@@ -30,6 +34,26 @@ const growthAdditions = [
   "Expanded team profiles",
   "Technology partnerships",
   "Industry awards",
+];
+
+/**
+ * Service areas, read from the same data as the service pages so the
+ * capability claims here can never exceed what those pages describe.
+ */
+const capabilityGroups = [
+  { title: "Software & Web Development", href: "/web-software", services: devServices },
+  { title: "IT Support & Infrastructure", href: "/it-support", services: hardwareServices },
+  { title: "Software Setup & Support", href: "/web-software", services: softwareServices },
+];
+
+/** In-page links for reviewers who arrive looking for one specific section. */
+const jumpLinks = [
+  { href: "#fact-sheet", label: "Fact Sheet" },
+  { href: "#capabilities", label: "Capabilities" },
+  { href: "#methodology", label: "Methodology" },
+  { href: "#partnerships", label: "Partnerships" },
+  { href: "#roadmap", label: "Roadmap" },
+  { href: "#tender-readiness", label: "Tender Readiness" },
 ];
 
 export default function CapabilityStatementPage() {
@@ -58,18 +82,36 @@ export default function CapabilityStatementPage() {
         <CapabilityPdfButton />
       </PageHero>
 
-      <Section>
-        <div className="max-w-4xl mx-auto">
-          <h2 className="font-heading text-2xl md:text-3xl font-bold mb-6">Company Fact Sheet</h2>
-          <div className="rounded-2xl border border-border overflow-hidden">
+      <nav
+        aria-label="Sections of this statement"
+        className="sticky top-18 z-30 border-b border-border bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75"
+      >
+        <ul className="container mx-auto flex gap-1 overflow-x-auto px-4 py-2 text-sm [scrollbar-width:none]">
+          {jumpLinks.map((link) => (
+            <li key={link.href} className="shrink-0">
+              <a
+                href={link.href}
+                className="block rounded-full px-3.5 py-1.5 font-medium text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <Section id="fact-sheet" className="scroll-mt-32">
+        <div className="mx-auto max-w-4xl">
+          <h2 className="mb-6 font-heading text-2xl font-bold md:text-3xl">Company Fact Sheet</h2>
+          <div className="overflow-hidden rounded-2xl border border-border">
             <table className="w-full text-sm">
               <tbody>
                 {factSheet.map(([label, value], i) => (
                   <tr key={label} className={i % 2 === 0 ? "bg-card" : "bg-secondary/40"}>
-                    <th scope="row" className="text-left font-heading font-semibold p-4 align-top w-1/3">
+                    <th scope="row" className="w-1/3 p-4 text-left align-top font-heading font-semibold">
                       {label}
                     </th>
-                    <td className="p-4 text-muted-foreground align-top">{value}</td>
+                    <td className="p-4 align-top text-muted-foreground">{value}</td>
                   </tr>
                 ))}
               </tbody>
@@ -78,27 +120,68 @@ export default function CapabilityStatementPage() {
         </div>
       </Section>
 
-      <Section muted>
-        <div className="max-w-4xl mx-auto">
-          <h2 className="font-heading text-2xl md:text-3xl font-bold mb-6">Partnership Opportunities</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="rounded-2xl bg-card border border-border p-6">
-              <h3 className="font-heading font-semibold mb-4">Potential Partners</h3>
+      <Section muted id="capabilities" className="scroll-mt-32">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="mb-2 font-heading text-2xl font-bold md:text-3xl">Core Capabilities</h2>
+          <p className="mb-8 text-muted-foreground">
+            The service areas we deliver today. Each links to full detail on scope and what the client receives.
+          </p>
+          <div className="grid gap-6 md:grid-cols-3">
+            {capabilityGroups.map((group) => (
+              <div key={group.title} className="flex flex-col rounded-2xl border border-border bg-card p-6">
+                <h3 className="mb-4 font-heading font-semibold">{group.title}</h3>
+                <ul className="mb-6 space-y-3">
+                  {group.services.map((service) => (
+                    <li key={service.title} className="flex items-start gap-3 text-sm text-foreground/80">
+                      <span className="shrink-0 rounded-lg bg-accent/10 p-1.5">
+                        <service.icon className="h-4 w-4 text-accent" aria-hidden="true" />
+                      </span>
+                      <span className="pt-0.5">{service.title}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href={group.href}
+                  className="mt-auto inline-flex items-center gap-1.5 font-heading text-sm font-semibold text-accent hover:underline"
+                >
+                  Service details
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      <div id="methodology" className="scroll-mt-32">
+        <ProcessSteps
+          eyebrow="Methodology"
+          title="How We Deliver"
+          lead="A structured engagement model from requirements to long-term support, with scope and cost agreed in writing before work begins."
+        />
+      </div>
+
+      <Section muted id="partnerships" className="scroll-mt-32">
+        <div className="mx-auto max-w-4xl">
+          <h2 className="mb-6 font-heading text-2xl font-bold md:text-3xl">Partnership Opportunities</h2>
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="rounded-2xl border border-border bg-card p-6">
+              <h3 className="mb-4 font-heading font-semibold">Potential Partners</h3>
               <ul className="space-y-2">
                 {potentialPartners.map((partner) => (
                   <li key={partner} className="flex items-start gap-2.5 text-sm text-muted-foreground">
-                    <span className="mt-1.5 h-1 w-1 rounded-full bg-accent shrink-0" />
+                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
                     {partner}
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="rounded-2xl bg-card border border-border p-6">
-              <h3 className="font-heading font-semibold mb-4">Collaboration Areas</h3>
+            <div className="rounded-2xl border border-border bg-card p-6">
+              <h3 className="mb-4 font-heading font-semibold">Collaboration Areas</h3>
               <ul className="space-y-2">
                 {collaborationAreas.map((area) => (
                   <li key={area} className="flex items-start gap-2.5 text-sm text-muted-foreground">
-                    <span className="mt-1.5 h-1 w-1 rounded-full bg-accent shrink-0" />
+                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
                     {area}
                   </li>
                 ))}
@@ -108,17 +191,17 @@ export default function CapabilityStatementPage() {
         </div>
       </Section>
 
-      <Section>
-        <div className="max-w-4xl mx-auto">
-          <h2 className="font-heading text-2xl md:text-3xl font-bold mb-6">Future Roadmap</h2>
-          <div className="grid md:grid-cols-3 gap-6">
+      <Section id="roadmap" className="scroll-mt-32">
+        <div className="mx-auto max-w-4xl">
+          <h2 className="mb-6 font-heading text-2xl font-bold md:text-3xl">Future Roadmap</h2>
+          <div className="grid gap-6 md:grid-cols-3">
             {roadmap.map((phase) => (
-              <div key={phase.phase} className="rounded-2xl bg-card border border-border p-6">
-                <h3 className="font-heading font-semibold text-accent mb-4">{phase.phase}</h3>
+              <div key={phase.phase} className="rounded-2xl border border-border bg-card p-6">
+                <h3 className="mb-4 font-heading font-semibold text-accent">{phase.phase}</h3>
                 <ul className="space-y-2">
                   {phase.points.map((point) => (
                     <li key={point} className="flex items-start gap-2.5 text-sm text-muted-foreground">
-                      <span className="mt-1.5 h-1 w-1 rounded-full bg-accent shrink-0" />
+                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
                       {point}
                     </li>
                   ))}
@@ -138,27 +221,27 @@ export default function CapabilityStatementPage() {
         />
       </div>
 
-      <Section muted>
-        <div className="max-w-4xl mx-auto">
-          <h2 className="font-heading text-2xl md:text-3xl font-bold mb-6">Tender Readiness & Corporate Capability</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="rounded-2xl bg-card border border-border p-6">
-              <h3 className="font-heading font-semibold mb-4">This Statement Supports</h3>
+      <Section muted id="tender-readiness" className="scroll-mt-32">
+        <div className="mx-auto max-w-4xl">
+          <h2 className="mb-6 font-heading text-2xl font-bold md:text-3xl">Tender Readiness & Corporate Capability</h2>
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="rounded-2xl border border-border bg-card p-6">
+              <h3 className="mb-4 font-heading font-semibold">This Statement Supports</h3>
               <ul className="space-y-2">
                 {tenderUses.map((use) => (
                   <li key={use} className="flex items-start gap-2.5 text-sm text-muted-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
                     {use}
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="rounded-2xl bg-card border border-border p-6">
-              <h3 className="font-heading font-semibold mb-4">Being Added As We Grow</h3>
+            <div className="rounded-2xl border border-border bg-card p-6">
+              <h3 className="mb-4 font-heading font-semibold">Being Added As We Grow</h3>
               <ul className="space-y-2">
                 {growthAdditions.map((item) => (
                   <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground">
-                    <span className="mt-1.5 h-1 w-1 rounded-full bg-accent shrink-0" />
+                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
                     {item}
                   </li>
                 ))}
@@ -169,20 +252,26 @@ export default function CapabilityStatementPage() {
       </Section>
 
       <Section>
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="font-heading text-2xl md:text-3xl font-bold mb-6">Our Promise</h2>
-          <ul className="grid sm:grid-cols-2 gap-3 text-left mb-10">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="mb-6 font-heading text-2xl font-bold md:text-3xl">Our Promise</h2>
+          <ul className="mb-10 grid gap-3 text-left sm:grid-cols-2">
             {company.values.map((value) => (
-              <li key={value} className="flex items-start gap-3 rounded-xl bg-card border border-border p-4">
-                <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+              <li key={value} className="flex items-start gap-3 rounded-xl border border-border bg-card p-4">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
                 <span className="text-sm text-foreground/80">{value}</span>
               </li>
             ))}
           </ul>
-          <p className="text-muted-foreground leading-relaxed mb-8">{company.closingStatement}</p>
+          <p className="mb-8 leading-relaxed text-muted-foreground">{company.closingStatement}</p>
           <CapabilityPdfButton />
         </div>
       </Section>
+
+      <ContactCta
+        title="Preparing a tender or partnership?"
+        lead="We respond to RFQs, RFPs, and vendor registration requests. Talk to us directly about your requirements."
+        action={{ href: "/contact", label: "Contact Us" }}
+      />
     </>
   );
 }
