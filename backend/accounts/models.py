@@ -29,3 +29,21 @@ class AdminNotificationPreference(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user} — {self.event_type}: {'on' if self.enabled else 'off'}"
+
+
+class RevokedAccessToken(models.Model):
+    """An admin access token that was signed out before it expired.
+
+    The JWT is otherwise valid until `exp` (8 hours), so deleting the cookie
+    on logout does not stop a copy of the token from working. Every
+    authenticated request checks its `jti` against this table
+    (accounts/authentication.py). Rows are only needed until the token would
+    have expired anyway; logout prunes the expired ones.
+    """
+
+    jti = models.CharField(max_length=255, unique=True)
+    expires_at = models.DateTimeField(db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"{self.jti} (until {self.expires_at:%Y-%m-%d %H:%M})"
