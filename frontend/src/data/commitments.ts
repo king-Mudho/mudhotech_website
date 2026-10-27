@@ -6,7 +6,7 @@
  * slightly different words, across ten or so components). They are kept,
  * not invented, but none has been confirmed by the owner yet.
  *
- * TODO(content): confirm or change each one — see docs/OPEN-QUESTIONS.md #5.
+ * TODO(content): confirm or change each one — see docs/OPEN-QUESTIONS.md #7–9.
  * Edit the wording here and every page that makes the promise follows.
  */
 export const commitments = {
