@@ -19,10 +19,7 @@ export async function handleSubmission<T>(
   const body = await request.json().catch(() => null);
 
   if (!body) {
-    return NextResponse.json(
-      { success: false, error: { message: "Invalid request body." } },
-      { status: 400 },
-    );
+    return NextResponse.json({ success: false, error: { message: "Invalid request body." } }, { status: 400 });
   }
 
   // Silently accept-and-drop bot submissions so they don't learn they were caught.
@@ -54,6 +51,15 @@ export async function handleSubmission<T>(
       return NextResponse.json(
         { success: false, error: { message: "Too many submissions. Please try again later." } },
         { status: 429 },
+      );
+    }
+    // Django's validation is stricter in places than the zod schema (e.g.
+    // its email validator). That is the visitor's input, not an outage, so
+    // it should read as fixable rather than "Something went wrong".
+    if (error instanceof ApiError && error.status === 400) {
+      return NextResponse.json(
+        { success: false, error: { message: "Please check your details and try again." } },
+        { status: 400 },
       );
     }
     // Never leak backend internals to the client (docs/08-api-design.md §3).
