@@ -30,6 +30,13 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // deploy/deploy.sh alternates production builds between .next-blue and
+  // .next-green so the live server keeps serving one while the other is
+  // built. The same NEXT_DIST_DIR must be set for `next build` and
+  // `next start`: the build embeds its distDir in the compiled route
+  // modules, so a build directory cannot be renamed afterwards.
+  // Unset (local dev, tests) it is the usual .next.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   images: {
     formats: ["image/avif", "image/webp"],
     // Every non-default `quality` used in the markup has to be declared here
