@@ -16,6 +16,9 @@ Environment=NODE_ENV=production
 Environment=PORT=3200
 Environment=HOSTNAME=127.0.0.1
 EnvironmentFile=/srv/mudhotech/frontend/.env.production
+# Which build directory to serve: NEXT_DIST_DIR=.next-blue or .next-green,
+# written by deploy.sh. Optional ("-"): without it Next serves .next.
+EnvironmentFile=-/srv/mudhotech/frontend/.next-slot.env
 ExecStart=/usr/bin/npm run start
 Restart=always
 RestartSec=5
@@ -26,7 +29,10 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/srv/mudhotech/frontend/.next
+# Next writes its image cache inside the live build directory. "-" because
+# only some of these exist at any time; a missing path without it stops the
+# unit from starting.
+ReadWritePaths=-/srv/mudhotech/frontend/.next -/srv/mudhotech/frontend/.next-blue -/srv/mudhotech/frontend/.next-green
 ProtectKernelTunables=true
 ProtectControlGroups=true
 # AF_NETLINK is not optional here. Next.js calls os.networkInterfaces()

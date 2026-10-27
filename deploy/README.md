@@ -192,8 +192,28 @@ bash /srv/mudhotech/deploy/deploy.sh
 ```
 
 Pulls `main`, backs up the database, migrates, builds, restarts, health-checks.
-Builds before restarting, so the site is never serving a half-written
-`.next`.
+
+**The site stays up during the build.** Builds alternate between two
+directories, `frontend/.next-blue` and `frontend/.next-green`. Each deploy
+builds into whichever is not live, then writes `NEXT_DIST_DIR=<slot>` to
+`frontend/.next-slot.env` (read by `mudhotech-web.service`) and restarts. The
+only interruption is the few seconds of that restart. If the build fails,
+nothing is switched; if Next is unhealthy on the new build, the script
+switches back to the previous slot and exits non-zero.
+
+To roll back by hand to the previous build:
+
+```bash
+cat /srv/mudhotech/frontend/.next-slot.env        # e.g. NEXT_DIST_DIR=.next-green
+echo 'NEXT_DIST_DIR=.next-blue' > /srv/mudhotech/frontend/.next-slot.env   # the other one
+systemctl restart mudhotech-web
+```
+
+That restores the previous *build output* only; the checkout and
+`node_modules` stay at the newer commit.
+
+`deploy.sh` also installs `deploy/*.service` into `/etc/systemd/system/`
+whenever they differ, so edit the units in the repo, not on the server.
 
 ---
 
