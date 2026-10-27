@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 const destinations = [
-  { icon: Code2, label: "Web & Software", description: "Custom systems and apps", href: "/web-software" },
+  { icon: Code2, label: "Software Development", description: "Websites, systems and apps", href: "/web-software" },
   { icon: LifeBuoy, label: "IT Support", description: "Repairs and maintenance", href: "/it-support" },
   { icon: Newspaper, label: "Blog", description: "Practical technology guidance", href: "/blog" },
   { icon: MessageCircle, label: "Contact", description: "Talk to a real person", href: "/contact" },
@@ -36,7 +36,7 @@ export default function NotFound() {
           <p className="font-heading text-6xl font-extrabold text-accent/30 md:text-7xl" aria-hidden="true">
             404
           </p>
-          <h1 className="mt-2 font-heading text-3xl font-bold text-balance md:text-4xl">
+          <h1 className="mt-2 text-balance font-heading text-3xl font-bold md:text-4xl">
             We couldn&apos;t find that page
           </h1>
           {/* Kept verbatim: it is the plain-language explanation, and the

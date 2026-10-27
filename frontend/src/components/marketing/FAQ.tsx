@@ -1,8 +1,4 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { fadeUp } from "@/lib/motion";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { faq as defaultFaq, type FaqItem } from "@/data/faq";
 
@@ -23,32 +19,28 @@ export function FAQ({
   return (
     <section className={muted ? "section-padding bg-secondary/50" : "section-padding bg-background"}>
       <div className="container mx-auto px-4">
-        <motion.div {...fadeUp}>
-          <SectionHeading
-            eyebrow="FAQ"
-            title={title}
-            lead={lead}
-          />
-        </motion.div>
+        <div className="reveal">
+          <SectionHeading eyebrow="FAQ" title={title} lead={lead} />
+        </div>
 
-        <motion.div {...fadeUp} className="max-w-3xl mx-auto">
+        <div className="reveal mx-auto max-w-3xl">
           <Accordion type="single" collapsible className="space-y-3">
             {items.map((item, i) => (
               <AccordionItem
                 key={item.q}
                 value={`faq-${i}`}
-                className="bg-card border border-border rounded-xl px-6 data-[state=open]:border-accent/30 data-[state=open]:shadow-lg transition-all duration-300"
+                className="rounded-xl border border-border bg-card px-6 transition-all duration-300 data-[state=open]:border-accent/30 data-[state=open]:shadow-lg"
               >
-                <AccordionTrigger className="text-left font-heading font-semibold text-sm sm:text-base hover:text-accent transition-colors py-5 [&[data-state=open]]:text-accent">
+                <AccordionTrigger className="py-5 text-left font-heading text-sm font-semibold transition-colors hover:text-accent sm:text-base [&[data-state=open]]:text-accent">
                   {item.q}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground text-sm leading-relaxed pb-5">
+                <AccordionContent className="pb-5 text-sm leading-relaxed text-muted-foreground">
                   {item.a}
                 </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

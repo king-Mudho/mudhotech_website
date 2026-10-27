@@ -7,13 +7,22 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Field } from "@/components/forms/Field";
 import { FormSuccess } from "@/components/forms/FormSuccess";
 import { HoneypotField } from "@/components/forms/HoneypotField";
 import { apiFetch, ApiClientError } from "@/lib/api/client";
 import { softwareServiceRequestSchema, type SoftwareServiceRequestFormValues } from "@/lib/schemas";
-import { softwareServices } from "@/data/services";
+import { supportGroups } from "@/data/services";
+import { commitments } from "@/data/commitments";
 
 const DETAILS_MAX = 2000;
 
@@ -56,7 +65,7 @@ export function SoftwareServiceForm() {
     return (
       <FormSuccess
         title="Request received"
-        message="We'll look at what you've described and come back with next steps — usually within one business day. Diagnostics are free."
+        message={`We'll look at what you've described and come back with next steps, ${commitments.responseTimeShort}. ${commitments.freeAssessment}`}
         resetLabel="Send another request"
         onReset={() => setSent(false)}
       />
@@ -76,6 +85,16 @@ export function SoftwareServiceForm() {
         </Field>
       </div>
 
+      <Field
+        id="sw-phone"
+        label="Phone or WhatsApp"
+        note="optional"
+        hint="The quickest way for us to ask about the device."
+        error={errors.phone?.message}
+      >
+        {(field) => <Input {...field} type="tel" autoComplete="tel" inputMode="tel" {...register("phone")} />}
+      </Field>
+
       <Field id="sw-category" label="Service Category" error={errors.serviceCategory?.message}>
         {(field) => (
           <Controller
@@ -87,10 +106,15 @@ export function SoftwareServiceForm() {
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {softwareServices.map((service) => (
-                    <SelectItem key={service.title} value={service.title}>
-                      {service.title}
-                    </SelectItem>
+                  {supportGroups.map((group) => (
+                    <SelectGroup key={group.id}>
+                      <SelectLabel>{group.title}</SelectLabel>
+                      {group.services.map((service) => (
+                        <SelectItem key={service.title} value={service.title}>
+                          {service.title}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   ))}
                 </SelectContent>
               </Select>

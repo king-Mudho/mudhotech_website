@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, MessageCircle, Phone, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { company } from "@/data/company";
+import { commitments } from "@/data/commitments";
 import { WHATSAPP_GREETING, telHref, whatsappUrl } from "@/lib/whatsapp";
 
 /**
@@ -17,7 +18,7 @@ interface ContactCtaProps {
 
 export function ContactCta({
   title = "Ready to get started?",
-  lead = "Tell us what you need and we'll put together a practical, costed proposal. Consultations and diagnostics are free, with no obligation.",
+  lead = `Tell us what you need and we'll put together a practical, costed proposal. ${commitments.freeAssessment}`,
   action = { href: "/quote", label: "Request a Free Quote" },
 }: ContactCtaProps) {
   return (
@@ -41,44 +42,56 @@ export function ContactCta({
                 <Button asChild variant="accent" size="lg">
                   <Link href={action.href}>
                     {action.label}
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
                 </Button>
                 <Button asChild variant="whatsapp" size="lg">
                   <a href={whatsappUrl(WHATSAPP_GREETING)} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="h-4 w-4" />
+                    <MessageCircle className="h-4 w-4" aria-hidden="true" />
                     Chat on WhatsApp
                   </a>
                 </Button>
               </div>
             </div>
 
+            {/* Each <div> holds its <dt>/<dd> directly, which is the only nesting
+                a <dl> allows; the icon lives inside the <dt>. The old layout put
+                them a level deeper, so assistive tech lost the term/value pairs. */}
             <dl className="space-y-5 rounded-2xl border border-white/10 bg-white/5 p-6 text-sm">
-              <div className="flex items-start gap-3">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-hero-accent" aria-hidden="true" />
-                <div>
-                  <dt className="font-heading font-semibold text-white">Call us</dt>
-                  <dd>
-                    <a href={telHref()} className="text-white/75 hover:text-white hover:underline">
-                      {company.contact.phone}
-                    </a>
-                  </dd>
-                </div>
+              <div>
+                <dt className="flex items-center gap-2 font-heading font-semibold text-white">
+                  <Phone className="h-4 w-4 shrink-0 text-hero-accent" aria-hidden="true" />
+                  Call us
+                </dt>
+                <dd className="mt-1 pl-6">
+                  <a href={telHref()} className="text-white/75 hover:text-white hover:underline">
+                    {company.contact.phone}
+                  </a>
+                </dd>
               </div>
-              <div className="flex items-start gap-3">
-                <MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-hero-accent" aria-hidden="true" />
-                <div>
-                  <dt className="font-heading font-semibold text-white">WhatsApp</dt>
-                  <dd className="text-white/75">{company.contact.whatsapp}</dd>
-                </div>
+              <div>
+                <dt className="flex items-center gap-2 font-heading font-semibold text-white">
+                  <MessageCircle className="h-4 w-4 shrink-0 text-hero-accent" aria-hidden="true" />
+                  WhatsApp
+                </dt>
+                <dd className="mt-1 pl-6">
+                  <a
+                    href={whatsappUrl(WHATSAPP_GREETING)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/75 hover:text-white hover:underline"
+                  >
+                    {company.contact.whatsapp}
+                  </a>
+                </dd>
               </div>
-              <div className="flex items-start gap-3">
-                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-hero-accent" aria-hidden="true" />
-                <div>
-                  <dt className="font-heading font-semibold text-white">Office hours</dt>
-                  <dd className="text-white/75">{company.hours.weekdays}</dd>
-                  <dd className="text-white/75">{company.hours.saturday}</dd>
-                </div>
+              <div>
+                <dt className="flex items-center gap-2 font-heading font-semibold text-white">
+                  <Clock className="h-4 w-4 shrink-0 text-hero-accent" aria-hidden="true" />
+                  Office hours
+                </dt>
+                <dd className="mt-1 pl-6 text-white/75">{company.hours.weekdays}</dd>
+                <dd className="pl-6 text-white/75">{company.hours.saturday}</dd>
               </div>
             </dl>
           </div>

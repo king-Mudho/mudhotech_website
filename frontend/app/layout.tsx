@@ -54,9 +54,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${poppins.variable} ${openSans.variable}`} suppressHydrationWarning>
       <body className="font-body antialiased">
@@ -73,7 +71,10 @@ export default function RootLayout({
             <Footer />
           </HideOnAdmin>
           <FloatingActions />
-          <CookieConsent />
+          {/* Only ask when there is something to consent to. Without a GA ID no
+              analytics script exists, and the banner was asking visitors to
+              accept tracking the site does not do. */}
+          {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <CookieConsent />}
           <Toaster />
         </ThemeProvider>
         <Analytics />

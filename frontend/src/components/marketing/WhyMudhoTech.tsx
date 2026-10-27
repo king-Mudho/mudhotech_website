@@ -1,8 +1,5 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { Stethoscope, Wrench, FileText, MapPin } from "lucide-react";
-import { fadeUp } from "@/lib/motion";
+import { commitments } from "@/data/commitments";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 
 /**
@@ -31,7 +28,7 @@ const differentiators = [
   {
     icon: FileText,
     title: "Handed over, not held hostage",
-    body: "Every project ends with documentation and training. You own what we build, and you are free to take it elsewhere.",
+    body: commitments.ownership,
   },
   {
     icon: MapPin,
@@ -44,31 +41,24 @@ export function WhyMudhoTech() {
   return (
     <section className="section-padding bg-primary text-primary-foreground">
       <div className="container mx-auto px-4">
-        <motion.div {...fadeUp}>
+        <div className="reveal">
           <SectionHeading
             eyebrow="Why MudhoTech"
             title="How We Work"
             lead="Four commitments we make on every job, whatever the size."
             tone="light"
           />
-        </motion.div>
+        </div>
 
         <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {differentiators.map((item, i) => (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.08 }}
-              className="rounded-2xl border border-white/10 bg-white/5 p-6"
-            >
+          {differentiators.map((item) => (
+            <div key={item.title} className="reveal rounded-2xl border border-white/10 bg-white/5 p-6">
               <span className="mb-4 inline-flex rounded-xl bg-hero-accent/15 p-2.5">
                 <item.icon className="h-5 w-5 text-hero-accent" aria-hidden="true" />
               </span>
               <h3 className="mb-2 font-heading text-base font-semibold text-white">{item.title}</h3>
               <p className="text-sm leading-relaxed text-primary-foreground/70">{item.body}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

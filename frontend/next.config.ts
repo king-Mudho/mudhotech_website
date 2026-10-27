@@ -8,7 +8,7 @@ const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://images.unsplash.com https://www.google-analytics.com",
+  "img-src 'self' data: blob: https://www.google-analytics.com",
   "font-src 'self' data:",
   "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com",
   "frame-src https://www.google.com https://maps.google.com",
@@ -42,9 +42,8 @@ const nextConfig: NextConfig = {
     // Every non-default `quality` used in the markup has to be declared here
     // from Next 16 on; undeclared values warn today and will throw later.
     qualities: [60, 65, 75],
-    // TODO(content): placeholder gallery photography is hosted on Unsplash —
-    // remove this once real/licensed images land. See docs/OPEN-QUESTIONS.md #4.
-    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
+    // No remote images: the hot-linked Unsplash gallery is gone. Put real
+    // photography in public/images/ (see docs/CONTENT-GUIDE.md).
   },
   async headers() {
     return [

@@ -1,4 +1,5 @@
 import { company } from "@/data/company";
+import { devServices, supportGroups } from "@/data/services";
 import { faq, type FaqItem } from "@/data/faq";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -49,7 +50,7 @@ export function LocalBusinessJsonLd() {
         telephone: company.contact.phone,
         email: company.contact.email,
         address: postalAddress,
-        priceRange: "$$",
+        // No priceRange: "$$" was an unconfirmed claim about pricing.
         openingHoursSpecification: [
           {
             "@type": "OpeningHoursSpecification",
@@ -59,7 +60,7 @@ export function LocalBusinessJsonLd() {
           },
         ],
         areaServed: { "@type": "Country", name: "Zimbabwe" },
-        knowsAbout: company.targetMarkets,
+        knowsAbout: [...devServices, ...supportGroups.flatMap((group) => group.services)].map((s) => s.title),
       }}
     />
   );

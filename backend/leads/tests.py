@@ -76,6 +76,22 @@ class PublicSubmissionTests(TestCase):
         submission = ContactSubmission.objects.get()
         self.assertEqual(submission.source, ContactSubmission.Source.SOFTWARE_SERVICE)
         self.assertIn("[Software Service Request]", submission.subject)
+        self.assertIsNone(submission.phone)
+
+    def test_software_service_request_keeps_an_optional_phone(self):
+        response = self.client.post(
+            "/api/submissions/software-service/",
+            {
+                "name": "Farai Dube",
+                "email": "farai@example.com",
+                "phone": "+263 77 123 4567",
+                "service_category": "Laptop & Desktop Repairs",
+                "details": "Laptop no longer charges after a fall.",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ContactSubmission.objects.get().phone, "+263 77 123 4567")
 
     def test_valid_quote_creates_row(self):
         response = self.client.post(

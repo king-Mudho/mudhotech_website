@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
-import { Clock, Users } from "lucide-react";
+import { Clock, Info, Users } from "lucide-react";
 import { ServiceItemList } from "@/components/marketing/ServiceItemList";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,8 @@ interface ServiceCardProps {
   bestFor?: string;
   image?: string;
   turnaround?: string;
+  /** A caveat to read before relying on the claim, e.g. third-party fees. */
+  note?: string;
   /** How many items to show before the rest collapse. */
   maxItems?: number;
   className?: string;
@@ -36,6 +38,7 @@ export function ServiceCard({
   bestFor,
   image,
   turnaround,
+  note,
   maxItems = 5,
   className,
 }: ServiceCardProps) {
@@ -61,7 +64,7 @@ export function ServiceCard({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/25 to-transparent" />
           <span className="absolute bottom-3 left-4 rounded-xl bg-card/90 p-2.5 shadow-sm backdrop-blur-sm">
-            <Icon className="h-5 w-5 text-accent" />
+            <Icon className="h-5 w-5 text-accent" aria-hidden="true" />
           </span>
         </div>
       ) : null}
@@ -69,7 +72,7 @@ export function ServiceCard({
       <div className="flex flex-1 flex-col p-6">
         {!image && (
           <div className="mb-4 w-fit rounded-xl bg-accent/10 p-3 transition-colors group-hover:bg-accent/15">
-            <Icon className="h-6 w-6 text-accent" />
+            <Icon className="h-6 w-6 text-accent" aria-hidden="true" />
           </div>
         )}
 
@@ -84,22 +87,27 @@ export function ServiceCard({
         {(bestFor || turnaround) && (
           <dl className="mb-4 space-y-2 text-xs">
             {bestFor && (
-              <div className="flex gap-2">
+              <div>
                 <dt className="sr-only">Best for</dt>
-                <Users className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
-                <dd className="leading-relaxed text-muted-foreground">
-                  <span className="font-medium text-foreground/80">Best for: </span>
-                  {bestFor}
+                {/* Icon inside the <dd>: a <dl> group may only contain <dt>/<dd>. */}
+                <dd className="flex gap-2 leading-relaxed text-muted-foreground">
+                  <Users className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
+                  <span>
+                    <span className="font-medium text-foreground/80">Best for: </span>
+                    {bestFor}
+                  </span>
                 </dd>
               </div>
             )}
             {turnaround && (
-              <div className="flex gap-2">
+              <div>
                 <dt className="sr-only">Typical turnaround</dt>
-                <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
-                <dd className="leading-relaxed text-muted-foreground">
-                  <span className="font-medium text-foreground/80">Turnaround: </span>
-                  {turnaround}
+                <dd className="flex gap-2 leading-relaxed text-muted-foreground">
+                  <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
+                  <span>
+                    <span className="font-medium text-foreground/80">Turnaround: </span>
+                    {turnaround}
+                  </span>
                 </dd>
               </div>
             )}
@@ -107,6 +115,13 @@ export function ServiceCard({
         )}
 
         {items.length > 0 && <ServiceItemList items={items} collapsedCount={maxItems} />}
+
+        {note && (
+          <p className="mt-4 flex gap-2 rounded-lg bg-secondary/70 p-3 text-xs leading-relaxed text-muted-foreground">
+            <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
+            <span>{note}</span>
+          </p>
+        )}
 
         {worksWith && worksWith.length > 0 && (
           <div className="mt-auto pt-5">

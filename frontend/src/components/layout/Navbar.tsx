@@ -11,10 +11,10 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/s
 
 const navLinks = [
   { name: "Home", path: "/" },
-  { name: "Web & Software", path: "/web-software" },
+  { name: "Software Development", path: "/web-software" },
   { name: "IT Support", path: "/it-support" },
   { name: "About", path: "/about" },
-  { name: "Portfolio", path: "/portfolio" },
+  { name: "Our Work", path: "/portfolio" },
   { name: "Blog", path: "/blog" },
   { name: "Contact", path: "/contact" },
 ];
@@ -65,9 +65,7 @@ export function Navbar() {
 
   const linkClass = (active: boolean, mobile = false) =>
     [
-      mobile
-        ? "px-4 py-3 rounded-lg text-base font-semibold"
-        : "px-3.5 py-2 text-sm font-semibold rounded-lg",
+      mobile ? "px-4 py-3 rounded-lg text-base font-semibold" : "px-3.5 py-2 text-sm font-semibold rounded-lg",
       "transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
       active
         ? `text-accent ${mobile ? "bg-accent/15" : "bg-accent/10"}`
@@ -78,16 +76,13 @@ export function Navbar() {
     // The hero is light, so the bar stays light-on-light throughout —
     // scrolling only adds the separating shadow and border.
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-background/95 backdrop-blur-xl shadow-sm border-b border-border"
-          : "bg-background/80 backdrop-blur-md border-b border-transparent"
+          ? "border-b border-border bg-background/95 shadow-sm backdrop-blur-xl"
+          : "border-b border-transparent bg-background/80 backdrop-blur-md"
       }`}
     >
-      <nav
-        aria-label="Main"
-        className="container mx-auto flex h-18 items-center justify-between px-4 py-3"
-      >
+      <nav aria-label="Main" className="container mx-auto flex h-18 items-center justify-between px-4 py-3">
         <Link
           href="/"
           className="group flex items-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"

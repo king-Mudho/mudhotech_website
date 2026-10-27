@@ -17,43 +17,43 @@ const needs: { icon: LucideIcon; problem: string; service: string; body: string;
     icon: Cpu,
     problem: "My computer is slow, crashing, or won't start",
     service: "Laptop & Desktop Repairs",
-    body: "Free diagnostics first, then a clear quote before any repair work begins.",
-    href: "/it-support",
+    body: "Diagnosis first, then a clear quote before any repair work begins.",
+    href: "/it-support#repairs",
   },
   {
     icon: Wifi,
     problem: "Our office Wi-Fi or network keeps dropping",
     service: "Networking & Connectivity",
     body: "Network setup, troubleshooting, and coverage fixes for homes and offices.",
-    href: "/it-support",
+    href: "/it-support#networks",
   },
   {
     icon: ShieldAlert,
     problem: "Viruses, updates, or software setup headaches",
     service: "Security & Maintenance",
     body: "Antivirus, updates, and installations handled properly, so they stay handled.",
-    href: "/it-support",
+    href: "/it-support#software",
   },
   {
     icon: Globe,
     problem: "We need a website or an online store",
-    service: "Custom Web Systems & E-Commerce",
+    service: "Websites & E-Commerce",
     body: "Fast, mobile-friendly sites and stores with local payment integration.",
-    href: "/web-software",
+    href: "/web-software#services",
   },
   {
     icon: FileSpreadsheet,
     problem: "We still run on paper and spreadsheets",
-    service: "Custom Web Systems",
+    service: "Websites & Custom Web Systems",
     body: "Systems built around how your business actually works — records, stock, bookings, reports.",
-    href: "/web-software",
+    href: "/web-software#services",
   },
   {
     icon: Smartphone,
     problem: "We want customers to reach us on their phones",
     service: "Mobile App Development",
     body: "Mobile apps that put your services in your customers' pockets.",
-    href: "/web-software",
+    href: "/web-software#services",
   },
 ];
 
@@ -71,7 +71,7 @@ export function NeedsFinder() {
           {needs.map(({ icon: Icon, problem, service, body, href }) => (
             <li
               key={problem}
-              className="group flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md"
+              className="reveal group flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md"
             >
               <span className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent/10 transition-colors group-hover:bg-accent">
                 <Icon className="h-5 w-5 text-accent group-hover:text-accent-foreground" aria-hidden="true" />
@@ -84,7 +84,7 @@ export function NeedsFinder() {
 
               <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-5 text-sm font-semibold">
                 <Link href={href} className="inline-flex items-center gap-1.5 text-accent hover:underline">
-                  How we fix it
+                  How we fix it<span className="sr-only"> for {service}</span>
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
                 <a
@@ -94,7 +94,7 @@ export function NeedsFinder() {
                   className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline"
                 >
                   <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                  Ask on WhatsApp
+                  Ask on WhatsApp<span className="sr-only"> (opens WhatsApp)</span>
                 </a>
               </div>
             </li>

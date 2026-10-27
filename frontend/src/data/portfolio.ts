@@ -1,101 +1,101 @@
-// TODO(content): every entry in this file is placeholder material and must be
-// replaced with real, verifiable project and repair case studies before the
-// site is presented to procurement/investor audiences.
-// See docs/OPEN-QUESTIONS.md #4 and docs/07-content-data-model.md §9.
+/**
+ * Work shown on /portfolio.
+ *
+ * This file used to hold invented projects with invented results ("Doubled
+ * online order volume within one quarter") and invented repair case studies.
+ * They were hidden, but one edit away from publication. It now has two lists:
+ *
+ * - `caseStudies`: real, completed MudhoTech work. Empty until the owner adds
+ *   some. An entry is only rendered once `permissionConfirmed` is true.
+ * - `exampleProjects`: the kinds of work the business takes on, written from
+ *   the service list in data/services.ts. Always labelled on the page as
+ *   illustrative, never as client work, and with no outcomes or figures.
+ *
+ * How to add a case study: docs/CONTENT-GUIDE.md → "Portfolio".
+ */
 
-export interface PortfolioProject {
+export interface CaseStudy {
+  /** URL-safe id, e.g. "harare-retailer-stock-system". */
+  slug: string;
   title: string;
-  category: string;
-  summary: string;
-  tech: string[];
-  result: string;
+  /**
+   * The client's name only with their written permission. Otherwise describe
+   * them instead, e.g. "A multi-branch retailer in Harare".
+   */
+  client: string;
+  sector: string;
+  path: "build" | "support";
+  challenge: string;
+  solution: string;
+  /** Only an outcome the client has confirmed. Leave it out rather than estimate. */
+  outcome?: string;
+  /** Screenshots or photos in public/images/work/, taken by MudhoTech or supplied by the client. */
+  images?: { src: string; alt: string }[];
+  year?: number;
+  /** Must be true before the entry appears: the client agreed to be featured as written. */
+  permissionConfirmed: boolean;
 }
 
-export interface RepairShowcase {
+export const caseStudies: CaseStudy[] = [];
+
+export const publishedCaseStudies = caseStudies.filter((study) => study.permissionConfirmed);
+
+export interface ExampleProject {
   title: string;
+  path: "build" | "support";
+  /** Where the matching service is described. */
+  href: string;
   problem: string;
-  work: string;
-  result: string;
-  turnaround: string;
-  tags: string[];
+  /** What this kind of job usually involves, taken from that service's own list. */
+  involves: string[];
 }
 
-export const portfolioProjects: PortfolioProject[] = [
+export const exampleProjects: ExampleProject[] = [
   {
-    title: "School Management System",
-    category: "Education",
-    summary: "Student records, attendance, grading, and fee tracking in one platform with mobile money integration.",
-    tech: ["React", "Node.js", "PostgreSQL", "EcoCash API"],
-    result: "Cut termly report preparation from days to minutes",
+    title: "Stock and sales system for a shop with more than one branch",
+    path: "build",
+    href: "/web-software",
+    problem: "Stock is counted on paper or in separate spreadsheets, so branches disagree about what is available.",
+    involves: ["Inventory management", "Point of sale and business automation", "Training and handover to staff"],
   },
   {
-    title: "E-Commerce Platform",
-    category: "Retail",
-    summary: "Online storefront with inventory sync, order management, and local payment gateway integration.",
-    tech: ["Next.js", "Stripe", "ZimSwitch", "PostgreSQL"],
-    result: "Doubled online order volume within one quarter",
+    title: "Online store that takes EcoCash",
+    path: "build",
+    href: "/web-software",
+    problem: "A retailer selling in person wants customers to order and pay from their phones.",
+    involves: [
+      "Secure online store",
+      "Payment integration through the business's own merchant account",
+      "Order and inventory management in one place",
+    ],
   },
   {
-    title: "Fleet Management Dashboard",
-    category: "Logistics",
-    summary: "Real-time vehicle tracking, maintenance scheduling, and driver performance reporting.",
-    tech: ["React", "GPS API", "Recharts", "Node.js"],
-    result: "Reduced unscheduled downtime through preventive alerts",
+    title: "Booking system for a service business",
+    path: "build",
+    href: "/web-software",
+    problem: "Appointments are taken by phone and written in a diary, so double bookings happen.",
+    involves: ["Booking and reservation system", "Mobile-friendly customer pages", "Documentation and training"],
   },
   {
-    title: "Corporate Website & Intranet",
-    category: "Corporate",
-    summary: "Public marketing site plus an internal document portal with role-based access.",
-    tech: ["Next.js", "Tailwind CSS", "Django", "PostgreSQL"],
-    result: "Consolidated three separate systems into one",
+    title: "Office Wi-Fi that reaches every room",
+    path: "support",
+    href: "/it-support#networks",
+    problem: "Connections drop in some offices and slow to a crawl when everyone is online.",
+    involves: [
+      "Survey of where the signal drops",
+      "Router and access point configuration",
+      "Labelled, documented cabling",
+    ],
   },
   {
-    title: "Clinic Booking System",
-    category: "Healthcare",
-    summary: "Appointment scheduling, patient records, and automated SMS reminders.",
-    tech: ["React", "Django REST", "SMS Gateway"],
-    result: "Significant drop in missed appointments",
-  },
-  {
-    title: "Inventory & POS System",
-    category: "Retail",
-    summary: "Point-of-sale terminal with live stock levels, supplier tracking, and daily reconciliation.",
-    tech: ["Electron", "SQLite", "Node.js"],
-    result: "Eliminated end-of-day manual stock counts",
-  },
-];
-
-export const repairShowcases: RepairShowcase[] = [
-  {
-    title: "Laptop Overheating & Shutdown",
-    problem: "Machine shutting down under load; fan audibly struggling; heavy dust build-up.",
-    work: "Full internal clean, heat sink service, thermal paste replacement, fan lubrication.",
-    result: "Operating temperatures back within normal range; no further shutdowns.",
-    turnaround: "Same day",
-    tags: ["Cleaning", "Thermal", "Laptop"],
-  },
-  {
-    title: "Cracked Laptop Screen Replacement",
-    problem: "Display physically cracked after a drop; touch input intermittently unresponsive.",
-    work: "Sourced and fitted a matching IPS panel; verified hinge alignment and cable seating.",
-    result: "Full display and input function restored.",
-    turnaround: "48 hours",
-    tags: ["Screen", "Repair", "Laptop"],
-  },
-  {
-    title: "Office Network Rebuild",
-    problem: "Frequent dropouts across a 12-workstation office; unmanaged cabling.",
-    work: "Re-cabled to structured Ethernet, replaced router, configured segmented Wi-Fi.",
-    result: "Stable connectivity across all workstations.",
-    turnaround: "3 days",
-    tags: ["Networking", "Office", "Cabling"],
-  },
-  {
-    title: "Failing Hard Drive Data Migration",
-    problem: "Drive reporting SMART errors; boot times degrading; user data at risk.",
-    work: "Imaged the failing drive, migrated to NVMe SSD, verified data integrity.",
-    result: "No data loss; substantially faster boot and load times.",
-    turnaround: "24 hours",
-    tags: ["Data Recovery", "SSD", "Upgrade"],
+    title: "Laptop that stopped charging after a fall",
+    path: "support",
+    href: "/it-support#repairs",
+    problem: "The machine no longer charges and the owner needs the files on it.",
+    involves: [
+      "Diagnosis and a quote before any work",
+      "Charging port (DC jack) repair",
+      "Data backed up before anything is changed",
+    ],
   },
 ];

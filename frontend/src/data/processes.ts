@@ -1,4 +1,5 @@
 import { engagementSteps } from "@/data/engagementModel";
+import { commitments } from "@/data/commitments";
 
 export interface ProcessPhase {
   title: string;
@@ -45,7 +46,7 @@ export const engagementPhases: ProcessPhase[] = [
 export const repairPhases: ProcessPhase[] = [
   {
     title: "Bring it in, or we come to you",
-    body: "Drop the device at our Graniteside office, or book an on-site visit for office equipment and networks.",
+    body: commitments.intake,
   },
   {
     title: "Free diagnosis",
@@ -68,7 +69,7 @@ export const enquiryPhases: ProcessPhase[] = [
   },
   {
     title: "We reply",
-    body: "A real person responds, typically within one business day.",
+    body: `A real person responds, ${commitments.responseTimeShort}.`,
   },
   {
     title: "We assess",
