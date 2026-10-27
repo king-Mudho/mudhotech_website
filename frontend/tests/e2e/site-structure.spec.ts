@@ -61,8 +61,8 @@ test("the support request form asks for an optional phone number", async ({ page
 
 test("no cookie banner appears when analytics are not configured", async ({ page }) => {
   test.skip(!!process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID, "analytics configured in this environment");
-  await page.goto("/");
-  await page.waitForTimeout(2000);
+  // Wait for hydration: a client-rendered banner would have appeared by then.
+  await page.goto("/", { waitUntil: "networkidle" });
   await expect(page.getByRole("region", { name: "Cookie consent" })).toHaveCount(0);
 });
 

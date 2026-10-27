@@ -7,7 +7,7 @@ import { faq } from "@/data/faq";
 import { roadmap } from "@/data/roadmap";
 import { serviceCommitments, supportChannels } from "@/data/serviceCommitments";
 import { potentialPartners, collaborationAreas } from "@/data/partnerships";
-import { caseStudies, exampleProjects, publishedCaseStudies } from "@/data/portfolio";
+import { caseStudies, exampleProjects, isPublished } from "@/data/portfolio";
 
 describe("blogPosts", () => {
   it("has the 4 starter posts the spec requires", () => {
@@ -170,9 +170,19 @@ describe("supporting content modules", () => {
 });
 
 describe("portfolio", () => {
+  const draftStudy = {
+    slug: "example",
+    title: "Example",
+    client: "A retailer in Harare",
+    sector: "Retail",
+    path: "build",
+    challenge: "Stock counted on paper.",
+    solution: "A shared stock system.",
+  } as const;
+
   it("publishes only case studies the client has agreed to", () => {
-    expect(publishedCaseStudies.every((study) => study.permissionConfirmed)).toBe(true);
-    expect(publishedCaseStudies.length).toBe(caseStudies.filter((study) => study.permissionConfirmed).length);
+    expect(isPublished({ ...draftStudy, permissionConfirmed: false })).toBe(false);
+    expect(isPublished({ ...draftStudy, permissionConfirmed: true })).toBe(true);
   });
 
   it("gives every case study the problem and solution, with local images only", () => {

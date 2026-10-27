@@ -38,7 +38,8 @@ export interface CaseStudy {
 
 export const caseStudies: CaseStudy[] = [];
 
-export const publishedCaseStudies = caseStudies.filter((study) => study.permissionConfirmed);
+/** Use as `caseStudies.filter(isPublished)`: only entries the client has agreed to. */
+export const isPublished = (study: CaseStudy) => study.permissionConfirmed;
 
 export interface ExampleProject {
   title: string;

@@ -7,7 +7,7 @@ import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { ContactCta } from "@/components/marketing/ContactCta";
 import { Button } from "@/components/ui/button";
-import { exampleProjects, publishedCaseStudies } from "@/data/portfolio";
+import { caseStudies, exampleProjects, isPublished } from "@/data/portfolio";
 import { whatsappUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -27,6 +27,8 @@ const pathLabel = { build: "Software development", support: "IT support" } as co
  * illustrative examples. Add case studies in src/data/portfolio.ts.
  */
 export default function PortfolioPage() {
+  const publishedCaseStudies = caseStudies.filter(isPublished);
+
   return (
     <>
       <PageHero
