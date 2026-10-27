@@ -127,9 +127,9 @@
      This replaced framer-motion's whileInView, which server-rendered every
      animated section at opacity 0 and left it invisible until JavaScript
      loaded: on a slow mobile connection, or if a script failed, visitors saw
-     blank sections. Here the content is visible by default; browsers with
-     scroll-driven animations (Chromium) add the fade, others show it as-is,
-     and "reduce motion" switches it off entirely. */
+     blank sections. Here the content is always visible; browsers with
+     scroll-driven animations (Chromium) add a short upward slide, others
+     show it as-is, and "reduce motion" switches it off entirely. */
   @supports (animation-timeline: view()) {
     /* screen only: a printout must never capture a block mid-fade. */
     @media screen and (prefers-reduced-motion: no-preference) {
@@ -169,13 +169,14 @@
   }
 }
 
+/* Movement only, never opacity: a fading block spends part of its entrance
+   as faint text (Lighthouse measured 1.5:1 mid-fade), and anything still
+   waiting to scroll in would sit invisible in screenshots and previews. */
 @keyframes reveal-up {
   from {
-    opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(16px);
   }
   to {
-    opacity: 1;
     transform: none;
   }
 }
