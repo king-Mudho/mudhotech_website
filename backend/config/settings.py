@@ -138,7 +138,8 @@ CORS_ALLOW_CREDENTIALS = True
 # --- DRF ---
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # SimpleJWT plus a check against tokens revoked at logout.
+        "accounts.authentication.RevocableJWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",

@@ -98,3 +98,22 @@ test("signing out restores the login redirect", async ({ page }) => {
   await page.goto("/admin");
   await expect(page).toHaveURL(/\/admin\/login/);
 });
+
+test("signing out revokes the session token, not just the cookie", async ({ page, context }) => {
+  await page.goto("/admin/login");
+  await page.getByLabel("Username").fill(ADMIN_USER);
+  await page.getByLabel("Password").fill(ADMIN_PASSWORD);
+  await page.getByRole("button", { name: /sign in/i }).click();
+  await expect(page.getByRole("heading", { name: "Lead Dashboard" })).toBeVisible();
+
+  // A copy of the cookie, as it might sit on a shared machine or in a log.
+  const session = (await context.cookies()).find((c) => c.name === "mudhotech_admin_session");
+  expect(session).toBeDefined();
+
+  await page.getByRole("button", { name: /sign out/i }).click();
+  await expect(page).toHaveURL(/\/admin\/login/);
+
+  await context.addCookies([session!]);
+  const me = await page.request.get("/api/admin/me");
+  expect(await me.json()).toMatchObject({ isAdmin: false });
+});
