@@ -30,8 +30,10 @@ The app is two services that run side by side. **You need both running** — the
 First time only:
 
 ```bash
-cd backend && python -m venv .venv && .venv/Scripts/python.exe -m pip install -r requirements.txt && .venv/Scripts/python.exe manage.py migrate
+cd backend && cp .env.example .env && python -m venv .venv && .venv/Scripts/python.exe -m pip install -r requirements.txt && .venv/Scripts/python.exe manage.py migrate
 ```
+
+The `.env` copy is required: `DJANGO_DEBUG` defaults to **false**, and with DEBUG off Django refuses to start without a real `DJANGO_SECRET_KEY`. `.env.example` turns DEBUG on for local work.
 
 Every time:
 
@@ -208,14 +210,14 @@ npm --prefix frontend run e2e
 The public endpoints are rate-limited to 10 submissions/hour, which a full e2e run exhausts. Start the backend with raised limits when testing — production keeps the defaults:
 
 ```bash
-THROTTLE_SUBMISSION=500/hour THROTTLE_ANON=500/hour backend/.venv/Scripts/python.exe backend/manage.py runserver 8000
+THROTTLE_SUBMISSION=500/hour THROTTLE_ANON=500/hour THROTTLE_LOGIN=500/hour backend/.venv/Scripts/python.exe backend/manage.py runserver 8000
 ```
 
-A `429` with "Request was throttled" from a form is the limiter doing its job, not a bug.
+A `429` with "Request was throttled" from a form is the limiter doing its job, not a bug. Limits are per visitor IP: the Route Handlers forward it to Django as `X-Forwarded-For` (`src/lib/client-ip.ts`), and Django trusts exactly one proxy hop.
 
 Playwright builds and serves a production bundle itself. Run it against an already-running server with `PLAYWRIGHT_BASE_URL=http://localhost:3000` if you prefer.
 
-Current state: **54 unit/component tests, 13 end-to-end journeys, 15 Django API tests**, zero lint errors, clean typecheck.
+Current state: **91 unit/component tests, 24 end-to-end tests, 30 Django API tests**, zero lint errors, clean typecheck. The same checks (minus e2e) run in GitHub Actions on every push and pull request — see `.github/workflows/ci.yml`.
 
 ---
 
@@ -233,16 +235,11 @@ A development account (`admin` / `DevAdmin123!`) exists in the local SQLite data
 
 ## Deployment
 
-The two services deploy separately.
+Both services run on one AlmaLinux VPS behind nginx: Next.js on `127.0.0.1:3200`, Django/Gunicorn on `127.0.0.1:8200`, SQLite on local disk. Everything — first-time provisioning, TLS, and routine deploys — is scripted in [`deploy/`](deploy/README.md). Deploys are manual (`deploy/deploy.sh` on the server); CI never deploys.
 
-**Frontend → Vercel.** Connect the repo, set the root directory to `frontend`, add the environment variables above, and deploy.
+Production settings live in `backend/.env` and `frontend/.env.production`, created from the `*.env.production.example` files. Django will not start with `DJANGO_DEBUG=false` unless `DJANGO_SECRET_KEY` is a long random value.
 
-**Backend → needs a host that runs long-lived Python processes** (Railway, Render, Fly.io, or a VPS). Vercel cannot host it.
-
-Two things to settle before production:
-
-- **SQLite is a real risk in production.** Many managed hosts have no persistent disk, and SQLite handles concurrent writes poorly. Switching to Postgres is a `DATABASES` settings change plus a migration run — worth doing if the host does not guarantee a persistent volume.
-- **Lock down Django:** set `DJANGO_DEBUG=false`, a strong `DJANGO_SECRET_KEY`, the real domain in `DJANGO_ALLOWED_HOSTS`, and the deployed frontend origin in `CORS_ALLOWED_ORIGINS`.
+Django **must stay bound to loopback**. The rate limits trust the `X-Forwarded-For` that Next.js sends; if port 8200 were reachable from outside, anyone could choose their own IP and bypass them, and the admin API would be exposed without the Next.js layer in front.
 
 ---
 

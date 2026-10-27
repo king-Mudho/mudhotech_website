@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiFetch, ApiClientError } from "@/lib/api/client";
+import { safeAdminRedirect } from "@/lib/auth";
 
 export function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/admin";
+  const redirectTo = safeAdminRedirect(searchParams.get("redirect"));
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -38,13 +39,13 @@ export function AdminLoginForm() {
   };
 
   return (
-    <div className="w-full max-w-sm rounded-2xl bg-card border border-border shadow-xl p-8">
-      <div className="text-center mb-8">
-        <div className="rounded-lg bg-accent/10 p-3 w-fit mx-auto mb-4">
+    <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-xl">
+      <div className="mb-8 text-center">
+        <div className="mx-auto mb-4 w-fit rounded-lg bg-accent/10 p-3">
           <Lock className="h-6 w-6 text-accent" />
         </div>
         <h1 className="font-heading text-2xl font-bold">Admin Sign In</h1>
-        <p className="text-muted-foreground text-sm mt-2">Authorised staff only.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Authorised staff only.</p>
       </div>
 
       <form onSubmit={onSubmit} className="space-y-5">
@@ -71,7 +72,7 @@ export function AdminLoginForm() {
           />
         </div>
 
-        {error && <p className="text-destructive-emphasis text-sm">{error}</p>}
+        {error && <p className="text-sm text-destructive-emphasis">{error}</p>}
 
         <Button type="submit" variant="accent" className="w-full" disabled={submitting}>
           {submitting ? "Signing in…" : "Sign In"}

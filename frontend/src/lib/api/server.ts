@@ -1,4 +1,6 @@
 import "server-only";
+import { headers as incomingHeaders } from "next/headers";
+import { visitorIpFrom } from "@/lib/client-ip";
 
 const INTERNAL_API_URL = process.env.INTERNAL_API_URL ?? "http://localhost:8000";
 
@@ -17,6 +19,15 @@ interface DjangoFetchOptions extends RequestInit {
   token?: string;
 }
 
+async function currentVisitorIp(): Promise<string | null> {
+  try {
+    return visitorIpFrom(await incomingHeaders());
+  } catch {
+    // Called outside a request scope (build time, scripts): nothing to forward.
+    return null;
+  }
+}
+
 /**
  * Server-only call into the Django API. Every Next.js Route Handler goes
  * through this, and Route Handlers are the only public entry point — the
@@ -25,12 +36,15 @@ interface DjangoFetchOptions extends RequestInit {
  */
 export async function djangoFetch<T>(path: string, options: DjangoFetchOptions = {}): Promise<T> {
   const { token, headers, ...rest } = options;
+  // Django's rate limits key on this (see src/lib/client-ip.ts).
+  const visitorIp = await currentVisitorIp();
 
   const res = await fetch(`${INTERNAL_API_URL}${path}`, {
     ...rest,
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(visitorIp ? { "X-Forwarded-For": visitorIp } : {}),
       ...headers,
     },
     cache: "no-store",

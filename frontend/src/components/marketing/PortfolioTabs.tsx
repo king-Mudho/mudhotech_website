@@ -59,7 +59,7 @@ export function PortfolioTabs() {
   return (
     <div className="mx-auto max-w-6xl">
       <FilterChips options={galleryCategories} active={galleryCategory} onChange={setGalleryCategory} />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="gallery-grid">
         {filteredGallery.map((image) => (
           <SkeletonImage
             key={image.src}

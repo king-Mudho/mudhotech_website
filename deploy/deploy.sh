@@ -45,10 +45,21 @@ log "Database migrations"
 # Back up first. SQLite is a single file, so a copy is a complete snapshot —
 # and this is the only thing standing between a bad migration and every lead
 # the business has captured.
+#
+# sqlite3's online backup API, not `cp`: the API is still serving requests
+# at this point, and a plain copy taken mid-write can be a corrupt file.
 if [[ -f backend/db.sqlite3 ]]; then
   backup="backend/db.sqlite3.$(date +%Y%m%d-%H%M%S).bak"
-  sudo -u "$APP_USER" cp backend/db.sqlite3 "$backup"
+  sudo -u "$APP_USER" "$APP_ROOT/backend/.venv/bin/python" -c '
+import sqlite3, sys
+src, dst = sqlite3.connect(sys.argv[1]), sqlite3.connect(sys.argv[2])
+with dst:
+    src.backup(dst)
+' backend/db.sqlite3 "$backup"
   echo "  Backed up to $backup"
+  # Keep the newest 20. Every deploy adds one and nothing removed them, so
+  # the disk shared with the other sites on this box slowly filled up.
+  ls -1t backend/db.sqlite3.*.bak 2>/dev/null | tail -n +21 | xargs -r rm -f --
 fi
 # NOT `set -a && . ./.env`: sourcing the file through bash breaks on any
 # value containing spaces or angle brackets, and
@@ -62,8 +73,13 @@ log "Frontend dependencies"
 # `npm ci` not `npm install`: it installs exactly what package-lock.json
 # pins, so a deploy cannot silently pull a newer transitive dependency than
 # the one the tests ran against.
-sudo -u "$APP_USER" npm --prefix frontend ci --omit=dev --silent || \
-  sudo -u "$APP_USER" npm --prefix frontend ci --silent
+#
+# Dev dependencies are required: `next build` needs typescript, tailwindcss,
+# postcss and autoprefixer, which are all devDependencies. The old
+# `--omit=dev` attempt only worked because husky's prepare script failed
+# without them and tripped the fallback. HUSKY=0 skips git-hook setup,
+# which is meaningless on the server.
+sudo -u "$APP_USER" HUSKY=0 npm --prefix frontend ci --silent
 
 log "Building"
 sudo -u "$APP_USER" npm --prefix frontend run build

@@ -18,6 +18,7 @@ WEBROOT=/var/www/certbot
 EMAIL="${CERTBOT_EMAIL:-}"
 
 log() { printf '\n\033[1;34m==>\033[0m %s\n' "$1"; }
+die() { printf '\n\033[1;31m!!\033[0m %s\n' "$1"; exit 1; }
 
 [[ $EUID -eq 0 ]] || { echo "Run as root."; exit 1; }
 

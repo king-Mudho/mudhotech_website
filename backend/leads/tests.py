@@ -1,8 +1,13 @@
 """API tests for the submission and admin surfaces (docs/12-testing-plan.md).
 Run with: python manage.py test"""
 
+from datetime import timedelta
+from unittest import mock
+
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.test import TestCase
+from django.utils import timezone
 from rest_framework.test import APIClient
 
 from accounts.models import AdminNotificationPreference
@@ -12,6 +17,9 @@ from .models import ContactSubmission, NewsletterSubscriber, QuoteRequest
 
 class PublicSubmissionTests(TestCase):
     def setUp(self):
+        # Throttle counters live in a shared file cache; reset so tests and
+        # repeated runs don't eat into each other's budget.
+        cache.clear()
         self.client = APIClient()
 
     def test_valid_contact_submission_creates_row(self):
@@ -96,6 +104,7 @@ class PublicSubmissionTests(TestCase):
 
 class AdminAccessTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.client = APIClient()
         User = get_user_model()
         self.admin = User.objects.create_user("admin", "admin@example.com", "pw12345!", is_staff=True)
@@ -167,3 +176,138 @@ class AdminAccessTests(TestCase):
         response = self.client.get("/api/admin/notification-preferences/")
         self.assertFalse(response.json()["new_contact"])
         self.assertTrue(response.json()["new_quote"])
+
+
+class SubmissionThrottleTests(TestCase):
+    """Every request reaches Django from the Next.js server, so the limit has
+    to key on the forwarded visitor IP rather than on REMOTE_ADDR."""
+
+    def setUp(self):
+        cache.clear()
+        self.client = APIClient()
+
+    def _subscribe(self, n: int, forwarded_for: str):
+        return self.client.post(
+            "/api/newsletter/", {"email": f"reader{n}@example.com"}, format="json", HTTP_X_FORWARDED_FOR=forwarded_for
+        )
+
+    def test_limit_applies_per_forwarded_ip(self):
+        for n in range(10):
+            self.assertEqual(self._subscribe(n, "198.51.100.7").status_code, 201)
+        self.assertEqual(self._subscribe(10, "198.51.100.7").status_code, 429)
+
+        # A different visitor behind the same Next.js server is unaffected.
+        self.assertEqual(self._subscribe(11, "203.0.113.9").status_code, 201)
+
+    def test_spoofed_left_hand_hops_do_not_mint_fresh_buckets(self):
+        for n in range(10):
+            self._subscribe(n, f"10.0.0.{n}, 198.51.100.7")
+        self.assertEqual(self._subscribe(10, "10.0.0.99, 198.51.100.7").status_code, 429)
+
+
+class AdminInputValidationTests(TestCase):
+    """Malformed admin input must be a 400, not an unhandled 500."""
+
+    def setUp(self):
+        cache.clear()
+        self.client = APIClient()
+        admin = get_user_model().objects.create_user("admin", "admin@example.com", "pw12345!", is_staff=True)
+        self.client.force_authenticate(admin)
+        self.submission = ContactSubmission.objects.create(
+            name="Existing", email="existing@example.com", subject="Hi", message="Hello there."
+        )
+
+    def test_unknown_type_is_rejected(self):
+        self.assertEqual(self.client.get("/api/admin/submissions/?type=bogus").status_code, 400)
+        response = self.client.patch(
+            f"/api/admin/submissions/{self.submission.pk}/?type=bogus", {"status": "read"}, format="json"
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_malformed_date_is_rejected(self):
+        self.assertEqual(self.client.get("/api/admin/submissions/?type=contact&from=yesterday").status_code, 400)
+        self.assertEqual(self.client.get("/api/admin/submissions/?type=contact&to=2026-02-30").status_code, 400)
+
+    def test_to_date_includes_the_whole_day(self):
+        today = timezone.now().date().isoformat()
+        response = self.client.get(f"/api/admin/submissions/?type=contact&from={today}&to={today}")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["total"], 1)
+
+        yesterday = (timezone.now() - timedelta(days=1)).date().isoformat()
+        response = self.client.get(f"/api/admin/submissions/?type=contact&to={yesterday}")
+        self.assertEqual(response.json()["total"], 0)
+
+    def test_bulk_rejects_non_integer_ids(self):
+        for ids in (["abc"], "1,2", [True], []):
+            response = self.client.post(
+                "/api/admin/submissions/bulk/", {"ids": ids, "action": "markRead", "type": "contact"}, format="json"
+            )
+            self.assertEqual(response.status_code, 400, ids)
+
+    def test_bulk_updates_valid_ids(self):
+        response = self.client.post(
+            "/api/admin/submissions/bulk/",
+            {"ids": [self.submission.pk], "action": "markRead", "type": "contact"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["affected"], 1)
+
+    def test_analytics_clamps_out_of_range_days(self):
+        response = self.client.get("/api/admin/analytics/?days=99999999999")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["range_days"], 366)
+
+    def test_analytics_groups_by_day(self):
+        response = self.client.get("/api/admin/analytics/?days=7")
+        self.assertEqual(response.json()["contacts_daily"], {timezone.now().date().isoformat(): 1})
+
+
+class AdminReplyTests(TestCase):
+    def setUp(self):
+        cache.clear()
+        self.client = APIClient()
+        admin = get_user_model().objects.create_user("admin", "admin@example.com", "pw12345!", is_staff=True)
+        self.client.force_authenticate(admin)
+        self.submission = ContactSubmission.objects.create(
+            name="Lead", email="lead@example.com", subject="Hi", message="Hello there."
+        )
+
+    def _reply(self, **overrides):
+        payload = {
+            "to": "lead@example.com",
+            "subject": "Re: Hi",
+            "message": "Thanks for getting in touch.",
+            "submissionType": "contact",
+            "submissionId": self.submission.pk,
+        }
+        payload.update(overrides)
+        return self.client.post("/api/admin/reply/", payload, format="json")
+
+    @mock.patch("leads.admin_views.send_reply", return_value=True)
+    def test_successful_reply_marks_submission_replied(self, send):
+        self.assertEqual(self._reply().status_code, 200)
+        send.assert_called_once()
+        self.submission.refresh_from_db()
+        self.assertEqual(self.submission.status, "replied")
+
+    @mock.patch("leads.admin_views.send_reply", return_value=False)
+    def test_failed_send_is_reported_and_status_unchanged(self, _send):
+        self.assertEqual(self._reply().status_code, 502)
+        self.submission.refresh_from_db()
+        self.assertEqual(self.submission.status, "new")
+
+    @mock.patch("leads.admin_views.send_reply", return_value=True)
+    def test_invalid_input_is_rejected_without_sending(self, send):
+        cases = [
+            {"to": "not-an-email"},
+            {"subject": "Line one\nBcc: victim@example.com"},
+            {"subject": "x" * 201},
+            {"submissionType": "bogus"},
+            {"submissionId": "1; DROP TABLE"},
+        ]
+        for case in cases:
+            self.assertEqual(self._reply(**case).status_code, 400, case)
+        self.assertEqual(self._reply(submissionId=999999).status_code, 404)
+        send.assert_not_called()
