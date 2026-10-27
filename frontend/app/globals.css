@@ -42,7 +42,7 @@
     /* Brighter than --accent: that one is tuned for AA on light backgrounds,
        which is too dark to read over the navy hero overlay. */
     --hero-accent: 211 100% 66%;
-    --whatsapp: 142 70% 45%;
+    --whatsapp: 142 70% 30%;
     --whatsapp-foreground: 0 0% 100%;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -78,7 +78,7 @@
     --hero: 218 74% 6%;
     --hero-foreground: 0 0% 100%;
     --hero-accent: 211 100% 66%;
-    --whatsapp: 142 70% 45%;
+    --whatsapp: 142 70% 30%;
     --whatsapp-foreground: 0 0% 100%;
     --sidebar-background: 220 40% 8%;
     --sidebar-foreground: 220 15% 90%;
@@ -96,14 +96,18 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    @apply bg-background font-body text-foreground antialiased;
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-heading;
   }
 
   /* Honour the OS "reduce motion" preference for CSS-driven animation.
-     Framer Motion is handled separately via <MotionConfig reducedMotion="user">.
      Animations are neutralised rather than removed so anything that relies on
      an animation to become visible still ends up visible. */
   @media (prefers-reduced-motion: reduce) {
@@ -119,6 +123,23 @@
 }
 
 @layer utilities {
+  /* Scroll-in entrance for below-the-fold blocks, in CSS only.
+     This replaced framer-motion's whileInView, which server-rendered every
+     animated section at opacity 0 and left it invisible until JavaScript
+     loaded: on a slow mobile connection, or if a script failed, visitors saw
+     blank sections. Here the content is always visible; browsers with
+     scroll-driven animations (Chromium) add a short upward slide, others
+     show it as-is, and "reduce motion" switches it off entirely. */
+  @supports (animation-timeline: view()) {
+    /* screen only: a printout must never capture a block mid-fade. */
+    @media screen and (prefers-reduced-motion: no-preference) {
+      .reveal {
+        animation: reveal-up linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 30%;
+      }
+    }
+  }
   .section-padding {
     @apply py-20 md:py-28;
   }
@@ -129,21 +150,33 @@
 
 @layer components {
   .prose-custom h2 {
-    @apply font-heading text-xl font-bold text-foreground mt-10 mb-3;
+    @apply mb-3 mt-10 font-heading text-xl font-bold text-foreground;
   }
   .prose-custom h3 {
-    @apply font-heading text-lg font-semibold text-foreground mt-6 mb-2;
+    @apply mb-2 mt-6 font-heading text-lg font-semibold text-foreground;
   }
   .prose-custom p {
-    @apply text-muted-foreground text-sm leading-relaxed mb-4;
+    @apply mb-4 text-sm leading-relaxed text-muted-foreground;
   }
   .prose-custom ul {
-    @apply list-disc list-inside text-muted-foreground text-sm leading-relaxed mb-4 space-y-1;
+    @apply mb-4 list-inside list-disc space-y-1 text-sm leading-relaxed text-muted-foreground;
   }
   .prose-custom a {
     @apply text-accent hover:underline;
   }
   .prose-custom strong {
-    @apply text-foreground font-semibold;
+    @apply font-semibold text-foreground;
+  }
+}
+
+/* Movement only, never opacity: a fading block spends part of its entrance
+   as faint text (Lighthouse measured 1.5:1 mid-fade), and anything still
+   waiting to scroll in would sit invisible in screenshots and previews. */
+@keyframes reveal-up {
+  from {
+    transform: translateY(16px);
+  }
+  to {
+    transform: none;
   }
 }

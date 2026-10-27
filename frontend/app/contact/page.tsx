@@ -8,6 +8,7 @@ import { ContactForm } from "@/components/forms/ContactForm";
 import { ProcessSteps } from "@/components/marketing/ProcessSteps";
 import { enquiryPhases } from "@/data/processes";
 import { company } from "@/data/company";
+import { commitments } from "@/data/commitments";
 import { telHref, mailtoHref, whatsappUrl, WHATSAPP_GREETING } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -63,7 +64,7 @@ export default function ContactPage() {
       />
 
       <Section>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+        <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {contactCards.map(({ icon: Icon, label, value, hint, href }) => (
             <a
               key={label}
@@ -87,8 +88,8 @@ export default function ContactPage() {
           ))}
         </div>
 
-        <div className="max-w-3xl mx-auto mt-10 rounded-2xl bg-card border border-border p-6">
-          <h2 className="font-heading font-semibold text-lg mb-3">Business Hours</h2>
+        <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-border bg-card p-6">
+          <h2 className="mb-3 font-heading text-lg font-semibold">Business Hours</h2>
           <ul className="space-y-1 text-sm text-muted-foreground">
             <li>{company.hours.weekdays}</li>
             <li>{company.hours.saturday}</li>
@@ -107,10 +108,10 @@ export default function ContactPage() {
       </div>
 
       <Section muted>
-        <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">Send Us a Message</h2>
-            <p className="text-muted-foreground">We typically respond within one business day.</p>
+        <div className="mx-auto max-w-2xl">
+          <div className="mb-10 text-center">
+            <h2 className="mb-4 font-heading text-3xl font-bold md:text-4xl">Send Us a Message</h2>
+            <p className="text-muted-foreground">{commitments.responseTime}</p>
           </div>
           <ContactForm />
         </div>

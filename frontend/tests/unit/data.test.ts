@@ -1,13 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { blogPosts } from "@/data/blogPosts";
-import { softwareServices, devServices, hardwareServices, galleryImages } from "@/data/services";
+import { softwareServices, devServices, hardwareServices, supportGroups } from "@/data/services";
 import { company } from "@/data/company";
 import { engagementSteps } from "@/data/engagementModel";
 import { faq } from "@/data/faq";
 import { roadmap } from "@/data/roadmap";
 import { serviceCommitments, supportChannels } from "@/data/serviceCommitments";
 import { potentialPartners, collaborationAreas } from "@/data/partnerships";
-import { portfolioProjects, repairShowcases } from "@/data/portfolio";
+import { caseStudies, exampleProjects, isPublished } from "@/data/portfolio";
 
 describe("blogPosts", () => {
   it("has the 4 starter posts the spec requires", () => {
@@ -37,9 +37,33 @@ describe("blogPosts", () => {
 
 describe("services", () => {
   it("has the category counts the spec requires", () => {
-    expect(softwareServices).toHaveLength(5);
-    expect(devServices).toHaveLength(4);
+    expect(softwareServices).toHaveLength(6);
+    expect(devServices).toHaveLength(3);
     expect(hardwareServices).toHaveLength(6);
+  });
+
+  it("lists every support service exactly once on /it-support", () => {
+    const grouped = supportGroups.flatMap((group) => group.services.map((service) => service.title));
+    const support = [...softwareServices, ...hardwareServices].map((service) => service.title);
+    expect([...grouped].sort()).toEqual([...support].sort());
+  });
+
+  it("keeps setup and support work off the development page", () => {
+    // /web-software is the build path; installation, repairs and
+    // troubleshooting belong to /it-support.
+    const support = new Set([...softwareServices, ...hardwareServices].map((service) => service.title));
+    for (const service of devServices) expect(support.has(service.title)).toBe(false);
+  });
+
+  it("caveats every payment integration claim", () => {
+    // Merchant accounts, fees, and provider eligibility are the client's,
+    // not ours; Stripe does not onboard Zimbabwe-registered businesses.
+    for (const service of [...devServices, ...softwareServices, ...hardwareServices]) {
+      const mentionsPayments = [...service.items, ...(service.worksWith ?? [])].some((text) =>
+        /ecocash|zimswitch|stripe|card payment/i.test(text),
+      );
+      if (mentionsPayments) expect(service.note).toMatch(/merchant account/i);
+    }
   });
 
   it("gives every category at least one item and a description", () => {
@@ -80,13 +104,6 @@ describe("services", () => {
       const items = category.items.map((i) => i.toLowerCase());
       const duplicated = category.worksWith.filter((tool) => items.includes(tool.toLowerCase()));
       expect(duplicated).toEqual([]);
-    }
-  });
-
-  it("tags every gallery image with a category and alt text", () => {
-    for (const image of galleryImages) {
-      expect(image.alt.length).toBeGreaterThan(0);
-      expect(image.category.length).toBeGreaterThan(0);
     }
   });
 });
@@ -153,19 +170,38 @@ describe("supporting content modules", () => {
 });
 
 describe("portfolio", () => {
-  it("gives every project tech chips and a measurable result", () => {
-    for (const project of portfolioProjects) {
-      expect(project.tech.length).toBeGreaterThan(0);
-      expect(project.result.length).toBeGreaterThan(0);
+  const draftStudy = {
+    slug: "example",
+    title: "Example",
+    client: "A retailer in Harare",
+    sector: "Retail",
+    path: "build",
+    challenge: "Stock counted on paper.",
+    solution: "A shared stock system.",
+  } as const;
+
+  it("publishes only case studies the client has agreed to", () => {
+    expect(isPublished({ ...draftStudy, permissionConfirmed: false })).toBe(false);
+    expect(isPublished({ ...draftStudy, permissionConfirmed: true })).toBe(true);
+  });
+
+  it("gives every case study the problem and solution, with local images only", () => {
+    for (const study of caseStudies) {
+      expect(study.challenge.length).toBeGreaterThan(0);
+      expect(study.solution.length).toBeGreaterThan(0);
+      for (const image of study.images ?? []) expect(image.src.startsWith("/images/")).toBe(true);
     }
   });
 
-  it("gives every repair showcase the problem/work/result/turnaround set", () => {
-    for (const repair of repairShowcases) {
-      expect(repair.problem.length).toBeGreaterThan(0);
-      expect(repair.work.length).toBeGreaterThan(0);
-      expect(repair.result.length).toBeGreaterThan(0);
-      expect(repair.turnaround.length).toBeGreaterThan(0);
+  it("keeps illustrative examples free of outcomes and figures", () => {
+    // They are labelled "Illustrative example" on the page; a number or a
+    // result would turn them back into an unverified claim.
+    for (const example of exampleProjects) {
+      expect(example.involves.length).toBeGreaterThan(0);
+      expect(`${example.title} ${example.problem} ${example.involves.join(" ")}`).not.toMatch(
+        /\d+%|\bdoubled\b|\btripled\b|\bcut\b/i,
+      );
+      expect(example.href.startsWith("/web-software") || example.href.startsWith("/it-support")).toBe(true);
     }
   });
 });

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MessageCircle, Phone } from "lucide-react";
 import { ServiceJsonLd, FaqJsonLd } from "@/components/seo/JsonLd";
 import { FAQ } from "@/components/marketing/FAQ";
 import { supportFaq } from "@/data/faq";
@@ -8,67 +9,95 @@ import { SectionHeading } from "@/components/layout/SectionHeading";
 import { SectionBreak } from "@/components/layout/SectionBreak";
 import { ServiceCard } from "@/components/marketing/ServiceCard";
 import { ProcessSteps } from "@/components/marketing/ProcessSteps";
-import { ContactCta } from "@/components/marketing/ContactCta";
+import { SoftwareServiceForm } from "@/components/forms/SoftwareServiceForm";
+import { Button } from "@/components/ui/button";
 import { repairPhases } from "@/data/processes";
-import { hardwareServices } from "@/data/services";
+import { supportGroups } from "@/data/services";
+import { company } from "@/data/company";
+import { commitments } from "@/data/commitments";
+import { telHref, whatsappUrl } from "@/lib/whatsapp";
+
+const description =
+  "Laptop and desktop repairs and upgrades, networking and Wi-Fi, printer and device setup, and software installation and troubleshooting, from our Harare office or on site.";
 
 export const metadata: Metadata = {
-  title: "IT Support & Hardware Services",
-  description:
-    "Hardware installation and upgrades, laptop and desktop repairs, preventive maintenance, networking, peripheral setup, and advanced hardware support.",
+  title: "IT Support, Repairs & Software Setup",
+  description,
   alternates: { canonical: "/it-support" },
 };
 
+/**
+ * The "keep technology working" path: every repair, network, and software
+ * setup service, in three groups. Software setup moved here from
+ * /web-software, so that page can be about building software.
+ */
 export default function ITSupportPage() {
   return (
     <>
-      <ServiceJsonLd
-        name="IT Support & Hardware Services"
-        description="Hardware installation and upgrades, laptop and desktop repairs, preventive maintenance, networking, and peripheral setup."
-        path="/it-support"
-      />
+      <ServiceJsonLd name="IT Support, Repairs & Software Setup" description={description} path="/it-support" />
       <FaqJsonLd items={supportFaq} />
 
       <PageHero
         crumbs={[{ name: "IT Support" }]}
         eyebrow="IT Support"
-        title="Hardware & Networking Support"
-        lead="We keep your systems running — fast, secure, and smooth. Repairs, upgrades, maintenance, and networking."
+        title="IT Support, Repairs & Software Setup"
+        lead="Computers repaired, networks fixed, and software set up properly — for a single laptop or a whole office."
         hueShift={14}
-      />
+      >
+        <nav aria-label="On this page" className="mt-8">
+          <ul className="flex flex-wrap justify-center gap-2">
+            {supportGroups.map((group) => (
+              <li key={group.id}>
+                <a
+                  href={`#${group.id}`}
+                  className="inline-flex rounded-full border border-border bg-card/90 px-4 py-2 text-sm font-semibold text-foreground shadow-sm transition-colors hover:border-accent/40 hover:text-accent"
+                >
+                  {group.title}
+                </a>
+              </li>
+            ))}
+            <li>
+              <a
+                href="#request-support"
+                className="inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground shadow-sm transition-colors hover:bg-accent/90"
+              >
+                Request support
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </PageHero>
 
-      <Section>
-        {/* Each card is an h3; without this h2 the page jumped straight from
-            the h1 to h3, which reads as a missing level to assistive tech. */}
-        <SectionHeading
-          eyebrow="What We Cover"
-          title="Hardware & Networking Services"
-          lead="Installation, repair, maintenance, and connectivity — for a single laptop or a whole office."
-        />
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {hardwareServices.map((service) => (
-            <ServiceCard
-              key={service.title}
-              icon={service.icon}
-              title={service.title}
-              description={service.description}
-              detail={service.detail}
-              items={service.items}
-              worksWith={service.worksWith}
-              bestFor={service.bestFor}
-              image={service.image}
-              turnaround={service.turnaround}
-            />
-          ))}
-        </div>
-      </Section>
+      {supportGroups.map((group, i) => (
+        <Section key={group.id} id={group.id} muted={i % 2 === 1} className="scroll-mt-20">
+          <SectionHeading eyebrow={`${i + 1} of ${supportGroups.length}`} title={group.title} lead={group.lead} />
+          <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {group.services.map((service) => (
+              <ServiceCard
+                key={service.title}
+                icon={service.icon}
+                title={service.title}
+                description={service.description}
+                detail={service.detail}
+                items={service.items}
+                worksWith={service.worksWith}
+                bestFor={service.bestFor}
+                image={service.image}
+                turnaround={service.turnaround}
+                note={service.note}
+                className="reveal"
+              />
+            ))}
+          </div>
+        </Section>
+      ))}
 
       <div className="container mx-auto px-4">
         <SectionBreak
           src="/images/section-repairs.jpg"
           alt="Technician repairing computer hardware"
           title="Diagnosed Properly, Fixed Once"
-          subtitle="Free diagnostics before any repair work begins."
+          subtitle={commitments.freeAssessment}
         />
       </div>
 
@@ -80,13 +109,50 @@ export default function ITSupportPage() {
         link={null}
       />
 
-      <FAQ items={supportFaq} title="Repair & Support Questions" lead="What people usually ask before they bring a device in." />
-
-      <ContactCta
-        title="Need something fixed?"
-        lead="Tell us what's wrong and we'll diagnose it — no charge for the assessment. WhatsApp a photo of the problem to get started faster."
-        action={{ href: "/contact", label: "Get in Touch" }}
+      <FAQ
+        items={supportFaq}
+        title="Repair & Support Questions"
+        lead="What people usually ask before they bring a device in."
       />
+
+      <Section id="request-support" className="scroll-mt-20">
+        <div className="mx-auto grid max-w-5xl gap-10 lg:grid-cols-[1fr_1.4fr]">
+          <div>
+            <SectionHeading
+              eyebrow="Get Help"
+              title="Request Support"
+              lead={`Tell us what is wrong and which device or system it affects. ${commitments.responseTime}`}
+              align="left"
+              className="mb-6"
+            />
+            <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+              Faster on your phone? Send a photo of the problem on WhatsApp, or call during office hours —{" "}
+              {company.hours.weekdays}.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+              <Button asChild variant="whatsapp" size="lg">
+                <a
+                  href={whatsappUrl("Hello MudhoTech, I need IT support with: ")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                  WhatsApp {company.contact.whatsapp}
+                </a>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <a href={telHref()}>
+                  <Phone className="h-4 w-4" aria-hidden="true" />
+                  Call {company.contact.phone}
+                </a>
+              </Button>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+            <SoftwareServiceForm />
+          </div>
+        </div>
+      </Section>
     </>
   );
 }

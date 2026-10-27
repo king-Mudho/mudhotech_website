@@ -1,27 +1,18 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { HomeHero } from "@/components/marketing/HomeHero";
-import { ServiceCategoryCards } from "@/components/marketing/ServiceCategoryCards";
-import { WorksWith } from "@/components/marketing/WorksWith";
 import { ContactCta } from "@/components/marketing/ContactCta";
 import { NeedsFinder } from "@/components/marketing/NeedsFinder";
-
-// Below-the-fold and framer-motion/embla-heavy — deferred so they don't
-// compete with the hero for main-thread time during the LCP window.
-const WhyMudhoTech = dynamic(() => import("@/components/marketing/WhyMudhoTech").then((m) => m.WhyMudhoTech));
-const FAQ = dynamic(() => import("@/components/marketing/FAQ").then((m) => m.FAQ));
-const ProcessSteps = dynamic(() => import("@/components/marketing/ProcessSteps").then((m) => m.ProcessSteps));
-const IndustriesServed = dynamic(() =>
-  import("@/components/marketing/IndustriesServed").then((m) => m.IndustriesServed),
-);
-import { Section } from "@/components/layout/Section";
-import { SectionHeading } from "@/components/layout/SectionHeading";
+import { WhyMudhoTech } from "@/components/marketing/WhyMudhoTech";
+import { FAQ } from "@/components/marketing/FAQ";
+import { ProcessSteps } from "@/components/marketing/ProcessSteps";
+import { IndustriesServed } from "@/components/marketing/IndustriesServed";
 import { OrganizationJsonLd, LocalBusinessJsonLd, WebSiteJsonLd, FaqJsonLd } from "@/components/seo/JsonLd";
-import { company } from "@/data/company";
 
 export const metadata: Metadata = {
-  title: "Innovative Digital Solutions & Reliable IT Support",
-  description: company.about,
+  // Absolute: names the services and the city, which the layout's default doesn't.
+  title: { absolute: "Software Development & IT Support in Harare | MudhoTech Solutions" },
+  description:
+    "MudhoTech Solutions builds websites, business systems, and mobile apps, and provides IT support, computer repairs, and networking for organizations across Zimbabwe, from Harare.",
   alternates: { canonical: "/" },
 };
 
@@ -38,24 +29,11 @@ export default function Home() {
       <HomeHero />
       <NeedsFinder />
 
-      <Section muted>
-        <div className="mx-auto max-w-3xl text-center">
-          <SectionHeading eyebrow="Who We Are" title={company.shortName} className="mb-6" />
-          <p className="mb-4 leading-relaxed text-muted-foreground">{company.about}</p>
-          <p className="leading-relaxed text-muted-foreground">{company.closingStatement}</p>
-        </div>
-      </Section>
-
-      {/* TrustedPartners and Testimonials are deliberately not rendered.
-          Both are placeholder content — six invented client logos (one of
-          them Harare City Council, a real government body) and four
-          testimonials attributed to named individuals who do not exist.
-          On a live domain those read as genuine endorsements. The
-          components and their data are still in the repo; restore these two
-          lines once there is real, attributable content to put in them.
-          See docs/OPEN-QUESTIONS.md #4. */}
-      <ServiceCategoryCards />
-      <WorksWith />
+      {/* "Who We Are" and the four "Our Services" photo cards were removed:
+          both restated what the hero's two paths and the problem cards above
+          already say. TrustedPartners and Testimonials stay unrendered — they
+          hold invented logos and testimonials (see docs/OPEN-QUESTIONS.md #4);
+          restore them only with real, attributable content. */}
       <WhyMudhoTech />
       <ProcessSteps />
       <IndustriesServed />

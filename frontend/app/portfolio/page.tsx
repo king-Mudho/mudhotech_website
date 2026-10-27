@@ -1,51 +1,170 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, FileSearch, MessageCircle } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
-import { SectionBreak } from "@/components/layout/SectionBreak";
-import { PortfolioTabs } from "@/components/marketing/PortfolioTabs";
 import { ContactCta } from "@/components/marketing/ContactCta";
+import { Button } from "@/components/ui/button";
+import { caseStudies, exampleProjects, isPublished } from "@/data/portfolio";
+import { whatsappUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
-  title: "Portfolio",
+  title: "Our Work",
   description:
-    "Selected software projects, hardware repair case studies, and device gallery from MudhoTech Solutions.",
+    "How MudhoTech Solutions presents its work: client case studies published with permission, and the kinds of software and IT support projects we take on.",
   alternates: { canonical: "/portfolio" },
 };
 
+const pathLabel = { build: "Software development", support: "IT support" } as const;
+
+/**
+ * This page used to be a filterable gallery of thirty hot-linked Unsplash
+ * photos under "Projects, Repairs & Gallery … software we've delivered,
+ * hardware we've brought back", which read as MudhoTech's own work. It now
+ * shows only real case studies (none published yet) and clearly labelled
+ * illustrative examples. Add case studies in src/data/portfolio.ts.
+ */
 export default function PortfolioPage() {
+  const publishedCaseStudies = caseStudies.filter(isPublished);
+
   return (
     <>
       <PageHero
-        crumbs={[{ name: "Portfolio" }]}
+        crumbs={[{ name: "Our Work" }]}
         eyebrow="Our Work"
-        title="Portfolio"
-        lead="The devices and systems we work on day to day. Written case studies and client references are available on request."
+        title="Our Work"
+        lead="Client work is published here only with the client's permission. Until then, ask us for examples and references that match your project."
         hueShift={-20}
       />
 
       <Section>
         <SectionHeading
-          eyebrow="Selected Work"
-          title="Projects, Repairs & Gallery"
-          lead="Browse by what you need: software we've delivered, hardware we've brought back, or the kit we work on."
+          eyebrow="Case Studies"
+          title="Client Projects"
+          lead="Each case study states the problem, what we did, and an outcome the client has confirmed."
         />
-        <PortfolioTabs />
+
+        {publishedCaseStudies.length > 0 ? (
+          <ul className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2">
+            {publishedCaseStudies.map((study) => (
+              <li
+                key={study.slug}
+                className="reveal overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
+              >
+                {study.images?.[0] && (
+                  <div className="relative aspect-[16/9]">
+                    <Image
+                      src={study.images[0].src}
+                      alt={study.images[0].alt}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                <div className="p-6">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-accent">
+                    {pathLabel[study.path]} · {study.sector}
+                    {study.year ? ` · ${study.year}` : ""}
+                  </p>
+                  <h3 className="mb-1 font-heading text-xl font-semibold">{study.title}</h3>
+                  <p className="mb-4 text-sm text-muted-foreground">{study.client}</p>
+                  <dl className="space-y-3 text-sm leading-relaxed">
+                    <div>
+                      <dt className="font-semibold text-foreground">The problem</dt>
+                      <dd className="text-muted-foreground">{study.challenge}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-semibold text-foreground">What we did</dt>
+                      <dd className="text-muted-foreground">{study.solution}</dd>
+                    </div>
+                    {study.outcome && (
+                      <div>
+                        <dt className="font-semibold text-foreground">Outcome</dt>
+                        <dd className="text-muted-foreground">{study.outcome}</dd>
+                      </div>
+                    )}
+                  </dl>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="mx-auto max-w-2xl rounded-2xl border border-dashed border-border bg-secondary/40 p-8 text-center">
+            <span className="mx-auto mb-4 inline-flex rounded-xl bg-accent/10 p-3">
+              <FileSearch className="h-6 w-6 text-accent" aria-hidden="true" />
+            </span>
+            <h3 className="mb-2 font-heading text-lg font-semibold">No case studies published yet</h3>
+            <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
+              We only publish client work when the client has agreed to it. If you would like to see work similar to
+              yours, or speak to someone we have worked with, ask and we will share what we can.
+            </p>
+            <div className="flex flex-col justify-center gap-3 sm:flex-row">
+              <Button asChild variant="accent">
+                <Link href="/contact">
+                  Ask for examples
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline">
+                <a
+                  href={whatsappUrl("Hello MudhoTech, could you share examples of work similar to my project?")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                  Ask on WhatsApp
+                </a>
+              </Button>
+            </div>
+          </div>
+        )}
       </Section>
 
-      <div className="container mx-auto px-4">
-        <SectionBreak
-          src="/images/section-networking.jpg"
-          alt="Structured network cabling in an office"
-          title="Built to Be Handed Over"
-          subtitle="Documented, supported, and yours — every project ends with training, not a dependency."
+      <Section muted>
+        <SectionHeading
+          eyebrow="Illustrative Examples"
+          title="The Kind of Work We Take On"
+          lead="These describe typical jobs, drawn from our service list. They are not specific client projects and make no claim about results."
         />
-      </div>
+        <ul className="mx-auto grid max-w-6xl gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {exampleProjects.map((example) => (
+            <li
+              key={example.title}
+              className="reveal flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm"
+            >
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                <span className="rounded-full border border-dashed border-muted-foreground/40 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Illustrative example
+                </span>
+                <span className="text-xs font-semibold text-accent">{pathLabel[example.path]}</span>
+              </div>
+              <h3 className="mb-2 font-heading text-lg font-semibold leading-snug">{example.title}</h3>
+              <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{example.problem}</p>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-foreground/70">Usually involves</p>
+              <ul className="mb-5 list-disc space-y-1 pl-5 text-sm text-muted-foreground marker:text-accent">
+                {example.involves.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <Link
+                href={example.href}
+                className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:underline"
+              >
+                About this service<span className="sr-only"> — {example.title}</span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </Section>
 
       <ContactCta
         title="Want to see work like yours?"
-        lead="Written case studies and client references are available on request. Tell us what you are planning and we'll share relevant examples."
-        action={{ href: "/contact", label: "Ask for References" }}
+        lead="Tell us what you are planning and we'll share relevant examples and references where our clients allow it."
+        action={{ href: "/contact", label: "Ask for Examples" }}
       />
     </>
   );

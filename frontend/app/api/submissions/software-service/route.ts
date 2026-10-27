@@ -5,6 +5,7 @@ export async function POST(request: Request) {
   return handleSubmission(request, softwareServiceRequestSchema, "/api/submissions/software-service/", (data) => ({
     name: data.name,
     email: data.email,
+    phone: data.phone || null,
     service_category: data.serviceCategory,
     details: data.details,
   }));

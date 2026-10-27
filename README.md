@@ -217,7 +217,7 @@ A `429` with "Request was throttled" from a form is the limiter doing its job, n
 
 Playwright builds and serves a production bundle itself. Run it against an already-running server with `PLAYWRIGHT_BASE_URL=http://localhost:3000` if you prefer.
 
-Current state: **91 unit/component tests, 24 end-to-end tests, 30 Django API tests**, zero lint errors, clean typecheck. The same checks (minus e2e) run in GitHub Actions on every push and pull request — see `.github/workflows/ci.yml`.
+Current state: **94 unit/component tests, 31 end-to-end tests, 36 Django API tests**, zero lint errors, clean typecheck. The same checks (minus e2e) run in GitHub Actions on every push and pull request — see `.github/workflows/ci.yml`.
 
 ---
 
@@ -244,6 +244,8 @@ Django **must stay bound to loopback**. The rate limits trust the `X-Forwarded-F
 ---
 
 ## Before going live
+
+To change copy, services, contact details, case studies, or blog posts, see [`docs/CONTENT-GUIDE.md`](docs/CONTENT-GUIDE.md). The October 2026 redesign, its measurements, and the deployment plan are in [`docs/REDESIGN-2026-10.md`](docs/REDESIGN-2026-10.md).
 
 Details and the full launch checklist are in [`docs/BUILD-REPORT.md`](docs/BUILD-REPORT.md); the outstanding business decisions are in [`docs/OPEN-QUESTIONS.md`](docs/OPEN-QUESTIONS.md).
 

@@ -12,6 +12,7 @@ import { Field } from "@/components/forms/Field";
 import { FormSuccess } from "@/components/forms/FormSuccess";
 import { HoneypotField } from "@/components/forms/HoneypotField";
 import { apiFetch, ApiClientError } from "@/lib/api/client";
+import { commitments } from "@/data/commitments";
 import { quoteSchema, serviceTypeOptions, type QuoteFormValues } from "@/lib/schemas";
 
 const DESCRIPTION_MAX = 2000;
@@ -55,7 +56,7 @@ export function QuoteForm() {
     return (
       <FormSuccess
         title="Quote request received"
-        message="We'll review what you've described and come back with scope, timeline, and a clear cost estimate — usually within one business day. No obligation either way."
+        message={`We'll review what you've described and come back with scope, timeline, and a clear cost estimate, ${commitments.responseTimeShort}. No obligation either way.`}
         resetLabel="Request another quote"
         onReset={() => setSent(false)}
       />
@@ -80,9 +81,7 @@ export function QuoteForm() {
           {(field) => <Input {...field} type="email" autoComplete="email" {...register("email")} />}
         </Field>
         <Field id="quote-phone" label="Phone" note="optional" error={errors.phone?.message}>
-          {(field) => (
-            <Input {...field} type="tel" inputMode="tel" autoComplete="tel" {...register("phone")} />
-          )}
+          {(field) => <Input {...field} type="tel" inputMode="tel" autoComplete="tel" {...register("phone")} />}
         </Field>
       </div>
 
@@ -145,9 +144,7 @@ export function QuoteForm() {
         {isSubmitting ? "Sending…" : "Request a Quote"}
       </Button>
 
-      <p className="text-xs text-muted-foreground">
-        Free consultation · No obligation · We never share your details.
-      </p>
+      <p className="text-xs text-muted-foreground">{commitments.freeAssessmentShort} · We never share your details.</p>
     </form>
   );
 }

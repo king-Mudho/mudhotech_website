@@ -28,6 +28,8 @@ class SoftwareServiceRequestCreateSerializer(serializers.Serializer):
 
     name = serializers.CharField(max_length=100)
     email = serializers.EmailField()
+    # Optional: most support enquiries are easiest to follow up by phone or WhatsApp.
+    phone = serializers.CharField(max_length=30, required=False, allow_blank=True, allow_null=True)
     service_category = serializers.CharField(max_length=150)
     details = serializers.CharField(min_length=10, max_length=2000)
 
@@ -35,6 +37,7 @@ class SoftwareServiceRequestCreateSerializer(serializers.Serializer):
         return ContactSubmission.objects.create(
             name=validated_data["name"],
             email=validated_data["email"],
+            phone=validated_data.get("phone") or None,
             subject=f"[Software Service Request] {validated_data['service_category']}",
             message=validated_data["details"],
             source=ContactSubmission.Source.SOFTWARE_SERVICE,

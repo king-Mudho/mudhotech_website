@@ -80,6 +80,7 @@ export type QuoteFormValues = z.infer<typeof quoteSchema>;
 export const softwareServiceRequestSchema = z.object({
   name,
   email,
+  phone,
   serviceCategory: z.string().min(1, "Please choose a service category."),
   details: longText("request", "what is happening and which device or system it affects."),
   ...honeypot,

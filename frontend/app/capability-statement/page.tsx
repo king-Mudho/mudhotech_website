@@ -42,8 +42,8 @@ const growthAdditions = [
  */
 const capabilityGroups = [
   { title: "Software & Web Development", href: "/web-software", services: devServices },
-  { title: "IT Support & Infrastructure", href: "/it-support", services: hardwareServices },
-  { title: "Software Setup & Support", href: "/web-software", services: softwareServices },
+  { title: "IT Support & Infrastructure", href: "/it-support#repairs", services: hardwareServices },
+  { title: "Software Setup & Support", href: "/it-support#software", services: softwareServices },
 ];
 
 /** In-page links for reviewers who arrive looking for one specific section. */

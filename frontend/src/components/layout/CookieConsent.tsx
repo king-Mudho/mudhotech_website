@@ -40,7 +40,7 @@ export function CookieConsent() {
     <div
       role="region"
       aria-label="Cookie consent"
-      className="fixed inset-x-0 bottom-0 z-[55] animate-in slide-in-from-bottom p-4 duration-500"
+      className="fixed inset-x-0 bottom-0 z-[55] p-4 duration-500 animate-in slide-in-from-bottom"
     >
       <div className="container mx-auto max-w-4xl">
         <div className="flex flex-col items-start gap-4 rounded-2xl border border-border bg-card p-5 shadow-2xl md:flex-row md:items-center md:p-6">
@@ -49,10 +49,10 @@ export function CookieConsent() {
           </span>
 
           <div className="flex-1">
-            <p className="mb-1 text-sm font-medium text-foreground">We use cookies</p>
+            <p className="mb-1 text-sm font-medium text-foreground">Allow analytics cookies?</p>
             <p className="text-xs leading-relaxed text-muted-foreground">
-              We use cookies to enhance your browsing experience, analyse site traffic, and personalise content.
-              Declining means no analytics script is ever sent to your browser. Read our{" "}
+              With your permission we use Google Analytics to see which pages are useful. If you decline, no analytics
+              script is loaded. Read our{" "}
               <Link href="/privacy-policy" className="text-accent underline underline-offset-2 hover:text-accent/80">
                 Privacy Policy
               </Link>{" "}

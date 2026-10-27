@@ -1,9 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { fadeUp, fadeUpDelayed } from "@/lib/motion";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { cn } from "@/lib/utils";
 import { engagementPhases, type ProcessPhase } from "@/data/processes";
@@ -34,9 +30,9 @@ export function ProcessSteps({
   return (
     <section className="section-padding bg-background">
       <div className="container mx-auto px-4">
-        <motion.div {...fadeUp}>
+        <div className="reveal">
           <SectionHeading eyebrow={eyebrow} title={title} lead={lead} />
-        </motion.div>
+        </div>
 
         <div className="relative mx-auto max-w-6xl">
           {/* Connector line behind the numbered markers on wide screens. */}
@@ -47,18 +43,15 @@ export function ProcessSteps({
           />
           <ol className={cn("grid gap-8 md:grid-cols-2", gridCols[phases.length] ?? "lg:grid-cols-4")}>
             {phases.map((phase, i) => (
-              <motion.li
-                key={phase.title}
-                {...fadeUpDelayed(i)}
-                className="relative flex flex-col items-center text-center"
-              >
+              <li key={phase.title} className="reveal relative flex flex-col items-center text-center">
                 <span className="relative z-10 mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-accent font-heading text-lg font-bold text-accent-foreground shadow-lg shadow-accent/25 ring-8 ring-background">
                   {i + 1}
                 </span>
                 <h3 className="mb-2 font-heading text-lg font-semibold text-foreground">{phase.title}</h3>
                 <p className="mb-3 text-sm leading-relaxed text-muted-foreground">{phase.body}</p>
-                {phase.footnote && <p className="mt-auto text-xs font-medium text-accent/80">{phase.footnote}</p>}
-              </motion.li>
+                {/* Full-strength accent: at 80% opacity this was 4.0:1, under AA. */}
+                {phase.footnote && <p className="mt-auto text-xs font-medium text-accent">{phase.footnote}</p>}
+              </li>
             ))}
           </ol>
         </div>

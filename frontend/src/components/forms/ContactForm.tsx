@@ -12,6 +12,7 @@ import { Field } from "@/components/forms/Field";
 import { FormSuccess } from "@/components/forms/FormSuccess";
 import { HoneypotField } from "@/components/forms/HoneypotField";
 import { apiFetch, ApiClientError } from "@/lib/api/client";
+import { commitments } from "@/data/commitments";
 import { contactSchema, type ContactFormValues } from "@/lib/schemas";
 import { composeEnquiry, whatsappUrl } from "@/lib/whatsapp";
 
@@ -79,7 +80,7 @@ export function ContactForm() {
     return (
       <FormSuccess
         title="Message received"
-        message="Thanks for getting in touch. A real person reads every enquiry — we typically reply within one business day."
+        message={`Thanks for getting in touch. A real person reads every enquiry. ${commitments.responseTime}`}
         onReset={() => setSent(false)}
       />
     );
@@ -100,9 +101,7 @@ export function ContactForm() {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field id="contact-phone" label="Phone" note="optional" error={errors.phone?.message}>
-          {(field) => (
-            <Input {...field} type="tel" inputMode="tel" autoComplete="tel" {...register("phone")} />
-          )}
+          {(field) => <Input {...field} type="tel" inputMode="tel" autoComplete="tel" {...register("phone")} />}
         </Field>
         <Field id="contact-subject" label="Subject" error={errors.subject?.message}>
           {(field) => <Input {...field} {...register("subject")} />}
