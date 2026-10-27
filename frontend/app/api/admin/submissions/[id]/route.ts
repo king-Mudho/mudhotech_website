@@ -5,11 +5,14 @@ import { withAdminAuth, djangoFetch } from "@/lib/api/admin-handler";
  * Builds the Django path from validated parts only. `id` arrives
  * URL-decoded, so interpolating it raw let `..%2F..` walk the proxied
  * request onto a different Django endpoint with the admin's token attached.
+ * The id is re-serialised from a number and the type is one of two
+ * literals, so no request text reaches the upstream URL.
  */
 function djangoPath(request: Request, id: string): string | null {
-  if (!/^\d+$/.test(id)) return null;
-  const type = new URL(request.url).searchParams.get("type") ?? "contact";
-  return `/api/admin/submissions/${id}/?${new URLSearchParams({ type })}`;
+  if (!/^\d{1,18}$/.test(id)) return null;
+  const submissionId = Number.parseInt(id, 10);
+  const type = new URL(request.url).searchParams.get("type") === "quote" ? "quote" : "contact";
+  return `/api/admin/submissions/${submissionId}/?type=${type}`;
 }
 
 const invalidId = () =>
