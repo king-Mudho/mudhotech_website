@@ -192,9 +192,10 @@ def notify_newsletter_signup(email: str) -> None:
         _send_email(recipient, subject, html_body)
 
 
-def send_reply(to: str, subject: str, message: str) -> None:
+def send_reply(to: str, subject: str, message: str) -> bool:
     """Equivalent of the legacy `send-reply` edge function. Caller is
-    responsible for the admin re-verification (see leads/views.py)."""
+    responsible for the admin re-verification (see leads/admin_views.py).
+    Returns whether the message was handed to a transport."""
     html_body = f"""
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
         <div style="background:#1a1a2e;padding:24px;text-align:center;">
@@ -208,4 +209,4 @@ def send_reply(to: str, subject: str, message: str) -> None:
         </div>
       </div>
     """
-    _send_email(to, subject, html_body)
+    return _send_email(to, subject, html_body)

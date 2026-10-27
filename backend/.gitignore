@@ -5,3 +5,5 @@ db.sqlite3
 staticfiles/
 .env
 .env.local
+.django_cache/
+*.sqlite3.*.bak

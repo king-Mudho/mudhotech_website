@@ -1,13 +1,22 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .serializers import AdminTokenObtainPairSerializer
 
 
+class LoginRateThrottle(AnonRateThrottle):
+    """Per-IP brute-force limit on the admin login, kept separate from the
+    general anonymous budget so it can be tuned on its own."""
+
+    scope = "login"
+
+
 class AdminTokenObtainPairView(TokenObtainPairView):
     serializer_class = AdminTokenObtainPairSerializer
+    throttle_classes = [LoginRateThrottle]
 
 
 class MeView(APIView):
