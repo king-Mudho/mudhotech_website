@@ -2,9 +2,10 @@ import { test, expect } from "@playwright/test";
 
 const CATEGORIES = ["Laptops", "Desktops", "Smartphones", "Hardware Repairs", "Software Setup", "Networking"];
 
+// The portfolio page is gallery-only for now (see PortfolioTabs.tsx), so
+// there is no tab to open first.
 test.beforeEach(async ({ page }) => {
   await page.goto("/portfolio");
-  await page.getByRole("tab", { name: "Gallery" }).click();
 });
 
 test("gallery exposes every device category", async ({ page }) => {
@@ -17,7 +18,7 @@ test("every category shows multiple images", async ({ page }) => {
   for (const category of CATEGORIES) {
     await page.getByRole("button", { name: category, exact: true }).click();
 
-    const images = page.locator("[role='tabpanel'][data-state='active'] img");
+    const images = page.getByTestId("gallery-grid").locator("img");
     await expect
       .poll(() => images.count(), { message: `expected several images under "${category}"` })
       .toBeGreaterThan(1);
@@ -33,7 +34,7 @@ test("every category shows multiple images", async ({ page }) => {
 test("no gallery image is broken", async ({ page }) => {
   await page.getByRole("button", { name: "All", exact: true }).click();
 
-  const images = page.locator("[role='tabpanel'][data-state='active'] img");
+  const images = page.getByTestId("gallery-grid").locator("img");
   await expect.poll(() => images.count()).toBeGreaterThan(10);
 
   const count = await images.count();
