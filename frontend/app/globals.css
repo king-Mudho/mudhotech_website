@@ -42,6 +42,10 @@
     /* Brighter than --accent: that one is tuned for AA on light backgrounds,
        which is too dark to read over the navy hero overlay. */
     --hero-accent: 211 100% 66%;
+    /* Dark sections with white text (How We Work, footer). Must stay dark in
+       both themes; --primary and --foreground do not. */
+    --band: 218 74% 15%;
+    --band-foreground: 0 0% 100%;
     --whatsapp: 142 70% 30%;
     --whatsapp-foreground: 0 0% 100%;
     --sidebar-background: 0 0% 98%;
@@ -68,7 +72,8 @@
     --muted: 220 25% 14%;
     --muted-foreground: 220 15% 55%;
     --accent: 211 100% 60%;
-    --accent-foreground: 0 0% 100%;
+    /* Navy, not white: white on this bright accent is 3.0:1, navy is 6.0:1. */
+    --accent-foreground: 218 74% 10%;
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 100%;
     --destructive-emphasis: 0 84% 70%;
@@ -78,6 +83,8 @@
     --hero: 218 74% 6%;
     --hero-foreground: 0 0% 100%;
     --hero-accent: 211 100% 66%;
+    --band: 218 55% 11%;
+    --band-foreground: 0 0% 100%;
     --whatsapp: 142 70% 30%;
     --whatsapp-foreground: 0 0% 100%;
     --sidebar-background: 220 40% 8%;
@@ -161,8 +168,10 @@
   .prose-custom ul {
     @apply mb-4 list-inside list-disc space-y-1 text-sm leading-relaxed text-muted-foreground;
   }
+  /* Underlined, not colour alone: in dark mode the accent is too close to
+     the body text to tell a link apart (1.2:1). */
   .prose-custom a {
-    @apply text-accent hover:underline;
+    @apply text-accent underline underline-offset-2 hover:no-underline;
   }
   .prose-custom strong {
     @apply font-semibold text-foreground;
