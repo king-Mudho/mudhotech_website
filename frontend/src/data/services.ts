@@ -43,6 +43,12 @@ export interface ServiceCategory {
   /** Who the service actually suits, in plain terms. */
   bestFor: string;
   /**
+   * A photo from public/images that shows this work, shown at the top of the
+   * card. Omitted where no photo genuinely shows the service; the card then
+   * shows generated artwork (ServiceArt) instead of an unrelated picture.
+   */
+  image?: string;
+  /**
    * TODO(content): typical turnaround, e.g. "Same day" / "2–3 working days".
    * Deliberately left unset — these are commitments the business has to be
    * able to honour, so they need the owner's numbers, not invented ones.
@@ -92,6 +98,7 @@ export const softwareServices: ServiceCategory[] = [
   {
     icon: Shield,
     title: "Security & Maintenance",
+    image: "/images/section-security.jpg",
     description:
       "Clean out what is already on the machine, then set up the protection and backups that stop it happening again.",
     detail:
@@ -109,6 +116,7 @@ export const softwareServices: ServiceCategory[] = [
   {
     icon: GraduationCap,
     title: "Academic & Productivity Tools",
+    image: "/images/section-blog-insights.jpg",
     description:
       "Reference managers, formatting, and originality checks for work that has to meet a submission standard.",
     detail:
@@ -127,6 +135,7 @@ export const softwareServices: ServiceCategory[] = [
   {
     icon: Palette,
     title: "Design & Creative Tools",
+    image: "/images/section-creative.jpg",
     description:
       "Creative software installed and tuned to your hardware, plus straightforward design work when you need it.",
     detail:
@@ -143,6 +152,7 @@ export const softwareServices: ServiceCategory[] = [
   {
     icon: KeyRound,
     title: "Digital Support & Troubleshooting",
+    image: "/images/section-contact-support.jpg",
     description:
       "The jobs that start with “it won’t turn on” or “I’m locked out” — diagnosed before anything is charged.",
     detail:
@@ -159,6 +169,7 @@ export const softwareServices: ServiceCategory[] = [
   {
     icon: Settings,
     title: "Business Software Setup",
+    image: "/images/hero-quote.jpg",
     description: "Business software installed, configured, and kept running so your team can rely on it.",
     detail:
       "Accounting and office software set up with your chart of accounts, users, and permissions already in place rather than left at defaults. Ongoing maintenance keeps licences current and updates applied, so renewal season is not the first time anyone looks at it.",
@@ -179,6 +190,7 @@ export const devServices: ServiceCategory[] = [
   {
     icon: Globe,
     title: "Websites & Custom Web Systems",
+    image: "/images/service-software.jpg",
     description: "Purpose-built web platforms designed around how your organization actually operates.",
     detail:
       "Built to match your existing process rather than forcing your team onto someone else's. Scope, timeline, and cost are agreed in writing before development starts, and the finished system is handed over with documentation and training so you are not dependent on us to run it.",
@@ -193,6 +205,7 @@ export const devServices: ServiceCategory[] = [
   {
     icon: ShoppingCart,
     title: "E-Commerce Solutions",
+    image: "/images/service-ecommerce.jpg",
     description: "Online stores that accept the payment methods your customers already have on their phones.",
     detail:
       "A storefront wired to local payment rails, not just international cards — so customers can pay the way they already do. Stock, orders, and payments live in one place, which means the shop floor and the website stop disagreeing about what is available.",
@@ -209,6 +222,7 @@ export const devServices: ServiceCategory[] = [
   {
     icon: Smartphone,
     title: "Mobile App Development",
+    image: "/images/hero-blog.jpg",
     description: "Apps that put your service on the device your customers are already holding.",
     detail:
       "Android first, because that is what most of the market is carrying. Cross-platform where one codebase can serve both stores and keep your costs down, native where the app genuinely needs the hardware, and a progressive web app where asking someone to install anything is the thing losing you users.",
@@ -224,6 +238,7 @@ export const hardwareServices: ServiceCategory[] = [
   {
     icon: HardDrive,
     title: "Hardware Installation & Upgrades",
+    image: "/images/service-hardware.jpg",
     description: "Targeted component upgrades that make an existing machine worth keeping.",
     detail:
       "An upgrade is usually cheaper than a replacement, and we will tell you when it is not. We check what your board and chassis actually support before recommending anything, then fit it and migrate your existing installation across so you keep your files and settings.",
@@ -254,6 +269,7 @@ export const hardwareServices: ServiceCategory[] = [
   {
     icon: Wrench,
     title: "Laptop & Desktop Repairs",
+    image: "/images/section-repairs.jpg",
     description: "Physical faults diagnosed properly and fixed once — screens, hinges, ports, and boards.",
     detail:
       "Diagnostics are free and come before any quote, so you know what is wrong and what it costs before committing. Where a board-level repair is possible we will attempt it rather than defaulting to a full replacement part, and we will say plainly when a machine is not economic to repair.",
@@ -290,6 +306,7 @@ export const hardwareServices: ServiceCategory[] = [
   {
     icon: Wifi,
     title: "Networking & Connectivity",
+    image: "/images/service-networking.jpg",
     description: "Wi-Fi and cabling that reach every room and hold up when everyone is online at once.",
     detail:
       "We survey where the signal actually drops rather than guessing from the router, then fix it with placement, channel configuration, cabling, or additional access points as the building requires. Structured cabling is labelled and documented, so the next person to work on it is not starting from scratch.",
@@ -324,6 +341,7 @@ export const hardwareServices: ServiceCategory[] = [
   {
     icon: Cpu,
     title: "Advanced Hardware Support",
+    image: "/images/hero-it-support.jpg",
     description: "Board-level diagnostics and firmware work for faults that defeat a parts swap.",
     detail:
       "When the obvious replacements have not fixed it, the fault is usually on the board or in firmware. We run component-level diagnostics on memory, processor, and graphics to isolate it, and can recover data from drives that are failing but not yet dead.",

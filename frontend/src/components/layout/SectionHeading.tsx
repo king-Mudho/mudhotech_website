@@ -25,7 +25,7 @@ export function SectionHeading({
   title,
   lead,
   tone = "default",
-  align = "left",
+  align = "center",
   action,
   className,
 }: SectionHeadingProps) {
@@ -45,7 +45,7 @@ export function SectionHeading({
           <span
             className={cn(
               "mb-3 inline-flex rounded-full px-3.5 py-1 font-heading text-xs font-semibold uppercase tracking-wider",
-              light ? "bg-white/10 text-hero-accent" : "border border-accent/25 bg-accent/10 text-accent",
+              light ? "bg-white/10 text-hero-accent" : "border border-accent/25 bg-accent/10 text-accent-strong",
             )}
           >
             {eyebrow}

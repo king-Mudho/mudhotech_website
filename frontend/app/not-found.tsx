@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Home, LifeBuoy, Newspaper, Code2, MessageCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroBackground } from "@/components/layout/HeroBackground";
-import { HeroNetwork } from "@/components/marketing/HeroNetwork";
+import { HeroCosmos, HeroScrim } from "@/components/marketing/HeroCosmos";
 
 export const metadata: Metadata = {
   title: "Page Not Found",
@@ -31,7 +31,8 @@ export default function NotFound() {
   return (
     <section className="page-padding-top relative overflow-hidden py-20 md:py-28">
       <HeroBackground />
-      <HeroNetwork placement="center" />
+      <HeroCosmos />
+      <HeroScrim />
 
       <div className="container relative mx-auto px-4">
         <div className="mx-auto max-w-2xl text-center">

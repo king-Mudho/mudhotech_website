@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, it, expect } from "vitest";
 import { blogPosts } from "@/data/blogPosts";
 import { softwareServices, devServices, hardwareServices, supportGroups } from "@/data/services";
@@ -88,11 +90,13 @@ describe("services", () => {
     }
   });
 
-  it("carries no photographs: service cards use generated artwork", () => {
-    // Stock photos were removed from the cards (ServiceArt draws them now);
-    // this stops one creeping back through the data file.
+  it("points every service photo at a file that exists in public/images", () => {
+    // Local files only: a remote URL would need a next.config remotePatterns
+    // entry and could reintroduce hot-linked stock imagery.
     for (const category of [...softwareServices, ...devServices, ...hardwareServices]) {
-      expect(category).not.toHaveProperty("image");
+      if (!category.image) continue;
+      expect(category.image.startsWith("/images/")).toBe(true);
+      expect(existsSync(resolve(__dirname, "../../public", category.image.slice(1)))).toBe(true);
     }
   });
 

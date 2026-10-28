@@ -112,6 +112,7 @@ export default function ContactPage() {
             eyebrow="Write to Us"
             title="Send Us a Message"
             lead={commitments.responseTime}
+            align="left"
             className="lg:sticky lg:top-28 lg:self-start"
           />
           <div className="card-surface p-6 sm:p-8">

@@ -51,7 +51,7 @@ export default function ITSupportPage() {
         lead="Computers repaired, networks fixed, and software set up properly — for a single laptop or a whole office."
       >
         <nav aria-label="On this page">
-          <ul className="flex flex-wrap gap-2">
+          <ul className="flex flex-wrap justify-center gap-2">
             {supportGroups.map((group) => (
               <li key={group.id}>
                 <a
@@ -88,6 +88,7 @@ export default function ITSupportPage() {
                 items={service.items}
                 worksWith={service.worksWith}
                 bestFor={service.bestFor}
+                image={service.image}
                 turnaround={service.turnaround}
                 note={service.note}
                 className="reveal"

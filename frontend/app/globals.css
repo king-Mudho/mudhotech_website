@@ -23,7 +23,14 @@
     --muted-foreground: 218 17% 40%;
     /* Darkened from 50% so white text on --accent, and --accent text on light
        backgrounds, both clear WCAG AA 4.5:1 (docs/09-ui-ux-design.md §7). */
-    --accent: 211 100% 38%;
+    /* #0066cc: 5.6:1 with white text, 5.3:1 as text on the page. */
+    --accent: 210 100% 40%;
+    /* #0071e3: button hover only. 4.7:1 with white text, but 4.47:1 as
+       small text on the page, so never used for text. */
+    --accent-hover: 210 100% 44.5%;
+    /* #0059b3: small accent text on tinted pills over grey sections, where
+       #0066cc measures 4.39:1. */
+    --accent-strong: 210 100% 35%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -35,7 +42,7 @@
     --destructive-emphasis: 0 72% 41%;
     --border: 220 15% 90%;
     --input: 220 15% 90%;
-    --ring: 211 100% 38%;
+    --ring: 210 100% 40%;
     --radius: 0.5rem;
     --hero: 218 74% 10%;
     --hero-foreground: 0 0% 100%;
@@ -72,6 +79,8 @@
     --muted: 220 25% 14%;
     --muted-foreground: 220 15% 55%;
     --accent: 211 100% 60%;
+    --accent-hover: 211 100% 66%;
+    --accent-strong: 211 100% 66%;
     /* Navy, not white: white on this bright accent is 3.0:1, navy is 6.0:1. */
     --accent-foreground: 218 74% 10%;
     --destructive: 0 62% 30%;
