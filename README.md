@@ -217,7 +217,7 @@ A `429` with "Request was throttled" from a form is the limiter doing its job, n
 
 Playwright builds and serves a production bundle itself. Run it against an already-running server with `PLAYWRIGHT_BASE_URL=http://localhost:3000` if you prefer.
 
-Current state: **116 unit/component tests, 31 end-to-end tests, 36 Django API tests**, zero lint errors, clean typecheck. The same checks (minus e2e) run in GitHub Actions on every push and pull request — see `.github/workflows/ci.yml`.
+Current state: **128 unit/component tests, 36 end-to-end tests, 39 Django API tests**, zero lint errors, clean typecheck. The same checks (minus e2e) run in GitHub Actions on every push and pull request — see `.github/workflows/ci.yml`.
 
 ---
 

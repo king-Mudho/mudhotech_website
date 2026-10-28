@@ -59,6 +59,22 @@ test("the support request form asks for an optional phone number", async ({ page
   await expect(page.getByLabel(/Phone or WhatsApp/)).toBeVisible();
 });
 
+test("the support request form takes the device and how to reach it", async ({ page }) => {
+  await page.goto("/it-support#request-support");
+  await expect(page.getByLabel(/Device or system/)).toBeVisible();
+  const handover = page.getByRole("group", { name: /How should we get to it/ });
+  await handover.getByRole("radio", { name: /Graniteside office/ }).check();
+  await expect(handover.getByRole("radio", { name: /Graniteside office/ })).toBeChecked();
+  await expect(handover.getByRole("radio")).toHaveCount(3);
+});
+
+test("the homepage states facts a visitor can check", async ({ page }) => {
+  await page.goto("/");
+  for (const fact of [/Graniteside, Harare/, /Mon–Fri 8 AM–5 PM/, /within one business day/i]) {
+    await expect(page.locator("dl").getByText(fact)).toBeVisible();
+  }
+});
+
 test("no cookie banner appears when analytics are not configured", async ({ page }) => {
   test.skip(!!process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID, "analytics configured in this environment");
   // Wait for hydration: a client-rendered banner would have appeared by then.

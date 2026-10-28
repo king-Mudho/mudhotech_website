@@ -93,6 +93,55 @@ class PublicSubmissionTests(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(ContactSubmission.objects.get().phone, "+263 77 123 4567")
 
+    def test_software_service_request_records_device_and_handover(self):
+        response = self.client.post(
+            "/api/submissions/software-service/",
+            {
+                "name": "Farai Dube",
+                "email": "farai@example.com",
+                "service_category": "Laptop & Desktop Repairs",
+                "device": "HP ProBook 450",
+                "handover": "drop-off",
+                "details": "Laptop no longer charges after a fall.",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+        message = ContactSubmission.objects.get().message
+        self.assertIn("Device or system: HP ProBook 450", message)
+        self.assertIn("Getting to it: Customer will bring it to the Graniteside office", message)
+        self.assertTrue(message.endswith("Laptop no longer charges after a fall."))
+
+    def test_software_service_request_without_booking_details_keeps_the_message_as_written(self):
+        self.client.post(
+            "/api/submissions/software-service/",
+            {
+                "name": "Farai Dube",
+                "email": "farai@example.com",
+                "service_category": "Laptop & Desktop Repairs",
+                "device": "",
+                "handover": None,
+                "details": "Laptop no longer charges after a fall.",
+            },
+            format="json",
+        )
+        self.assertEqual(ContactSubmission.objects.get().message, "Laptop no longer charges after a fall.")
+
+    def test_software_service_request_rejects_an_unknown_handover(self):
+        response = self.client.post(
+            "/api/submissions/software-service/",
+            {
+                "name": "Farai Dube",
+                "email": "farai@example.com",
+                "service_category": "Laptop & Desktop Repairs",
+                "handover": "courier",
+                "details": "Laptop no longer charges after a fall.",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(ContactSubmission.objects.count(), 0)
+
     def test_valid_quote_creates_row(self):
         response = self.client.post(
             "/api/submissions/quote/",

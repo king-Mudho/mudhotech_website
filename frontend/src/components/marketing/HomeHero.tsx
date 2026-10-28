@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { ArrowRight, Code2, MessageCircle, Wrench } from "lucide-react";
+import { ArrowRight, BadgeCheck, Clock, Code2, MapPin, MessageCircle, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroBackground } from "@/components/layout/HeroBackground";
 import { HeroNetwork } from "@/components/marketing/HeroNetwork";
@@ -40,6 +40,19 @@ const paths: {
     href: "/it-support",
     cta: "IT support",
   },
+];
+
+/**
+ * Facts a visitor can check, shown just below the first screen. Comparable
+ * IT firms put proof here (testimonials, years trading, certifications);
+ * none of those is confirmed for MudhoTech yet (docs/OPEN-QUESTIONS.md), so
+ * this row uses what the site already states and the owner can verify.
+ */
+const facts: { icon: LucideIcon; label: string; value: string }[] = [
+  { icon: BadgeCheck, label: "Registered company", value: `${company.name}, Zimbabwe` },
+  { icon: MapPin, label: "Office", value: company.registeredOffice.replace(/, Zimbabwe$/, "") },
+  { icon: Clock, label: "Open", value: company.hours.summary },
+  { icon: MessageCircle, label: "Replies", value: commitments.responseTimeShort.replace(/^./, (c) => c.toUpperCase()) },
 ];
 
 /**
@@ -131,6 +144,28 @@ export function HomeHero() {
             </li>
           ))}
         </ul>
+
+        <dl className="mx-auto mt-10 grid max-w-4xl gap-x-6 gap-y-4 text-left sm:grid-cols-2 lg:grid-cols-4">
+          {facts.map(({ icon: Icon, label, value }) => (
+            <div key={label} className="flex items-start gap-3">
+              <dt className="flex shrink-0 items-center">
+                <span className="rounded-lg bg-accent/10 p-2">
+                  <Icon className="h-4 w-4 text-accent" aria-hidden="true" />
+                </span>
+                <span className="sr-only">{label}</span>
+              </dt>
+              <dd className="min-w-0">
+                <span
+                  className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                  aria-hidden="true"
+                >
+                  {label}
+                </span>
+                <span className="block text-sm font-medium text-foreground">{value}</span>
+              </dd>
+            </div>
+          ))}
+        </dl>
 
         {/* Kept for search engines and screen readers; the visible headline
             leads with the plain-English version of the same claim. */}

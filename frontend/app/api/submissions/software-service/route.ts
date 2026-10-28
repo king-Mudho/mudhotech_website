@@ -7,6 +7,8 @@ export async function POST(request: Request) {
     email: data.email,
     phone: data.phone || null,
     service_category: data.serviceCategory,
+    device: data.device || null,
+    handover: data.handover || null,
     details: data.details,
   }));
 }

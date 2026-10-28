@@ -26,6 +26,13 @@ import { commitments } from "@/data/commitments";
 
 const DETAILS_MAX = 2000;
 
+/** The two intake routes the site already offers (commitments.intake), plus "not sure". */
+const handoverOptions = [
+  { value: "drop-off", label: "I'll bring it to your Graniteside office" },
+  { value: "on-site", label: "Please come to us (on-site visit)" },
+  { value: "not-sure", label: "Not sure yet" },
+] as const;
+
 export function SoftwareServiceForm() {
   const [sent, setSent] = useState(false);
 
@@ -122,6 +129,39 @@ export function SoftwareServiceForm() {
           />
         )}
       </Field>
+
+      <Field
+        id="sw-device"
+        label="Device or system"
+        note="optional"
+        hint="For example: HP ProBook laptop, office Wi-Fi, or the accounts PC."
+        error={errors.device?.message}
+      >
+        {(field) => <Input {...field} maxLength={100} {...register("device")} />}
+      </Field>
+
+      <fieldset className="space-y-2">
+        <legend className="flex items-baseline gap-1.5 text-sm font-medium leading-none">
+          How should we get to it?
+          <span className="text-xs font-normal text-muted-foreground">(optional)</span>
+        </legend>
+        <div className="grid gap-2 pt-1 sm:grid-cols-3">
+          {handoverOptions.map((option) => (
+            <label
+              key={option.value}
+              className="flex cursor-pointer items-start gap-2.5 rounded-lg border border-input bg-background p-3 text-sm transition-colors hover:border-accent/50 has-[:checked]:border-accent has-[:checked]:bg-accent/5 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring"
+            >
+              <input
+                type="radio"
+                value={option.value}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-[hsl(var(--accent))]"
+                {...register("handover")}
+              />
+              <span>{option.label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
 
       <Field
         id="sw-details"
