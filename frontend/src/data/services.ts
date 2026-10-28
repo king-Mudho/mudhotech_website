@@ -325,6 +325,7 @@ export const hardwareServices: ServiceCategory[] = [
   {
     icon: Printer,
     title: "Peripheral & Device Setup",
+    image: "/images/service-peripherals.jpg",
     description: "Printers, scanners, and displays connected, shared, and actually working for everyone.",
     detail:
       "Most peripheral problems are driver and sharing configuration rather than faulty hardware. We set the device up once, share it correctly across the machines that need it, and leave the settings documented so a new laptop can be added without another call-out.",
