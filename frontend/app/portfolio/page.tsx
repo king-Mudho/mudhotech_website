@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, FileSearch, MessageCircle } from "lucide-react";
+import { ArrowRight, FileSearch } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
 import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/layout/SectionHeading";
@@ -36,7 +37,6 @@ export default function PortfolioPage() {
         eyebrow="Our Work"
         title="Our Work"
         lead="Client work is published here only with the client's permission. Until then, ask us for examples and references that match your project."
-        hueShift={-20}
       />
 
       <Section>
@@ -47,12 +47,9 @@ export default function PortfolioPage() {
         />
 
         {publishedCaseStudies.length > 0 ? (
-          <ul className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2">
+          <ul className="grid gap-6 md:grid-cols-2">
             {publishedCaseStudies.map((study) => (
-              <li
-                key={study.slug}
-                className="reveal overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
-              >
+              <li key={study.slug} className="card-interactive reveal overflow-hidden">
                 {study.images?.[0] && (
                   <div className="relative aspect-[16/9]">
                     <Image
@@ -92,16 +89,18 @@ export default function PortfolioPage() {
             ))}
           </ul>
         ) : (
-          <div className="mx-auto max-w-2xl rounded-2xl border border-dashed border-border bg-secondary/40 p-8 text-center">
-            <span className="mx-auto mb-4 inline-flex rounded-xl bg-accent/10 p-3">
-              <FileSearch className="h-6 w-6 text-accent" aria-hidden="true" />
+          <div className="flex flex-col gap-6 rounded-2xl border border-dashed border-border bg-secondary/40 p-7 md:flex-row md:items-center md:p-10">
+            <span className="icon-tile h-14 w-14">
+              <FileSearch className="h-7 w-7" aria-hidden="true" />
             </span>
-            <h3 className="mb-2 font-heading text-lg font-semibold">No case studies published yet</h3>
-            <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
-              We only publish client work when the client has agreed to it. If you would like to see work similar to
-              yours, or speak to someone we have worked with, ask and we will share what we can.
-            </p>
-            <div className="flex flex-col justify-center gap-3 sm:flex-row">
+            <div className="flex-1">
+              <h3 className="mb-2 font-heading text-lg font-semibold">No case studies published yet</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                We only publish client work when the client has agreed to it. If you would like to see work similar to
+                yours, or speak to someone we have worked with, ask and we will share what we can.
+              </p>
+            </div>
+            <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
               <Button asChild variant="accent">
                 <Link href="/contact">
                   Ask for examples
@@ -114,7 +113,7 @@ export default function PortfolioPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                  <WhatsAppIcon className="h-4 w-4" aria-hidden="true" />
                   Ask on WhatsApp
                 </a>
               </Button>
@@ -129,12 +128,9 @@ export default function PortfolioPage() {
           title="The Kind of Work We Take On"
           lead="These describe typical jobs, drawn from our service list. They are not specific client projects and make no claim about results."
         />
-        <ul className="mx-auto grid max-w-6xl gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {exampleProjects.map((example) => (
-            <li
-              key={example.title}
-              className="reveal flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm"
-            >
+            <li key={example.title} className="card-interactive reveal group flex flex-col p-6">
               <div className="mb-4 flex flex-wrap items-center gap-2">
                 <span className="rounded-full border border-dashed border-muted-foreground/40 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Illustrative example

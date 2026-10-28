@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
-import { Phone, MessageCircle, Mail, MapPin } from "lucide-react";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
+import { Phone, Mail, MapPin } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
 import { Section } from "@/components/layout/Section";
+import { SectionHeading } from "@/components/layout/SectionHeading";
 import { SectionBreak } from "@/components/layout/SectionBreak";
 import { MapEmbed } from "@/components/layout/MapEmbed";
 import { ContactForm } from "@/components/forms/ContactForm";
@@ -29,7 +31,7 @@ export default function ContactPage() {
       href: telHref(),
     },
     {
-      icon: MessageCircle,
+      icon: WhatsAppIcon,
       label: "WhatsApp",
       value: company.contact.whatsapp,
       hint: "Opens a chat",
@@ -60,22 +62,21 @@ export default function ContactPage() {
         eyebrow="Contact"
         title="Let's Talk"
         lead="Questions, quotes, or support — reach us whichever way suits you best."
-        hueShift={20}
       />
 
       <Section>
-        <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {contactCards.map(({ icon: Icon, label, value, hint, href }) => (
             <a
               key={label}
               href={href}
               target={href.startsWith("http") ? "_blank" : undefined}
               rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="group flex flex-col items-center rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-lg"
+              className="card-interactive group flex flex-col p-6"
             >
-              <div className="mb-4 w-fit rounded-xl bg-accent/10 p-3 transition-colors group-hover:bg-accent/15">
-                <Icon className="h-6 w-6 text-accent" />
-              </div>
+              <span className="icon-tile mb-4">
+                <Icon className="h-5 w-5" aria-hidden="true" />
+              </span>
               <p className="mb-1 font-heading font-semibold">{label}</p>
               <p className="break-words text-sm text-muted-foreground">{value}</p>
               {/* Tells the visitor what tapping actually does before they
@@ -88,9 +89,9 @@ export default function ContactPage() {
           ))}
         </div>
 
-        <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-border bg-card p-6">
-          <h2 className="mb-3 font-heading text-lg font-semibold">Business Hours</h2>
-          <ul className="space-y-1 text-sm text-muted-foreground">
+        <div className="card-surface mt-6 flex flex-col gap-3 p-6 md:flex-row md:items-center md:justify-between">
+          <h2 className="font-heading text-lg font-semibold">Business Hours</h2>
+          <ul className="flex flex-col gap-1 text-sm text-muted-foreground md:flex-row md:gap-8">
             <li>{company.hours.weekdays}</li>
             <li>{company.hours.saturday}</li>
             <li>{company.hours.sunday}</li>
@@ -100,20 +101,22 @@ export default function ContactPage() {
 
       <div className="container mx-auto px-4">
         <SectionBreak
-          src="/images/section-contact-support.jpg"
-          alt="Support team assisting a client"
           title="A Real Person Will Reply"
           subtitle="No ticket queues or call centres — you deal directly with the people doing the work."
         />
       </div>
 
       <Section muted>
-        <div className="mx-auto max-w-2xl">
-          <div className="mb-10 text-center">
-            <h2 className="mb-4 font-heading text-3xl font-bold md:text-4xl">Send Us a Message</h2>
-            <p className="text-muted-foreground">{commitments.responseTime}</p>
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] lg:gap-14">
+          <SectionHeading
+            eyebrow="Write to Us"
+            title="Send Us a Message"
+            lead={commitments.responseTime}
+            className="lg:sticky lg:top-28 lg:self-start"
+          />
+          <div className="card-surface p-6 sm:p-8">
+            <ContactForm />
           </div>
-          <ContactForm />
         </div>
       </Section>
 

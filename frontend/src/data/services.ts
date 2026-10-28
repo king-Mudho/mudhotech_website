@@ -43,13 +43,6 @@ export interface ServiceCategory {
   /** Who the service actually suits, in plain terms. */
   bestFor: string;
   /**
-   * Local image only — no new stock URLs. Omitted where nothing in
-   * public/images genuinely depicts the work; the card falls back to an
-   * icon panel, which looks deliberate, whereas an unrelated photo of a
-   * server room above "CV formatting" does not.
-   */
-  image?: string;
-  /**
    * TODO(content): typical turnaround, e.g. "Same day" / "2–3 working days".
    * Deliberately left unset — these are commitments the business has to be
    * able to honour, so they need the owner's numbers, not invented ones.
@@ -95,7 +88,6 @@ export const softwareServices: ServiceCategory[] = [
       "Brave",
     ],
     bestFor: "New machines, rebuilds after a repair, and PCs that have slowed to a crawl.",
-    image: "/images/service-software.jpg",
   },
   {
     icon: Shield,
@@ -147,7 +139,6 @@ export const softwareServices: ServiceCategory[] = [
     ],
     worksWith: ["Adobe Photoshop", "Illustrator", "Premiere Pro", "Canva", "CapCut", "Filmora", "Audacity"],
     bestFor: "Event promoters, small marketing teams, and anyone editing video on a laptop.",
-    image: "/images/section-creative.jpg",
   },
   {
     icon: KeyRound,
@@ -198,7 +189,6 @@ export const devServices: ServiceCategory[] = [
       "POS & Business Automation",
     ],
     bestFor: "Organizations outgrowing spreadsheets, paper registers, or three systems that do not talk to each other.",
-    image: "/images/service-software.jpg",
   },
   {
     icon: ShoppingCart,
@@ -215,7 +205,6 @@ export const devServices: ServiceCategory[] = [
     worksWith: ["EcoCash", "ZimSwitch", "Card payments", "Mobile money"],
     note: paymentsNote,
     bestFor: "Retailers selling in person who want the same stock list online.",
-    image: "/images/service-ecommerce.jpg",
   },
   {
     icon: Smartphone,
@@ -261,7 +250,6 @@ export const hardwareServices: ServiceCategory[] = [
       "Case fans",
     ],
     bestFor: "Machines that are slow rather than broken, and anyone weighing a repair against a replacement.",
-    image: "/images/service-hardware.jpg",
   },
   {
     icon: Wrench,
@@ -282,7 +270,6 @@ export const hardwareServices: ServiceCategory[] = [
     ],
     worksWith: ["LED / LCD / IPS panels", "Hinges & casings", "Keyboards", "Trackpads", "DC jacks", "Motherboards"],
     bestFor: "Dropped laptops, liquid spills, cracked screens, and machines that no longer charge.",
-    image: "/images/section-repairs.jpg",
   },
   {
     icon: Wind,
@@ -299,7 +286,6 @@ export const hardwareServices: ServiceCategory[] = [
     ],
     worksWith: ["Thermal paste", "Cooling fans", "Heat sinks", "Cooling pads"],
     bestFor: "Machines running hot or loud, and offices wanting a maintenance schedule rather than emergencies.",
-    image: "/images/hero-it-support.jpg",
   },
   {
     icon: Wifi,
@@ -317,7 +303,6 @@ export const hardwareServices: ServiceCategory[] = [
     ],
     worksWith: ["Wi-Fi routers", "Access points", "Ethernet / LAN", "Structured cabling"],
     bestFor: "Offices with dead zones, dropped connections, or a new floor to wire.",
-    image: "/images/service-networking.jpg",
   },
   {
     icon: Printer,

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, MessageCircle, Phone, Clock } from "lucide-react";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
+import { ArrowRight, Phone, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { company } from "@/data/company";
 import { commitments } from "@/data/commitments";
@@ -24,7 +25,7 @@ export function ContactCta({
   return (
     <section className="section-padding bg-background">
       <div className="container mx-auto px-4">
-        <div className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl bg-hero px-6 py-12 text-hero-foreground shadow-xl sm:px-12 sm:py-16">
+        <div className="relative overflow-hidden rounded-3xl bg-hero px-6 py-10 text-hero-foreground shadow-xl sm:px-12 sm:py-14">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-hero-accent/20 blur-3xl"
@@ -47,7 +48,7 @@ export function ContactCta({
                 </Button>
                 <Button asChild variant="whatsapp" size="lg">
                   <a href={whatsappUrl(WHATSAPP_GREETING)} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                    <WhatsAppIcon className="h-4 w-4" aria-hidden="true" />
                     Chat on WhatsApp
                   </a>
                 </Button>
@@ -71,7 +72,7 @@ export function ContactCta({
               </div>
               <div>
                 <dt className="flex items-center gap-2 font-heading font-semibold text-white">
-                  <MessageCircle className="h-4 w-4 shrink-0 text-hero-accent" aria-hidden="true" />
+                  <WhatsAppIcon className="h-4 w-4 shrink-0 text-hero-accent" aria-hidden="true" />
                   WhatsApp
                 </dt>
                 <dd className="mt-1 pl-6">

@@ -17,7 +17,6 @@ export default function PrivacyPolicyPage() {
         eyebrow="Legal"
         title="Privacy Policy"
         lead="How we collect, use, and protect your information."
-        hueShift={10}
       />
 
       {/* Date of the last change to the wording below, from git history. */}

@@ -68,7 +68,6 @@ export default function WebSoftwarePage() {
         eyebrow="Software Development"
         title="Websites, Business Systems & Apps"
         lead="Software built around how your organization works — agreed in writing before we start, and handed over so you can run it."
-        hueShift={-12}
       />
 
       <Section id="services" className="scroll-mt-20">
@@ -77,7 +76,7 @@ export default function WebSoftwarePage() {
           title="From a Company Website to the System Behind It"
           lead="Pick the closest match. Most projects combine more than one, and we will say plainly if something off-the-shelf would serve you better."
         />
-        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {devServices.map((service) => (
             <ServiceCard
               key={service.title}
@@ -88,7 +87,6 @@ export default function WebSoftwarePage() {
               items={service.items}
               worksWith={service.worksWith}
               bestFor={service.bestFor}
-              image={service.image}
               turnaround={service.turnaround}
               note={service.note}
               className="reveal"
@@ -96,7 +94,7 @@ export default function WebSoftwarePage() {
           ))}
         </div>
 
-        <p className="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-2xl border border-border bg-secondary/50 px-5 py-4 text-center text-sm text-muted-foreground">
+        <p className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-2xl border border-border bg-secondary/50 px-5 py-4 text-sm text-muted-foreground">
           <Wrench className="h-4 w-4 text-accent" aria-hidden="true" />
           Need software installed, a virus removed, or a computer fixed instead?
           <Link
@@ -115,11 +113,11 @@ export default function WebSoftwarePage() {
           title="What You Get, Whatever the Size"
           lead="The same four things come with a five-page website and a multi-branch stock system."
         />
-        <ul className="mx-auto grid max-w-5xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {included.map(({ icon: Icon, title, body }) => (
-            <li key={title} className="reveal rounded-2xl border border-border bg-card p-6 shadow-sm">
-              <span className="mb-4 inline-flex rounded-xl bg-accent/10 p-2.5">
-                <Icon className="h-5 w-5 text-accent" aria-hidden="true" />
+            <li key={title} className="card-interactive reveal group p-6">
+              <span className="icon-tile mb-4">
+                <Icon className="h-5 w-5" aria-hidden="true" />
               </span>
               <h3 className="mb-2 font-heading text-base font-semibold text-foreground">{title}</h3>
               <p className="text-sm leading-relaxed text-muted-foreground">{body}</p>
@@ -136,8 +134,6 @@ export default function WebSoftwarePage() {
 
       <div className="container mx-auto px-4">
         <SectionBreak
-          src="/images/section-creative.jpg"
-          alt="Design and development work on a desktop screen"
           title="Software That Fits How You Work"
           subtitle="Built around your operations, not the other way around."
         />

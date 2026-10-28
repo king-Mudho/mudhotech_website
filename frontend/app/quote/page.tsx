@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CheckCircle2, MessageCircle, Phone } from "lucide-react";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
+import { CheckCircle2, Phone } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
 import { Section } from "@/components/layout/Section";
 import { QuoteForm } from "@/components/forms/QuoteForm";
@@ -23,18 +24,19 @@ export default function QuotePage() {
         eyebrow="Get a Quote"
         title="Request a Free Quote"
         lead="Tell us what you need. We'll come back with scope, timeline, and a clear cost estimate."
-        hueShift={-6}
       />
 
       <Section>
-        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1fr_22rem]">
-          <QuoteForm />
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_24rem] lg:gap-14">
+          <div className="card-surface p-6 sm:p-8">
+            <QuoteForm />
+          </div>
 
           {/* Beside the form rather than below it: answers "what happens after
               I press submit?" at the moment the visitor is deciding, and offers
               a faster route for anyone who would rather just talk. */}
           <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
-            <div className="rounded-2xl border border-border bg-card p-6">
+            <div className="card-surface p-6">
               <h2 className="mb-4 font-heading text-lg font-semibold">What happens next</h2>
               <ol className="space-y-4">
                 {enquiryPhases.slice(1).map((phase, i) => (
@@ -65,13 +67,13 @@ export default function QuotePage() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <MessageCircle className="h-4 w-4" />
+                    <WhatsAppIcon className="h-4 w-4" />
                     WhatsApp {company.contact.whatsapp}
                   </a>
                 </Button>
                 <Button asChild variant="heroOutline">
                   <a href={telHref()}>
-                    <Phone className="h-4 w-4" />
+                    <Phone className="h-4 w-4" aria-hidden="true" />
                     Call {company.contact.phone}
                   </a>
                 </Button>

@@ -22,7 +22,7 @@ export function LegalPage({
 }) {
   return (
     <Section>
-      <div className="mx-auto grid max-w-5xl gap-10 lg:grid-cols-[14rem_1fr]">
+      <div className="grid gap-10 lg:grid-cols-[16rem_minmax(0,1fr)] xl:gap-16">
         {/* Desktop only: on a phone a 14-item list would push the text a screen down. */}
         <aside className="hidden lg:sticky lg:top-28 lg:block lg:self-start">
           <LegalToc contentId="legal-content" />
@@ -34,7 +34,7 @@ export function LegalPage({
             Last updated <time dateTime={updated}>{formatDate(updated)}</time>
           </p>
 
-          <div id="legal-content" className="prose-custom max-w-none [&_h2]:scroll-mt-28">
+          <div id="legal-content" className="prose-custom max-w-3xl [&_h2]:scroll-mt-28">
             {children}
           </div>
         </div>

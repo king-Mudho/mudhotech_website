@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import type { LucideIcon } from "lucide-react";
-import { ArrowRight, BadgeCheck, Clock, Code2, MapPin, MessageCircle, Wrench } from "lucide-react";
+import { ArrowRight, BadgeCheck, Clock, Code2, MapPin, Wrench, Reply } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroBackground } from "@/components/layout/HeroBackground";
 import { HeroNetwork } from "@/components/marketing/HeroNetwork";
@@ -17,7 +18,6 @@ const paths: {
   icon: LucideIcon;
   eyebrow: string;
   title: string;
-  body: string;
   topics: string[];
   href: string;
   cta: string;
@@ -26,7 +26,6 @@ const paths: {
     icon: Code2,
     eyebrow: "Build",
     title: "Websites, systems & apps",
-    body: "Custom software for how your organization actually works, from a company website to stock, sales, and booking systems.",
     topics: ["Websites", "Business systems", "Online stores", "Mobile apps"],
     href: "/web-software",
     cta: "Software development",
@@ -35,7 +34,6 @@ const paths: {
     icon: Wrench,
     eyebrow: "Keep it working",
     title: "IT support & repairs",
-    body: "Laptops and desktops repaired, networks fixed, and software installed and set up properly.",
     topics: ["Repairs", "Networks & Wi-Fi", "Software setup", "Maintenance"],
     href: "/it-support",
     cta: "IT support",
@@ -52,7 +50,7 @@ const facts: { icon: LucideIcon; label: string; value: string }[] = [
   { icon: BadgeCheck, label: "Registered company", value: `${company.name}, Zimbabwe` },
   { icon: MapPin, label: "Office", value: company.registeredOffice.replace(/, Zimbabwe$/, "") },
   { icon: Clock, label: "Open", value: company.hours.summary },
-  { icon: MessageCircle, label: "Replies", value: commitments.responseTimeShort.replace(/^./, (c) => c.toUpperCase()) },
+  { icon: Reply, label: "Replies", value: commitments.responseTimeShort.replace(/^./, (c) => c.toUpperCase()) },
 ];
 
 /**
@@ -63,89 +61,84 @@ const facts: { icon: LucideIcon; label: string; value: string }[] = [
  */
 export function HomeHero() {
   return (
-    <section className="page-padding-top relative flex min-h-[calc(100vh-5rem)] items-center overflow-hidden">
+    <section className="page-padding-top relative overflow-hidden">
       <HeroBackground />
-      <HeroNetwork />
+      <HeroNetwork placement="right" />
 
-      <div className="container relative mx-auto px-4 py-16 text-center">
-        {/* States what the company does before the reader parses anything else. */}
-        <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-accent sm:text-sm">
-          Software Development &middot; IT Support &middot; Harare
-        </span>
+      <div className="container relative mx-auto px-4 pb-12 pt-10 md:pb-16 md:pt-14 lg:pt-20">
+        <div className="max-w-3xl">
+          {/* States what the company does before the reader parses anything else. */}
+          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-accent sm:text-sm">
+            Software Development &middot; IT Support &middot; Harare
+          </span>
 
-        <h1 className="mx-auto max-w-4xl text-balance font-heading text-4xl font-bold leading-[1.1] text-foreground sm:text-5xl lg:text-6xl">
-          We build the software your business runs on — and <span className="text-accent">keep it running.</span>
-        </h1>
+          <h1 className="text-balance font-heading text-4xl font-bold leading-[1.08] text-foreground sm:text-5xl lg:text-6xl">
+            We build the software your business runs on — and <span className="text-accent">keep it running.</span>
+          </h1>
 
-        <p className="mx-auto mt-6 max-w-2xl text-balance text-base leading-relaxed text-muted-foreground sm:text-lg">
-          Custom web systems, mobile apps, and dependable IT support for organizations across Zimbabwe. One team to
-          build it and to look after it.
-        </p>
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+            Custom web systems, mobile apps, and dependable IT support for organizations across Zimbabwe. One team to
+            build it and to look after it.
+          </p>
 
-        <div
-          className="mt-9 flex animate-fade-in-up flex-col justify-center gap-3 sm:flex-row"
-          style={{ animationDelay: "100ms" }}
-        >
-          <Button asChild variant="accent" size="xl">
-            <Link href="/quote">
-              Get a Free Quote
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </Button>
-          <Button asChild variant="whatsapp" size="xl">
-            <a href={whatsappUrl(WHATSAPP_GREETING)} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="h-4 w-4" aria-hidden="true" />
-              WhatsApp Us
+          <div className="mt-8 flex animate-fade-in-up flex-col gap-3 sm:flex-row" style={{ animationDelay: "100ms" }}>
+            <Button asChild variant="accent" size="xl">
+              <Link href="/quote">
+                Get a Free Quote
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </Button>
+            <Button asChild variant="whatsapp" size="xl">
+              <a href={whatsappUrl(WHATSAPP_GREETING)} target="_blank" rel="noopener noreferrer">
+                <WhatsAppIcon className="h-5 w-5" />
+                WhatsApp Us
+              </a>
+            </Button>
+          </div>
+
+          <p className="mt-4 text-sm text-muted-foreground">
+            {commitments.freeAssessmentShort} · Or call{" "}
+            <a href={telHref()} className="font-medium text-accent hover:underline">
+              {company.contact.phone}
             </a>
-          </Button>
+          </p>
         </div>
 
-        <p className="mt-5 text-sm text-muted-foreground">
-          {commitments.freeAssessmentShort} · Or call{" "}
-          <a href={telHref()} className="font-medium text-accent hover:underline">
-            {company.contact.phone}
-          </a>
-        </p>
-
         <h2 className="sr-only">What do you need?</h2>
-        <ul
-          className="mx-auto mt-14 grid max-w-4xl animate-fade-in-up gap-4 text-left md:grid-cols-2"
-          style={{ animationDelay: "220ms" }}
-        >
-          {paths.map(({ icon: Icon, eyebrow, title, body, topics, href, cta }) => (
+        <ul className="mt-10 grid animate-fade-in-up gap-5 md:grid-cols-2" style={{ animationDelay: "220ms" }}>
+          {paths.map(({ icon: Icon, eyebrow, title, topics, href, cta }) => (
             <li key={href}>
               <Link
                 href={href}
-                className="group flex h-full flex-col rounded-2xl border border-border bg-card/90 p-6 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="card-interactive group flex h-full flex-col gap-4 bg-card/90 p-6 backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:flex-row sm:items-start"
               >
-                <span className="mb-4 flex items-center gap-3">
-                  <span className="rounded-xl bg-accent/10 p-2.5">
-                    <Icon className="h-5 w-5 text-accent" aria-hidden="true" />
-                  </span>
+                <span className="icon-tile h-12 w-12">
+                  <Icon className="h-6 w-6" aria-hidden="true" />
+                </span>
+                <span className="flex min-w-0 flex-1 flex-col">
                   <span className="text-xs font-semibold uppercase tracking-wider text-accent">{eyebrow}</span>
-                </span>
-                <span className="mb-2 font-heading text-xl font-semibold text-foreground">{title}</span>
-                <span className="mb-4 text-sm leading-relaxed text-muted-foreground">{body}</span>
-                <span className="mb-5 flex flex-wrap gap-2">
-                  {topics.map((topic) => (
-                    <span
-                      key={topic}
-                      className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground/80"
-                    >
-                      {topic}
-                    </span>
-                  ))}
-                </span>
-                <span className="mt-auto inline-flex items-center gap-1.5 font-heading text-sm font-semibold text-accent">
-                  {cta}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                  <span className="mt-1 font-heading text-xl font-semibold text-foreground">{title}</span>
+                  <span className="mt-3 flex flex-wrap gap-2">
+                    {topics.map((topic) => (
+                      <span
+                        key={topic}
+                        className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground/80"
+                      >
+                        {topic}
+                      </span>
+                    ))}
+                  </span>
+                  <span className="mt-4 inline-flex items-center gap-1.5 font-heading text-sm font-semibold text-accent">
+                    {cta}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  </span>
                 </span>
               </Link>
             </li>
           ))}
         </ul>
 
-        <dl className="mx-auto mt-10 grid max-w-4xl gap-x-6 gap-y-4 text-left sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="mt-8 grid gap-x-6 gap-y-4 rounded-2xl border border-border bg-card/70 p-5 backdrop-blur-sm sm:grid-cols-2 lg:grid-cols-4">
           {facts.map(({ icon: Icon, label, value }) => (
             <div key={label} className="flex items-start gap-3">
               <dt className="flex shrink-0 items-center">

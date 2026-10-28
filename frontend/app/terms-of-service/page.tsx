@@ -17,7 +17,6 @@ export default function TermsOfServicePage() {
         eyebrow="Legal"
         title="Terms of Service"
         lead="The terms governing our services and engagements."
-        hueShift={10}
       />
 
       {/* Date of the last change to the wording below, from git history. */}
