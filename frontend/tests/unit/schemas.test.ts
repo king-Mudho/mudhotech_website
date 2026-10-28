@@ -90,6 +90,17 @@ describe("softwareServiceRequestSchema", () => {
   it("requires a service category", () => {
     expect(softwareServiceRequestSchema.safeParse({ ...valid, serviceCategory: "" }).success).toBe(false);
   });
+
+  it("accepts the optional device and handover, including an unchosen radio group", () => {
+    expect(
+      softwareServiceRequestSchema.safeParse({ ...valid, device: "HP ProBook 450", handover: "on-site" }).success,
+    ).toBe(true);
+    expect(softwareServiceRequestSchema.safeParse({ ...valid, device: "", handover: null }).success).toBe(true);
+  });
+
+  it("rejects a handover option the business does not offer", () => {
+    expect(softwareServiceRequestSchema.safeParse({ ...valid, handover: "courier" }).success).toBe(false);
+  });
 });
 
 describe("newsletterSchema", () => {

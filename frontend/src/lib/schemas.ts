@@ -82,6 +82,9 @@ export const softwareServiceRequestSchema = z.object({
   email,
   phone,
   serviceCategory: z.string().min(1, "Please choose a service category."),
+  device: z.string().trim().max(100, "Please keep this under 100 characters.").optional(),
+  // null when no radio is chosen (react-hook-form's value for an empty group).
+  handover: z.enum(["drop-off", "on-site", "not-sure"]).nullish(),
   details: longText("request", "what is happening and which device or system it affects."),
   ...honeypot,
 });

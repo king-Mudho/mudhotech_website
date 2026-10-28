@@ -22,6 +22,13 @@ class ContactSubmissionCreateSerializer(serializers.ModelSerializer):
         return value.strip()
 
 
+HANDOVER_CHOICES = [
+    ("drop-off", "Customer will bring it to the Graniteside office"),
+    ("on-site", "On-site visit requested"),
+    ("not-sure", "Not sure yet"),
+]
+
+
 class SoftwareServiceRequestCreateSerializer(serializers.Serializer):
     """Maps the M3 "Request Software Service" form onto ContactSubmission,
     tagged by `source` — docs/08-api-design.md §3."""
@@ -31,15 +38,25 @@ class SoftwareServiceRequestCreateSerializer(serializers.Serializer):
     # Optional: most support enquiries are easiest to follow up by phone or WhatsApp.
     phone = serializers.CharField(max_length=30, required=False, allow_blank=True, allow_null=True)
     service_category = serializers.CharField(max_length=150)
+    # Optional repair-booking details. Folded into the message rather than
+    # stored in new columns, so the admin inbox shows them with no migration.
+    device = serializers.CharField(max_length=100, required=False, allow_blank=True, allow_null=True)
+    handover = serializers.ChoiceField(choices=HANDOVER_CHOICES, required=False, allow_blank=True, allow_null=True)
     details = serializers.CharField(min_length=10, max_length=2000)
 
     def create(self, validated_data) -> ContactSubmission:
+        lines = []
+        if validated_data.get("device"):
+            lines.append(f"Device or system: {validated_data['device']}")
+        if validated_data.get("handover"):
+            lines.append(f"Getting to it: {dict(HANDOVER_CHOICES)[validated_data['handover']]}")
+        message = "\n".join(lines + ["", validated_data["details"]]) if lines else validated_data["details"]
         return ContactSubmission.objects.create(
             name=validated_data["name"],
             email=validated_data["email"],
             phone=validated_data.get("phone") or None,
             subject=f"[Software Service Request] {validated_data['service_category']}",
-            message=validated_data["details"],
+            message=message,
             source=ContactSubmission.Source.SOFTWARE_SERVICE,
         )
 

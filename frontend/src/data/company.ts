@@ -23,10 +23,20 @@ export const company = {
     weekdays: "Monday – Friday: 8:00 AM – 5:00 PM",
     saturday: "Saturday: By Appointment",
     sunday: "Sunday & Public Holidays: Closed",
+    /** The same hours, short enough for one line. */
+    summary: "Mon–Fri 8 AM–5 PM · Sat by appointment",
   },
   targetMarkets: [
-    "Government", "NGOs", "Education", "Healthcare", "Retail",
-    "Finance", "Manufacturing", "Agriculture", "Mining", "SMEs",
+    "Government",
+    "NGOs",
+    "Education",
+    "Healthcare",
+    "Retail",
+    "Finance",
+    "Manufacturing",
+    "Agriculture",
+    "Mining",
+    "SMEs",
   ],
   values: [
     "Listen before recommending solutions",
