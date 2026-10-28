@@ -76,7 +76,7 @@ Add an object with `slug` (the URL), `title`, `excerpt`, `date` (YYYY-MM-DD; use
 ## Images
 
 - Service cards show their `image` photo (or generated artwork without one); blog cards show the post's `image`. Section bands are drawn in code (`SectionBreak.tsx`).
-- Use only photos you own or are licensed to use. Images copied from other companies' adverts (often watermarked) must not be used.
+- Use only photos you own or are licensed to use. Images copied from other companies' adverts (often watermarked) must not be used. Record each new photo's source and licence in `docs/IMAGE-SOURCES.md`.
 
 - Put images in `frontend/public/images/` and reference them as `/images/<file>`.
 - Prefer JPG or PNG around 1600 px wide; the site resizes and converts them to AVIF/WebP automatically.
