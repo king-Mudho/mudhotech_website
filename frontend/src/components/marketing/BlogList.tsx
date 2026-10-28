@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { ServiceArt } from "@/components/marketing/ServiceArt";
+import { blogIcon } from "@/components/marketing/blog-icon";
 import { Search, Calendar, Clock, ArrowRight, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -45,20 +46,8 @@ function PostMeta({ post }: { post: BlogPost }) {
  */
 function FeaturedPost({ post }: { post: BlogPost }) {
   return (
-    <Link
-      href={`/blog/${post.slug}`}
-      className="group mx-auto mb-8 grid max-w-6xl overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-accent/30 hover:shadow-xl md:grid-cols-2"
-    >
-      <div className="relative h-56 md:h-full md:min-h-80">
-        <Image
-          src={post.image}
-          alt=""
-          fill
-          priority
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-      </div>
+    <Link href={`/blog/${post.slug}`} className="card-interactive group mb-6 grid overflow-hidden md:grid-cols-2">
+      <ServiceArt icon={blogIcon(post.category)} seed={post.slug} className="h-48 md:h-full md:min-h-72" />
       <div className="flex flex-col justify-center p-6 md:p-10">
         <div className="mb-4 flex items-center gap-2">
           <Badge className="bg-accent text-accent-foreground hover:bg-accent">Latest</Badge>
@@ -80,27 +69,16 @@ function FeaturedPost({ post }: { post: BlogPost }) {
 
 function PostCard({ post }: { post: BlogPost }) {
   return (
-    <Link
-      href={`/blog/${post.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-accent/30 hover:shadow-xl"
-    >
-      <div className="relative h-48">
-        <Image
-          src={post.image}
-          alt=""
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-      </div>
-      <div className="flex flex-1 flex-col p-6">
+    <Link href={`/blog/${post.slug}`} className="card-interactive group flex flex-col overflow-hidden">
+      <ServiceArt icon={blogIcon(post.category)} seed={post.slug} />
+      <div className="flex flex-1 flex-col p-5 md:p-6">
         <Badge variant="secondary" className="mb-3 w-fit">
           {post.category}
         </Badge>
         <h2 className="mb-2 font-heading text-lg font-semibold transition-colors group-hover:text-accent">
           {post.title}
         </h2>
-        <p className="mb-4 flex-1 text-sm leading-relaxed text-muted-foreground">{post.excerpt}</p>
+        <p className="mb-4 line-clamp-3 flex-1 text-sm leading-relaxed text-muted-foreground">{post.excerpt}</p>
         <PostMeta post={post} />
       </div>
     </Link>
@@ -135,7 +113,7 @@ export function BlogList() {
 
   return (
     <>
-      <div className="mx-auto mb-6 max-w-2xl">
+      <div className="mb-4 max-w-xl">
         <div className="relative">
           <Search
             className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
@@ -155,7 +133,7 @@ export function BlogList() {
         </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap justify-center gap-2">
+      <div className="mb-3 flex flex-wrap gap-2">
         {categories.map((cat) => (
           <button
             key={cat}
@@ -181,7 +159,7 @@ export function BlogList() {
         ))}
       </div>
 
-      <p role="status" className="mb-10 min-h-5 text-center text-sm text-muted-foreground">
+      <p role="status" className="mb-6 min-h-5 text-sm text-muted-foreground">
         {isFiltering && filtered.length > 0 && (
           <>
             {filtered.length} {filtered.length === 1 ? "article" : "articles"} found ·{" "}
@@ -205,7 +183,7 @@ export function BlogList() {
         <>
           {!isFiltering && featured && <FeaturedPost post={featured} />}
           {gridPosts.length > 0 && (
-            <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {gridPosts.map((post) => (
                 <PostCard key={post.slug} post={post} />
               ))}

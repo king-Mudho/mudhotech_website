@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { MessageCircle, Phone } from "lucide-react";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
+import { Phone } from "lucide-react";
 import { ServiceJsonLd, FaqJsonLd } from "@/components/seo/JsonLd";
 import { FAQ } from "@/components/marketing/FAQ";
 import { supportFaq } from "@/data/faq";
@@ -26,6 +27,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "/it-support" },
 };
 
+/** Columns that fill every row: four cards sit in one row, not three plus one. */
+const columns: Record<number, string> = {
+  2: "",
+  4: "xl:grid-cols-4",
+};
+
 /**
  * The "keep technology working" path: every repair, network, and software
  * setup service, in three groups. Software setup moved here from
@@ -42,10 +49,9 @@ export default function ITSupportPage() {
         eyebrow="IT Support"
         title="IT Support, Repairs & Software Setup"
         lead="Computers repaired, networks fixed, and software set up properly — for a single laptop or a whole office."
-        hueShift={14}
       >
-        <nav aria-label="On this page" className="mt-8">
-          <ul className="flex flex-wrap justify-center gap-2">
+        <nav aria-label="On this page">
+          <ul className="flex flex-wrap gap-2">
             {supportGroups.map((group) => (
               <li key={group.id}>
                 <a
@@ -71,7 +77,7 @@ export default function ITSupportPage() {
       {supportGroups.map((group, i) => (
         <Section key={group.id} id={group.id} muted={i % 2 === 1} className="scroll-mt-20">
           <SectionHeading eyebrow={`${i + 1} of ${supportGroups.length}`} title={group.title} lead={group.lead} />
-          <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className={`grid gap-6 md:grid-cols-2 ${columns[group.services.length] ?? "lg:grid-cols-3"}`}>
             {group.services.map((service) => (
               <ServiceCard
                 key={service.title}
@@ -82,7 +88,6 @@ export default function ITSupportPage() {
                 items={service.items}
                 worksWith={service.worksWith}
                 bestFor={service.bestFor}
-                image={service.image}
                 turnaround={service.turnaround}
                 note={service.note}
                 className="reveal"
@@ -93,12 +98,7 @@ export default function ITSupportPage() {
       ))}
 
       <div className="container mx-auto px-4">
-        <SectionBreak
-          src="/images/section-repairs.jpg"
-          alt="Technician repairing computer hardware"
-          title="Diagnosed Properly, Fixed Once"
-          subtitle={commitments.freeAssessment}
-        />
+        <SectionBreak title="Diagnosed Properly, Fixed Once" subtitle={commitments.freeAssessment} />
       </div>
 
       <ProcessSteps
@@ -116,7 +116,7 @@ export default function ITSupportPage() {
       />
 
       <Section id="request-support" className="scroll-mt-20">
-        <div className="mx-auto grid max-w-5xl gap-10 lg:grid-cols-[1fr_1.4fr]">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] lg:gap-14">
           <div>
             <SectionHeading
               eyebrow="Get Help"
@@ -136,7 +136,7 @@ export default function ITSupportPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                  <WhatsAppIcon className="h-4 w-4" aria-hidden="true" />
                   WhatsApp {company.contact.whatsapp}
                 </a>
               </Button>
@@ -148,7 +148,7 @@ export default function ITSupportPage() {
               </Button>
             </div>
           </div>
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+          <div className="card-surface p-6 sm:p-8">
             <SoftwareServiceForm />
           </div>
         </div>

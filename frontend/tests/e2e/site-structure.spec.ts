@@ -131,8 +131,10 @@ test.describe("homepage 3D background", () => {
     expect(await frame()).toBe(first);
   });
 
-  test("appears on the homepage only", async ({ page }) => {
-    await page.goto("/it-support");
-    await expect(page.locator(globe)).toHaveCount(0);
+  test("appears in every page's hero, so the pages match", async ({ page }) => {
+    for (const path of ["/it-support", "/about", "/blog"]) {
+      await page.goto(path);
+      await expect(page.locator(globe)).toHaveCount(1);
+    }
   });
 });

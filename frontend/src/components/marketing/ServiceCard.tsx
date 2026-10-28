@@ -1,7 +1,7 @@
-import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
-import { Clock, Info, Users } from "lucide-react";
+import { ChevronDown, Clock, Info, Users } from "lucide-react";
 import { ServiceItemList } from "@/components/marketing/ServiceItemList";
+import { ServiceArt } from "@/components/marketing/ServiceArt";
 import { cn } from "@/lib/utils";
 
 interface ServiceCardProps {
@@ -14,7 +14,6 @@ interface ServiceCardProps {
   /** Named software, platforms, and parts the service covers. */
   worksWith?: string[];
   bestFor?: string;
-  image?: string;
   turnaround?: string;
   /** A caveat to read before relying on the claim, e.g. third-party fees. */
   note?: string;
@@ -27,100 +26,76 @@ interface ServiceCardProps {
  * Server Component by design — /it-support renders it straight from a server
  * page and passes a Lucide component as `icon`, which cannot cross the
  * server/client boundary. The expand/collapse lives in ServiceItemList.
+ *
+ * The card shows the essentials (what it is, the first few things included,
+ * any caveat, and what it works with). The longer explanation and "best for"
+ * sit behind "More about this service", so a row of cards stays scannable.
+ * The stock photograph that used to head the card is replaced by ServiceArt.
  */
 export function ServiceCard({
-  icon: Icon,
+  icon,
   title,
   description,
   detail,
   items = [],
   worksWith,
   bestFor,
-  image,
   turnaround,
   note,
-  maxItems = 5,
+  maxItems = 4,
   className,
 }: ServiceCardProps) {
-  return (
-    <div
-      className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm",
-        "transition-all duration-300 hover:border-accent/40 hover:shadow-lg",
-        className,
-      )}
-    >
-      {image ? (
-        <div className="relative h-40 shrink-0 overflow-hidden">
-          {/* Decorative: the heading directly below names the service, so a
-              descriptive alt here would just be read out twice. */}
-          <Image
-            src={image}
-            alt=""
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            quality={65}
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/25 to-transparent" />
-          <span className="absolute bottom-3 left-4 rounded-xl bg-card/90 p-2.5 shadow-sm backdrop-blur-sm">
-            <Icon className="h-5 w-5 text-accent" aria-hidden="true" />
-          </span>
-        </div>
-      ) : null}
+  const hasMore = Boolean(detail || bestFor || turnaround);
 
-      <div className="flex flex-1 flex-col p-6">
-        {!image && (
-          <div className="mb-4 w-fit rounded-xl bg-accent/10 p-3 transition-colors group-hover:bg-accent/15">
-            <Icon className="h-6 w-6 text-accent" aria-hidden="true" />
+  return (
+    <article className={cn("card-interactive group flex h-full flex-col overflow-hidden", className)}>
+      <ServiceArt icon={icon} seed={title} />
+
+      <div className="flex flex-1 flex-col p-5 md:p-6">
+        <h3 className="font-heading text-lg font-semibold leading-snug text-foreground">{title}</h3>
+        {description && <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{description}</p>}
+
+        {items.length > 0 && (
+          <div className="mt-4">
+            <ServiceItemList items={items} collapsedCount={maxItems} />
           </div>
         )}
-
-        <h3 className="mb-2 font-heading text-lg font-semibold leading-snug">{title}</h3>
-
-        {description && <p className="mb-3 text-sm leading-relaxed text-muted-foreground">{description}</p>}
-
-        {detail && (
-          <p className="mb-4 border-l-2 border-accent/25 pl-3 text-sm leading-relaxed text-foreground/70">{detail}</p>
-        )}
-
-        {(bestFor || turnaround) && (
-          <dl className="mb-4 space-y-2 text-xs">
-            {bestFor && (
-              <div>
-                <dt className="sr-only">Best for</dt>
-                {/* Icon inside the <dd>: a <dl> group may only contain <dt>/<dd>. */}
-                <dd className="flex gap-2 leading-relaxed text-muted-foreground">
-                  <Users className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
-                  <span>
-                    <span className="font-medium text-foreground/80">Best for: </span>
-                    {bestFor}
-                  </span>
-                </dd>
-              </div>
-            )}
-            {turnaround && (
-              <div>
-                <dt className="sr-only">Typical turnaround</dt>
-                <dd className="flex gap-2 leading-relaxed text-muted-foreground">
-                  <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
-                  <span>
-                    <span className="font-medium text-foreground/80">Turnaround: </span>
-                    {turnaround}
-                  </span>
-                </dd>
-              </div>
-            )}
-          </dl>
-        )}
-
-        {items.length > 0 && <ServiceItemList items={items} collapsedCount={maxItems} />}
 
         {note && (
           <p className="mt-4 flex gap-2 rounded-lg bg-secondary/70 p-3 text-xs leading-relaxed text-muted-foreground">
             <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
             <span>{note}</span>
           </p>
+        )}
+
+        {hasMore && (
+          <details className="group/more mt-4 border-t border-border pt-3 text-sm">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 font-heading text-sm font-semibold text-accent [&::-webkit-details-marker]:hidden">
+              More about this service
+              <ChevronDown className="h-4 w-4 transition-transform group-open/more:rotate-180" aria-hidden="true" />
+            </summary>
+            <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted-foreground">
+              {detail && <p>{detail}</p>}
+              {bestFor && (
+                <p className="flex gap-2">
+                  <Users className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
+                  <span>
+                    <span className="font-medium text-foreground/80">Best for: </span>
+                    {bestFor}
+                  </span>
+                </p>
+              )}
+              {turnaround && (
+                <p className="flex gap-2">
+                  <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
+                  <span>
+                    <span className="font-medium text-foreground/80">Turnaround: </span>
+                    {turnaround}
+                  </span>
+                </p>
+              )}
+            </div>
+          </details>
         )}
 
         {worksWith && worksWith.length > 0 && (
@@ -138,6 +113,6 @@ export function ServiceCard({
           </div>
         )}
       </div>
-    </div>
+    </article>
   );
 }

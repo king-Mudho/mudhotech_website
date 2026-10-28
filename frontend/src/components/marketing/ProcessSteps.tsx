@@ -34,7 +34,7 @@ export function ProcessSteps({
           <SectionHeading eyebrow={eyebrow} title={title} lead={lead} />
         </div>
 
-        <div className="relative mx-auto max-w-6xl">
+        <div className="relative">
           {/* Connector line behind the numbered markers on wide screens. */}
           <div
             aria-hidden="true"

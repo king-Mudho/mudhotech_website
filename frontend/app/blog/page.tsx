@@ -20,7 +20,6 @@ export default function BlogPage() {
         eyebrow="Insights"
         title="Blog & Insights"
         lead="Practical technology guidance for businesses and institutions across Zimbabwe."
-        hueShift={8}
       />
 
       <Section>
@@ -29,20 +28,22 @@ export default function BlogPage() {
 
       <div className="container mx-auto px-4">
         <SectionBreak
-          src="/images/section-blog-insights.jpg"
-          alt="Reading technology insights on a laptop"
           title="Practical, Not Theoretical"
           subtitle="Written for business owners and administrators — not for other engineers."
         />
       </div>
 
       <Section muted>
-        <div className="max-w-xl mx-auto text-center">
-          <h2 className="font-heading text-2xl md:text-3xl font-bold mb-3">Stay in the Loop</h2>
-          <p className="text-muted-foreground mb-8">
-            Occasional practical guidance on technology for your business. No spam.
-          </p>
-          <NewsletterForm />
+        <div className="card-surface flex flex-col gap-6 p-7 md:flex-row md:items-center md:justify-between md:p-10">
+          <div>
+            <h2 className="mb-2 font-heading text-2xl font-bold md:text-3xl">Stay in the Loop</h2>
+            <p className="text-muted-foreground">
+              Occasional practical guidance on technology for your business. No spam.
+            </p>
+          </div>
+          <div className="w-full md:max-w-md">
+            <NewsletterForm />
+          </div>
         </div>
       </Section>
     </>

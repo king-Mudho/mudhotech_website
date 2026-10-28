@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface SectionHeadingProps {
@@ -7,6 +8,8 @@ interface SectionHeadingProps {
   /** `light` inverts the type for use on the dark stat band. */
   tone?: "default" | "light";
   align?: "center" | "left";
+  /** Optional link or button shown to the right of the heading on wide screens. */
+  action?: ReactNode;
   className?: string;
 }
 
@@ -22,7 +25,8 @@ export function SectionHeading({
   title,
   lead,
   tone = "default",
-  align = "center",
+  align = "left",
+  action,
   className,
 }: SectionHeadingProps) {
   const light = tone === "light";
@@ -30,42 +34,46 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        "mb-12",
+        "mb-8 md:mb-10",
+        action && "flex flex-col gap-4 md:flex-row md:items-end md:justify-between",
         align === "center" ? "text-center" : "text-left",
         className,
       )}
     >
-      {eyebrow && (
-        <span
-          className={cn(
-            "mb-3 inline-flex rounded-full px-3.5 py-1 font-heading text-xs font-semibold uppercase tracking-wider",
-            light ? "bg-white/10 text-hero-accent" : "border border-accent/25 bg-accent/10 text-accent",
-          )}
-        >
-          {eyebrow}
-        </span>
-      )}
-
-      <h2
-        className={cn(
-          "font-heading text-3xl font-bold leading-tight text-balance md:text-4xl",
-          light ? "text-white" : "text-foreground",
+      <div>
+        {eyebrow && (
+          <span
+            className={cn(
+              "mb-3 inline-flex rounded-full px-3.5 py-1 font-heading text-xs font-semibold uppercase tracking-wider",
+              light ? "bg-white/10 text-hero-accent" : "border border-accent/25 bg-accent/10 text-accent",
+            )}
+          >
+            {eyebrow}
+          </span>
         )}
-      >
-        {title}
-      </h2>
 
-      {lead && (
-        <p
+        <h2
           className={cn(
-            "mt-4 max-w-2xl text-base leading-relaxed text-balance",
-            align === "center" && "mx-auto",
-            light ? "text-white/75" : "text-muted-foreground",
+            "text-balance font-heading text-3xl font-bold leading-tight md:text-4xl",
+            light ? "text-white" : "text-foreground",
           )}
         >
-          {lead}
-        </p>
-      )}
+          {title}
+        </h2>
+
+        {lead && (
+          <p
+            className={cn(
+              "mt-3 max-w-3xl text-balance text-base leading-relaxed",
+              align === "center" && "mx-auto",
+              light ? "text-white/75" : "text-muted-foreground",
+            )}
+          >
+            {lead}
+          </p>
+        )}
+      </div>
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }

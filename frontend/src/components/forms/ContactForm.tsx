@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { MessageCircle } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -127,7 +128,7 @@ export function ContactForm() {
             voice control (WCAG 2.5.3, "Label in Name"). */}
         <Button asChild variant="whatsapp" size="lg" className="w-full sm:w-auto">
           <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
-            <MessageCircle className="h-4 w-4" />
+            <WhatsAppIcon className="h-4 w-4" />
             Send via WhatsApp
           </a>
         </Button>

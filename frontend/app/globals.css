@@ -147,8 +147,9 @@
       }
     }
   }
+  /* Tighter than before (80/112px): sections read as one page, not islands. */
   .section-padding {
-    @apply py-20 md:py-28;
+    @apply py-14 md:py-20;
   }
   .page-padding-top {
     @apply pt-20;
@@ -156,6 +157,26 @@
 }
 
 @layer components {
+  /* One card surface for the whole site. Interactive cards lift, pick up an
+     accent border and a soft accent glow; the icon tile inside fills with the
+     brand gradient (see .icon-tile). Transforms are dropped for reduced motion
+     by the global rule in @layer base. */
+  .card-surface {
+    @apply rounded-2xl border border-border bg-card shadow-sm;
+  }
+  .card-interactive {
+    @apply card-surface transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-accent/40;
+  }
+  .card-interactive:hover {
+    box-shadow: 0 18px 40px -18px hsl(var(--accent) / 0.45);
+  }
+  .icon-tile {
+    @apply inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors duration-300;
+  }
+  .group:hover .icon-tile,
+  .group:focus-within .icon-tile {
+    @apply bg-gradient-to-br from-accent to-hero-accent text-white;
+  }
   .prose-custom h2 {
     @apply mb-3 mt-10 font-heading text-xl font-bold text-foreground;
   }

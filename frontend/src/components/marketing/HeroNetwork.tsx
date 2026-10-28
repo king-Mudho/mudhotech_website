@@ -18,7 +18,15 @@ import { nearestLinks, rotate, spherePoints, type Vec3 } from "@/lib/hero-networ
  * - Lines stay faint and the edges are masked, so text contrast is unchanged.
  * - It re-reads the accent colour when the theme changes.
  */
-export function HeroNetwork() {
+interface HeroNetworkProps {
+  /**
+   * "center": behind a centred headline (unused now, kept for flexibility).
+   * "right": beside left-aligned hero text, as on every page's hero.
+   */
+  placement?: "center" | "right";
+}
+
+export function HeroNetwork({ placement = "right" }: HeroNetworkProps) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -92,9 +100,14 @@ export function HeroNetwork() {
 
     const draw = () => {
       const mobile = width < 640;
-      const radius = mobile ? Math.min(width * 0.62, 300) : Math.min(width * 0.36, height * 0.5, 520);
-      const cx = width / 2;
-      const cy = mobile ? height * 0.3 : height * 0.42;
+      const right = placement === "right";
+      const radius = mobile
+        ? Math.min(width * (right ? 0.5 : 0.62), 300)
+        : right
+          ? Math.min(width * 0.24, height * 0.42, 340)
+          : Math.min(width * 0.36, height * 0.5, 520);
+      const cx = right ? width * (mobile ? 0.86 : 0.76) : width / 2;
+      const cy = mobile ? height * (right ? 0.2 : 0.3) : height * (right ? 0.48 : 0.42);
 
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, width, height);
@@ -237,7 +250,7 @@ export function HeroNetwork() {
       reduceMotion.removeEventListener("change", sync);
       window.removeEventListener("pointermove", onPointer);
     };
-  }, []);
+  }, [placement]);
 
   return (
     <canvas
@@ -245,9 +258,14 @@ export function HeroNetwork() {
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 h-full w-full opacity-0 transition-opacity duration-1000 data-[ready=true]:opacity-100"
       style={{
-        maskImage: "radial-gradient(ellipse 75% 70% at 50% 42%, #000 35%, transparent 78%)",
-        WebkitMaskImage: "radial-gradient(ellipse 75% 70% at 50% 42%, #000 35%, transparent 78%)",
+        maskImage: mask[placement],
+        WebkitMaskImage: mask[placement],
       }}
     />
   );
 }
+
+const mask = {
+  center: "radial-gradient(ellipse 75% 70% at 50% 42%, #000 35%, transparent 78%)",
+  right: "radial-gradient(ellipse 55% 85% at 76% 48%, #000 40%, transparent 80%)",
+};

@@ -52,10 +52,13 @@ export function WhyMudhoTech() {
           />
         </div>
 
-        <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {differentiators.map((item) => (
-            <div key={item.title} className="reveal rounded-2xl border border-white/10 bg-white/5 p-6">
-              <span className="mb-4 inline-flex rounded-xl bg-hero-accent/15 p-2.5">
+            <div
+              key={item.title}
+              className="reveal group rounded-2xl border border-white/10 bg-white/5 p-6 transition-[transform,background-color,border-color] duration-300 hover:-translate-y-1 hover:border-hero-accent/40 hover:bg-white/10"
+            >
+              <span className="mb-4 inline-flex rounded-xl bg-hero-accent/15 p-2.5 transition-colors group-hover:bg-hero-accent/25">
                 <item.icon className="h-5 w-5 text-hero-accent" aria-hidden="true" />
               </span>
               <h3 className="mb-2 font-heading text-base font-semibold text-white">{item.title}</h3>

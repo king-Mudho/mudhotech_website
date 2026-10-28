@@ -33,7 +33,7 @@ If you change the hours, also update `openingHoursSpecification` in `frontend/sr
 - `devServices`: the **Software Development** page (`/web-software`).
 - `softwareServices` and `hardwareServices`: the **IT Support** page (`/it-support`), arranged into the three groups in `supportGroups`.
 
-Each service has a one-line `description`, a longer `detail`, an `items` checklist, an optional `worksWith` list of named products, `bestFor`, an optional local `image`, and an optional `note` for caveats. `turnaround` is deliberately empty; add it only when you can always honour it.
+Each service has a one-line `description`, a longer `detail`, an `items` checklist, an optional `worksWith` list of named products, `bestFor`, and an optional `note` for caveats. The card shows the description, the first four items, the note and the works-with list; `detail` and `bestFor` sit behind its "More about this service" toggle. Card artwork is generated from the service's icon (`ServiceArt`), so there is no photo to supply. `turnaround` is deliberately empty; add it only when you can always honour it.
 
 To add a service to IT Support, add it to `softwareServices` or `hardwareServices`, then add its exact title to one of the groups in `supportGroups`. A unit test fails if a support service is left out of every group.
 
@@ -74,6 +74,8 @@ Add an object with `slug` (the URL), `title`, `excerpt`, `date` (YYYY-MM-DD; use
 `frontend/src/data/faq.ts`: `faq` (homepage), `buildFaq` (Software Development), and `supportFaq` (IT Support). The page's FAQ structured data reads the same list, so search engines always see what visitors see.
 
 ## Images
+
+- Cards, section bands and blog cards use generated artwork (`src/components/marketing/ServiceArt.tsx` and `SectionBreak.tsx`), not photos. A blog post's `image` is still used for social-media previews.
 
 - Put images in `frontend/public/images/` and reference them as `/images/<file>`.
 - Prefer JPG or PNG around 1600 px wide; the site resizes and converts them to AVIF/WebP automatically.

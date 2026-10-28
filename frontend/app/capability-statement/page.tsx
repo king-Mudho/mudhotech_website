@@ -214,8 +214,6 @@ export default function CapabilityStatementPage() {
 
       <div className="container mx-auto px-4">
         <SectionBreak
-          src="/images/section-security.jpg"
-          alt="Secure systems and infrastructure"
           title="Ready for Formal Procurement"
           subtitle="Structured for vendor registration, RFQs, RFPs, and tender submissions."
         />

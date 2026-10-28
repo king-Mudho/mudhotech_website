@@ -88,11 +88,11 @@ describe("services", () => {
     }
   });
 
-  it("points every service image at a local file, never a remote host", () => {
-    // Remote stock would need a next.config remotePatterns entry and would
-    // reintroduce the placeholder imagery docs/OPEN-QUESTIONS.md #4 flags.
+  it("carries no photographs: service cards use generated artwork", () => {
+    // Stock photos were removed from the cards (ServiceArt draws them now);
+    // this stops one creeping back through the data file.
     for (const category of [...softwareServices, ...devServices, ...hardwareServices]) {
-      if (category.image) expect(category.image.startsWith("/images/")).toBe(true);
+      expect(category).not.toHaveProperty("image");
     }
   });
 
