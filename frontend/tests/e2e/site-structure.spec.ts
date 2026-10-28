@@ -150,8 +150,12 @@ test("every card photo actually loads", async ({ page }) => {
     for (let i = 0; i < count; i++) {
       const photo = photos.nth(i);
       await photo.scrollIntoViewIfNeeded();
+      // Generous timeout: on a fresh server the optimiser encodes each photo
+      // to AVIF on first request, which can take a few seconds.
       await expect
-        .poll(() => photo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0))
+        .poll(() => photo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0), {
+          timeout: 20_000,
+        })
         .toBe(true);
     }
   }

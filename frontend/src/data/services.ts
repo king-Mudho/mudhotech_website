@@ -290,6 +290,7 @@ export const hardwareServices: ServiceCategory[] = [
   {
     icon: Wind,
     title: "Cleaning & Preventive Maintenance",
+    image: "/images/service-cleaning.jpg",
     description: "Scheduled cleaning that stops heat quietly shortening the life of your machines.",
     detail:
       "Dust is the most common cause of thermal throttling and fan failure, and it is entirely preventable. A full strip-down, fan service, and thermal paste replacement typically restores performance that owners had written off as the machine simply getting old.",
