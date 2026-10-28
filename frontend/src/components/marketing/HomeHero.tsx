@@ -4,7 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import { ArrowRight, BadgeCheck, Clock, Code2, MapPin, Wrench, Reply } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroBackground } from "@/components/layout/HeroBackground";
-import { HeroNetwork } from "@/components/marketing/HeroNetwork";
+import { HeroCosmos, HeroScrim } from "@/components/marketing/HeroCosmos";
 import { company } from "@/data/company";
 import { commitments } from "@/data/commitments";
 import { WHATSAPP_GREETING, telHref, whatsappUrl } from "@/lib/whatsapp";
@@ -63,12 +63,16 @@ export function HomeHero() {
   return (
     <section className="page-padding-top relative overflow-hidden">
       <HeroBackground />
-      <HeroNetwork placement="right" />
+      {/* The globe centres on the headline, above the service cards. */}
+      <HeroCosmos focusY={0.3} />
+      <HeroScrim focusY={0.3} />
 
-      <div className="container relative mx-auto px-4 pb-12 pt-10 md:pb-16 md:pt-14 lg:pt-20">
-        <div className="max-w-3xl">
+      <div className="container relative mx-auto px-4 pb-12 md:pb-16">
+        {/* The centred "stage": headline over the 3D scene, tall enough for
+            the globe and its orbits to read as a full background. */}
+        <div className="mx-auto flex min-h-[30rem] max-w-4xl flex-col items-center justify-center py-12 text-center md:min-h-[36rem]">
           {/* States what the company does before the reader parses anything else. */}
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-accent sm:text-sm">
+          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-accent-strong sm:text-sm">
             Software Development &middot; IT Support &middot; Harare
           </span>
 
@@ -76,12 +80,15 @@ export function HomeHero() {
             We build the software your business runs on — and <span className="text-accent">keep it running.</span>
           </h1>
 
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+          <p className="mx-auto mt-5 max-w-2xl text-balance text-base leading-relaxed text-muted-foreground sm:text-lg">
             Custom web systems, mobile apps, and dependable IT support for organizations across Zimbabwe. One team to
             build it and to look after it.
           </p>
 
-          <div className="mt-8 flex animate-fade-in-up flex-col gap-3 sm:flex-row" style={{ animationDelay: "100ms" }}>
+          <div
+            className="mt-8 flex w-full animate-fade-in-up flex-col justify-center gap-3 sm:w-auto sm:flex-row"
+            style={{ animationDelay: "100ms" }}
+          >
             <Button asChild variant="accent" size="xl">
               <Link href="/quote">
                 Get a Free Quote
@@ -105,7 +112,7 @@ export function HomeHero() {
         </div>
 
         <h2 className="sr-only">What do you need?</h2>
-        <ul className="mt-10 grid animate-fade-in-up gap-5 md:grid-cols-2" style={{ animationDelay: "220ms" }}>
+        <ul className="grid animate-fade-in-up gap-5 md:grid-cols-2" style={{ animationDelay: "220ms" }}>
           {paths.map(({ icon: Icon, eyebrow, title, topics, href, cta }) => (
             <li key={href}>
               <Link

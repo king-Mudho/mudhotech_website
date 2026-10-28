@@ -49,6 +49,8 @@ const pairs: [string, string][] = [
   ["muted-foreground", "card"],
   ["accent", "background"],
   ["accent-foreground", "accent"],
+  ["accent-foreground", "accent-hover"],
+  ["accent-strong", "secondary"],
   ["hero-foreground", "hero"],
   ["hero-accent", "hero"],
   ["band-foreground", "band"],

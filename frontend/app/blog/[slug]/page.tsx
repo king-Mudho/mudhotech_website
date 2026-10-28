@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { BlogContent, headingsOf } from "@/components/marketing/BlogContent";
 import { ReadingProgress } from "@/components/marketing/ReadingProgress";
 import { ContactCta } from "@/components/marketing/ContactCta";
-import { ServiceArt } from "@/components/marketing/ServiceArt";
+import { CardPhoto } from "@/components/marketing/CardPhoto";
 import { blogIcon } from "@/components/marketing/blog-icon";
 import { ShareButtons } from "@/components/marketing/ShareButtons";
 import { ArticleJsonLd } from "@/components/seo/JsonLd";
@@ -186,11 +186,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       />
 
       <Section>
-        <h2 className="mb-8 font-heading text-2xl font-bold md:text-3xl">Related Articles</h2>
+        <h2 className="mb-8 text-center font-heading text-2xl font-bold md:text-3xl">Related Articles</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {related.map((item) => (
             <Link key={item.slug} href={`/blog/${item.slug}`} className="card-interactive group overflow-hidden">
-              <ServiceArt icon={blogIcon(item.category)} seed={item.slug} />
+              <CardPhoto src={item.image} icon={blogIcon(item.category)} />
               <div className="p-6">
                 <Badge variant="secondary" className="mb-3">
                   {item.category}

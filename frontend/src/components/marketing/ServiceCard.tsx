@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { ChevronDown, Clock, Info, Users } from "lucide-react";
 import { ServiceItemList } from "@/components/marketing/ServiceItemList";
 import { ServiceArt } from "@/components/marketing/ServiceArt";
+import { CardPhoto } from "@/components/marketing/CardPhoto";
 import { cn } from "@/lib/utils";
 
 interface ServiceCardProps {
@@ -14,6 +15,8 @@ interface ServiceCardProps {
   /** Named software, platforms, and parts the service covers. */
   worksWith?: string[];
   bestFor?: string;
+  /** A photo that shows the work; generated artwork is used without one. */
+  image?: string;
   turnaround?: string;
   /** A caveat to read before relying on the claim, e.g. third-party fees. */
   note?: string;
@@ -30,7 +33,8 @@ interface ServiceCardProps {
  * The card shows the essentials (what it is, the first few things included,
  * any caveat, and what it works with). The longer explanation and "best for"
  * sit behind "More about this service", so a row of cards stays scannable.
- * The stock photograph that used to head the card is replaced by ServiceArt.
+ * The card leads with a photo of the work where one exists, and with
+ * generated artwork (ServiceArt) where none does.
  */
 export function ServiceCard({
   icon,
@@ -40,6 +44,7 @@ export function ServiceCard({
   items = [],
   worksWith,
   bestFor,
+  image,
   turnaround,
   note,
   maxItems = 4,
@@ -49,7 +54,7 @@ export function ServiceCard({
 
   return (
     <article className={cn("card-interactive group flex h-full flex-col overflow-hidden", className)}>
-      <ServiceArt icon={icon} seed={title} />
+      {image ? <CardPhoto src={image} icon={icon} /> : <ServiceArt icon={icon} seed={title} />}
 
       <div className="flex flex-1 flex-col p-5 md:p-6">
         <h3 className="font-heading text-lg font-semibold leading-snug text-foreground">{title}</h3>

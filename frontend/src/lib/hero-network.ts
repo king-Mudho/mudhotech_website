@@ -1,5 +1,5 @@
 /**
- * Geometry for the homepage's 3D network globe (components/marketing/HeroNetwork).
+ * Geometry for the homepage's 3D network globe (components/marketing/HeroCosmos).
  *
  * Kept free of DOM and canvas code so it can be unit-tested. Points sit on a
  * unit sphere; rotating the sphere never changes the distance between two

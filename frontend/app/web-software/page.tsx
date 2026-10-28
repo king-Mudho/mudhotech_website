@@ -87,6 +87,7 @@ export default function WebSoftwarePage() {
               items={service.items}
               worksWith={service.worksWith}
               bestFor={service.bestFor}
+              image={service.image}
               turnaround={service.turnaround}
               note={service.note}
               className="reveal"
@@ -94,7 +95,7 @@ export default function WebSoftwarePage() {
           ))}
         </div>
 
-        <p className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-2xl border border-border bg-secondary/50 px-5 py-4 text-sm text-muted-foreground">
+        <p className="mt-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-2xl border border-border bg-secondary/50 px-5 py-4 text-center text-sm text-muted-foreground">
           <Wrench className="h-4 w-4 text-accent" aria-hidden="true" />
           Need software installed, a virus removed, or a computer fixed instead?
           <Link

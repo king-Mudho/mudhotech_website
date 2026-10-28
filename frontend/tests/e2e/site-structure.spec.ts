@@ -138,3 +138,25 @@ test.describe("homepage 3D background", () => {
     }
   });
 });
+
+test("every card photo actually loads", async ({ page }) => {
+  // A quality value missing from next.config's `images.qualities` makes the
+  // optimiser answer 400 and the card shows a broken image.
+  for (const path of ["/web-software", "/it-support", "/blog"]) {
+    await page.goto(path);
+    const photos = page.locator("article img, a img");
+    const count = await photos.count();
+    expect(count).toBeGreaterThan(0);
+    for (let i = 0; i < count; i++) {
+      const photo = photos.nth(i);
+      await photo.scrollIntoViewIfNeeded();
+      // Generous timeout: on a fresh server the optimiser encodes each photo
+      // to AVIF on first request, which can take a few seconds.
+      await expect
+        .poll(() => photo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0), {
+          timeout: 20_000,
+        })
+        .toBe(true);
+    }
+  }
+});

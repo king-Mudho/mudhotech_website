@@ -21,7 +21,7 @@ export function FAQ({
       <div className="container mx-auto px-4">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-14">
           <div className="reveal lg:sticky lg:top-28 lg:self-start">
-            <SectionHeading eyebrow="FAQ" title={title} lead={lead} className="mb-0" />
+            <SectionHeading eyebrow="FAQ" title={title} lead={lead} align="left" className="mb-0" />
           </div>
 
           <div className="reveal">
