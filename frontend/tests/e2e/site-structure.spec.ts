@@ -87,3 +87,36 @@ test.describe("mobile navigation", () => {
     }
   });
 });
+
+test.describe("homepage 3D background", () => {
+  const globe = "section canvas[aria-hidden='true']";
+
+  test("starts after load, stays out of the way, and animates", async ({ page }) => {
+    await page.goto("/");
+    const canvas = page.locator(globe);
+    await expect(canvas).toHaveAttribute("data-ready", "true");
+    await expect(canvas).toHaveCSS("pointer-events", "none");
+    const frame = () => canvas.evaluate((c: HTMLCanvasElement) => c.toDataURL());
+    const first = await frame();
+    await expect.poll(frame).not.toBe(first);
+    // The hero's links stay clickable through it.
+    await page.getByRole("link", { name: /IT support & repairs/ }).click();
+    await expect(page).toHaveURL(/\/it-support$/);
+  });
+
+  test("holds still when the visitor asks for reduced motion", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    const canvas = page.locator(globe);
+    await expect(canvas).toHaveAttribute("data-ready", "true");
+    const frame = () => canvas.evaluate((c: HTMLCanvasElement) => c.toDataURL());
+    const first = await frame();
+    await page.waitForTimeout(500);
+    expect(await frame()).toBe(first);
+  });
+
+  test("appears on the homepage only", async ({ page }) => {
+    await page.goto("/it-support");
+    await expect(page.locator(globe)).toHaveCount(0);
+  });
+});

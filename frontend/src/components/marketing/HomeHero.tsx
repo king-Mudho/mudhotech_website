@@ -3,6 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import { ArrowRight, Code2, MessageCircle, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroBackground } from "@/components/layout/HeroBackground";
+import { HeroNetwork } from "@/components/marketing/HeroNetwork";
 import { company } from "@/data/company";
 import { commitments } from "@/data/commitments";
 import { WHATSAPP_GREETING, telHref, whatsappUrl } from "@/lib/whatsapp";
@@ -51,6 +52,7 @@ export function HomeHero() {
   return (
     <section className="page-padding-top relative flex min-h-[calc(100vh-5rem)] items-center overflow-hidden">
       <HeroBackground />
+      <HeroNetwork />
 
       <div className="container relative mx-auto px-4 py-16 text-center">
         {/* States what the company does before the reader parses anything else. */}
