@@ -100,9 +100,18 @@ Branch: `claude/vibrant-ritchie-tg7ptv` · Figma: https://www.figma.com/design/3
 
 ### Accessibility (axe-core, WCAG 2.2 AA tags; 13 routes × desktop and mobile)
 
-|                               | Before  | After                                |
-| ----------------------------- | ------- | ------------------------------------ |
-| Pages with serious violations | 9 of 13 | **0 of 13** (with motion on and off) |
+|                                          | Before   | After this redesign                  | After the dark-mode fix (October 28) |
+| ---------------------------------------- | -------- | ------------------------------------ | ------------------------------------ |
+| Pages with serious violations, light     | 9 of 13  | **0 of 13** (with motion on and off) | 0 of 13                              |
+| Pages with serious violations, dark mode | 13 of 13 | 13 of 13 (84 elements)               | **0 of 13**                          |
+
+> **Correction, October 28.** This table first reported "0 of 13" with no theme named, and the summary read as if both themes passed. Only light mode did. The audit script set the browser's colour-scheme preference, which this site ignores (`enableSystem={false}` in `app/layout.tsx`), so its dark runs were really light ones. Re-run with the site's own theme switch, dark mode failed colour contrast on all 13 pages. The failures predate the redesign and were fixed separately:
+>
+> - Accent buttons: white on the bright dark-mode accent, 3.0:1. `--accent-foreground` is now navy in dark mode (6.0:1).
+> - How We Work band and footer: `bg-primary` and `bg-foreground` turn bright blue and light grey in dark mode (card text 2.3:1, footer small print 3.4:1, logo hidden). Both now use a new `--band` token, which keeps the original navy in light mode and stays dark in dark mode.
+> - Links in long-form text were told apart by colour alone (1.2:1 in dark mode). They are now always underlined.
+>
+> `tests/unit/contrast.test.ts` now checks the token pairs in both themes, so a change like this fails CI instead of reaching the site.
 
 ### Lighthouse
 

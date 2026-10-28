@@ -24,7 +24,9 @@ const services = [
 
 export function Footer() {
   return (
-    <footer className="bg-foreground text-background">
+    // bg-band, not bg-foreground: foreground turns light grey in dark mode,
+    // which hid the white logo and took the small print to 3.4:1.
+    <footer className="bg-band text-band-foreground">
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
@@ -35,7 +37,7 @@ export function Footer() {
               height={247}
               className="mb-4 h-16 w-auto brightness-0 invert"
             />
-            <p className="text-sm leading-relaxed text-background/70">
+            <p className="text-sm leading-relaxed text-band-foreground/70">
               {company.tagline} A Zimbabwean registered ICT company empowering businesses through smart technology.
             </p>
           </div>
@@ -45,7 +47,10 @@ export function Footer() {
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.path + link.name}>
-                  <Link href={link.path} className="text-sm text-background/70 transition-colors hover:text-accent">
+                  <Link
+                    href={link.path}
+                    className="text-sm text-band-foreground/70 transition-colors hover:text-hero-accent"
+                  >
                     {link.name}
                   </Link>
                 </li>
@@ -58,7 +63,10 @@ export function Footer() {
             <ul className="space-y-2">
               {services.map((s) => (
                 <li key={s.name}>
-                  <Link href={s.path} className="text-sm text-background/70 transition-colors hover:text-accent">
+                  <Link
+                    href={s.path}
+                    className="text-sm text-band-foreground/70 transition-colors hover:text-hero-accent"
+                  >
                     {s.name}
                   </Link>
                 </li>
@@ -69,44 +77,44 @@ export function Footer() {
           <div>
             <h2 className="mb-4 font-heading text-base font-semibold">Contact</h2>
             <ul className="space-y-3">
-              <li className="flex items-start gap-3 text-sm text-background/70">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+              <li className="flex items-start gap-3 text-sm text-band-foreground/70">
+                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-hero-accent" />
                 <div>
-                  <a href={telHref()} className="block py-1.5 transition-colors hover:text-accent">
+                  <a href={telHref()} className="block py-1.5 transition-colors hover:text-hero-accent">
                     {company.contact.phone}
                   </a>
                   <a
                     href={whatsappUrl(WHATSAPP_GREETING)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block py-1.5 transition-colors hover:text-accent"
+                    className="block py-1.5 transition-colors hover:text-hero-accent"
                   >
                     {company.contact.whatsapp} (WhatsApp)
                   </a>
                 </div>
               </li>
-              <li className="flex items-center gap-3 text-sm text-background/70">
-                <Mail className="h-4 w-4 shrink-0 text-accent" />
-                <a href={mailtoHref()} className="transition-colors hover:text-accent">
+              <li className="flex items-center gap-3 text-sm text-band-foreground/70">
+                <Mail className="h-4 w-4 shrink-0 text-hero-accent" />
+                <a href={mailtoHref()} className="transition-colors hover:text-hero-accent">
                   {company.contact.email}
                 </a>
               </li>
-              <li className="flex items-center gap-3 text-sm text-background/70">
-                <MapPin className="h-4 w-4 shrink-0 text-accent" />
+              <li className="flex items-center gap-3 text-sm text-band-foreground/70">
+                <MapPin className="h-4 w-4 shrink-0 text-hero-accent" />
                 <span>{company.registeredOffice}</span>
               </li>
             </ul>
           </div>
         </div>
       </div>
-      <div className="border-t border-background/10">
-        <div className="container mx-auto flex flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-background/50 md:flex-row">
+      <div className="border-t border-band-foreground/10">
+        <div className="container mx-auto flex flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-band-foreground/50 md:flex-row">
           <p>&copy; {new Date().getFullYear()} MudhoTech Solutions (Pvt) Ltd. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <Link href="/privacy-policy" className="transition-colors hover:text-accent">
+            <Link href="/privacy-policy" className="transition-colors hover:text-hero-accent">
               Privacy Policy
             </Link>
-            <Link href="/terms-of-service" className="transition-colors hover:text-accent">
+            <Link href="/terms-of-service" className="transition-colors hover:text-hero-accent">
               Terms of Service
             </Link>
             <Link

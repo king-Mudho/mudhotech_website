@@ -39,7 +39,9 @@ const differentiators = [
 
 export function WhyMudhoTech() {
   return (
-    <section className="section-padding bg-primary text-primary-foreground">
+    // bg-band, not bg-primary: primary turns bright blue in dark mode, which
+    // took the card text down to 2.3:1. --band stays navy in both themes.
+    <section className="section-padding bg-band text-band-foreground">
       <div className="container mx-auto px-4">
         <div className="reveal">
           <SectionHeading
@@ -57,7 +59,7 @@ export function WhyMudhoTech() {
                 <item.icon className="h-5 w-5 text-hero-accent" aria-hidden="true" />
               </span>
               <h3 className="mb-2 font-heading text-base font-semibold text-white">{item.title}</h3>
-              <p className="text-sm leading-relaxed text-primary-foreground/70">{item.body}</p>
+              <p className="text-sm leading-relaxed text-band-foreground/70">{item.body}</p>
             </div>
           ))}
         </div>

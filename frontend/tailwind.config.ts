@@ -65,6 +65,10 @@ export default {
           foreground: "hsl(var(--hero-foreground) / <alpha-value>)",
           accent: "hsl(var(--hero-accent) / <alpha-value>)",
         },
+        band: {
+          DEFAULT: "hsl(var(--band) / <alpha-value>)",
+          foreground: "hsl(var(--band-foreground) / <alpha-value>)",
+        },
         whatsapp: {
           DEFAULT: "hsl(var(--whatsapp) / <alpha-value>)",
           foreground: "hsl(var(--whatsapp-foreground) / <alpha-value>)",
