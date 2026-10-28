@@ -1,13 +1,10 @@
 import Link from "next/link";
-import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import type { LucideIcon } from "lucide-react";
 import { ArrowRight, BadgeCheck, Clock, Code2, MapPin, Wrench, Reply } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { HeroBackground } from "@/components/layout/HeroBackground";
 import { HeroCosmos, HeroScrim } from "@/components/marketing/HeroCosmos";
 import { company } from "@/data/company";
 import { commitments } from "@/data/commitments";
-import { WHATSAPP_GREETING, telHref, whatsappUrl } from "@/lib/whatsapp";
 
 /**
  * The two things MudhoTech does, as the first choice a visitor makes. These
@@ -69,8 +66,10 @@ export function HomeHero() {
 
       <div className="container relative mx-auto px-4 pb-12 md:pb-16">
         {/* The centred "stage": headline over the 3D scene, tall enough for
-            the globe and its orbits to read as a full background. */}
-        <div className="mx-auto flex min-h-[30rem] max-w-4xl flex-col items-center justify-center py-12 text-center md:min-h-[36rem]">
+            the globe and its orbits to read as a full background. No buttons
+            here: "Get a Quote" sits in the header and WhatsApp floats on every
+            page, so repeating them crowded the first screen. */}
+        <div className="mx-auto flex min-h-[26rem] max-w-4xl flex-col items-center justify-center py-12 text-center md:min-h-[32rem]">
           {/* States what the company does before the reader parses anything else. */}
           <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-accent-strong sm:text-sm">
             Software Development &middot; IT Support &middot; Harare
@@ -83,31 +82,6 @@ export function HomeHero() {
           <p className="mx-auto mt-5 max-w-2xl text-balance text-base leading-relaxed text-muted-foreground sm:text-lg">
             Custom web systems, mobile apps, and dependable IT support for organizations across Zimbabwe. One team to
             build it and to look after it.
-          </p>
-
-          <div
-            className="mt-8 flex w-full animate-fade-in-up flex-col justify-center gap-3 sm:w-auto sm:flex-row"
-            style={{ animationDelay: "100ms" }}
-          >
-            <Button asChild variant="accent" size="xl">
-              <Link href="/quote">
-                Get a Free Quote
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-            </Button>
-            <Button asChild variant="whatsapp" size="xl">
-              <a href={whatsappUrl(WHATSAPP_GREETING)} target="_blank" rel="noopener noreferrer">
-                <WhatsAppIcon className="h-5 w-5" />
-                WhatsApp Us
-              </a>
-            </Button>
-          </div>
-
-          <p className="mt-4 text-sm text-muted-foreground">
-            {commitments.freeAssessmentShort} · Or call{" "}
-            <a href={telHref()} className="font-medium text-accent hover:underline">
-              {company.contact.phone}
-            </a>
           </p>
         </div>
 
